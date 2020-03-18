@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePreguntasSeries extends Migration
+class CreateTableRespuestas extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreatePreguntasSeries extends Migration
      */
     public function up()
     {
-        Schema::create('preguntas_series', function (Blueprint $table) {
-            $table->integer('serie_id')->unsigned();
+        Schema::create('respuestas', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->bigInteger('pregunta_id')->unsigned();
+            $table->string('descripcion');
+            $table->integer('valor')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +30,6 @@ class CreatePreguntasSeries extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('preguntas_series');
+        Schema::dropIfExists('respuestas');
     }
 }

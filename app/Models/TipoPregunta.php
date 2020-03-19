@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class NivelAcademico extends Model
+class TipoPregunta extends Model
 {
     use SoftDeletes;
-    protected $fillable = [''];
-    protected $table = 'catalogo_nivel_academico';
+    protected $table = 'catalogo_tipos_preguntas';
+    protected $fillable = ['id','llave','descripcion'];
+
 }

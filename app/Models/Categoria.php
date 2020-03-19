@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Rama extends Model
+class Categoria extends Model
 {
     use SoftDeletes;
-    protected $fillable = [''];
-    protected $table = 'catalogo_rama';
+    protected $table = 'catalogo_categorias';
+    protected $fillable = ['id','llave','descripcion'];
+
 }

@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UR extends Model
+class Respuesta extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['llave','descripcion'];
-    protected $table = 'catalogo_ur';
+    protected $table = 'respuestas';
+    protected $fillable = ['id','pregunta_id','descripcion','valor'];
 }

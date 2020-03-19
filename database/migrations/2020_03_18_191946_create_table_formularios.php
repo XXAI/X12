@@ -17,8 +17,14 @@ class CreateTableFormularios extends Migration
             $table->integer('peso')->comment('del 1 al infinito, dependiendo lo requerido')->nullable();
             $table->string('descripcion');
             $table->string('categorias',100)->nullable();
+            $table->boolean('activo')->default(false);
+            $table->integer('creado_por')->unsigned()->nullable();
+            $table->integer('ultima_edicion_por')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('creado_por')->references('id')->on('users');
+            $table->foreign('ultima_edicion_por')->references('id')->on('users');
         });
     }
 

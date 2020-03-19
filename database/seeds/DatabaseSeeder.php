@@ -14,12 +14,12 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::create([
             'name' => 'Usuario Root',
             'username' => 'root',
-            'password' => Hash::make('ssa.plataforma'),
+            'password' => Hash::make('ssa.plataforma.2020'),
             'email' => 'root@localhost',
             'is_superuser' => 1,
             'avatar' => '/assets/avatars/50-king.svg'
         ]);
-        
+        /*
         //Carga de archivos CSV
         $lista_csv = [
             'permissions',
@@ -42,6 +42,6 @@ class DatabaseSeeder extends Seeder
                 IGNORE 1 LINES", addslashes($archivo_csv));
             echo $query;
             DB::connection()->getpdo()->exec($query);
-        }
+        }*/
     }
 }

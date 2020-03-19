@@ -18,6 +18,9 @@ class CreatePreguntasSeries extends Migration
             $table->bigInteger('pregunta_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('pregunta_id')->references('id')->on('preguntas');
+            $table->foreign('serie_id')->references('id')->on('series');
         });
     }
 

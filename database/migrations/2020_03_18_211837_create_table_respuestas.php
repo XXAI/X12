@@ -20,6 +20,8 @@ class CreateTableRespuestas extends Migration
             $table->integer('valor')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('pregunta_id')->references('id')->on('preguntas');
         });
     }
 

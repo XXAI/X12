@@ -1,0 +1,4 @@
+id,llave,descripcion
+1,STRING,Texto
+2,DATE,Fecha
+3,NUMBER,Número

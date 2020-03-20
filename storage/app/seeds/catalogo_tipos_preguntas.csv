@@ -1,0 +1,5 @@
+id,llave,descripcion
+1,SINO,"Binaria (Si o No)"
+2,MULTI,"Opción Multiple"
+3,UNIC,"Opicón Única"
+4,VAL,"Valor Asignado por el Usuario"

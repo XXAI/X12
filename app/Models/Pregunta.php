@@ -16,7 +16,7 @@ class Pregunta extends Model
     }
 
     public function respuesta(){
-        return $this->hasMany('App\Models\Respuesta','pregunta_id','id');
+        return $this->hasMany('App\Models\Respuesta','pregunta_id');
     }
 
     public function tipoPregunta(){

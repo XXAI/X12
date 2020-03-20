@@ -10,4 +10,8 @@ class Serie extends Model
     use SoftDeletes;
     protected $table = 'series';
     protected $fillable = ['id','valor_activar','condicion_activar'];
+
+    public function preguntas(){
+        return $this->belongsToMany('App\Models\Preguntas','preguntas_series','serie_id','pregunta_id');
+    }
 }

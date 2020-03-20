@@ -22,5 +22,4 @@ class Formulario extends Model
     public function ultimaEdicionPor(){
         return $this->belongsTo('App\Models\User','ultima_edicion_por');
     }
-    
 }

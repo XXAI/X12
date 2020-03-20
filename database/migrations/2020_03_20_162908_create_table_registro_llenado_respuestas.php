@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableRespuestasPersonas extends Migration
+class CreateTableRegistroLlenadoRespuestas extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateTableRespuestasPersonas extends Migration
      */
     public function up()
     {
-        Schema::create('respuestas_personas', function (Blueprint $table) {
+        Schema::create('registro_llenado_respuestas', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('registro_llenado_id')->unsigned();
             $table->bigInteger('persona_id')->unsigned();
             $table->bigInteger('pregunta_id')->unsigned();
-            $table->string('valor')->nullable();
+            $table->string('valor')->nullable()->comment('En caso de que la pregunta sea de tipo valor');
             $table->bigInteger('respuesta_id')->unsigned()->nullable();
             $table->integer('valor_respuesta')->nullable();
             $table->integer('relevancia')->nullable();
@@ -24,6 +26,7 @@ class CreateTableRespuestasPersonas extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign('registro_llenado_id')->references('id')->on('registro_llenado_formularios');
             $table->foreign('persona_id')->references('id')->on('personas');
             $table->foreign('pregunta_id')->references('id')->on('preguntas');
             $table->foreign('respuesta_id')->references('id')->on('respuestas');
@@ -37,6 +40,6 @@ class CreateTableRespuestasPersonas extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('respuestas_personas');
+        Schema::dropIfExists('registro_llenado_respuestas');
     }
 }

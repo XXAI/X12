@@ -24,6 +24,8 @@ Route::group([
 Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
+Route::get('obtener-formularios-app',       'API\Servicios\FormularioController@obtenerFormularios');
+
 Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('user',          'API\Admin\UserController');
     Route::apiResource('permission',    'API\Admin\PermissionController');
@@ -41,7 +43,6 @@ Route::group(['middleware'=>'auth'],function($router){
      *  Modulo de Reportes
      */
     Route::apiResource('formulario',            'API\Modulos\FormularioController');
-    Route::get('obtener-formularios-app',       'API\Servicios\FormularioController@obtenerFormularios');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

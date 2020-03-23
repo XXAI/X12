@@ -14,8 +14,8 @@ class Pregunta extends Model
     public function serie(){
         return $this->belongsTo('App\Models\Serie','serie_id');
     }
-
-    public function respuesta(){
+    
+    public function respuestas(){
         return $this->hasMany('App\Models\Respuesta','pregunta_id');
     }
 

@@ -12,6 +12,6 @@ class Serie extends Model
     protected $fillable = ['id','valor_activar','condicion_activar'];
 
     public function preguntas(){
-        return $this->belongsToMany('App\Models\Preguntas','preguntas_series','serie_id','pregunta_id');
+        return $this->belongsToMany('App\Models\Pregunta','preguntas_series','serie_id','pregunta_id');
     }
 }

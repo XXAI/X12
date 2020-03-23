@@ -32,7 +32,7 @@ import { ProfileModule } from './profile/profile.module';
 import { DevToolsModule } from './dev-tools/dev-tools.module';
 
 //Modulos del Sistema
-//import { EmpleadosModule } from './empleados/empleados.module';
+import { PublicModule } from './public/public.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +55,7 @@ import { DevToolsModule } from './dev-tools/dev-tools.module';
     SecurityModule,
     DevToolsModule,
     ProfileModule,
+    PublicModule,
     AppRoutingModule,
     WildcardRoutingModule,
   ],

@@ -1,0 +1,72 @@
+<h1 style="text-align: center;" *ngIf="formulario">{{formulario.descripcion}}</h1>
+<mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="formulario">
+    <mat-step [stepControl]="pregunta.obj_formulario" *ngFor="let pregunta of formulario.preguntas">
+      <form [formGroup]="pregunta.obj_formulario">
+        <!--ng-template matStepLabel></ng-template-->
+        <section>
+            <h2>{{pregunta.descripcion}}</h2>
+            <mat-radio-group class="formulario-radio-grupo" formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio" (change)="activarSerie(pregunta)">
+                <mat-radio-button class="formulario-radio-button" value="1">Si</mat-radio-button>
+                <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
+            </mat-radio-group>
+        </section>
+        <section *ngIf="pregunta.serie_activa" fxLayout="column" fxLayoutGap="5px">
+            <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie')" fxFlex>
+                <h3>{{serie_pregunta.descripcion}}</h3>
+                <mat-radio-group *ngIf="serie_pregunta.tipo_pregunta == 'SINO'" class="formulario-radio-grupo" formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_validador">
+                    <mat-radio-button class="formulario-radio-button" value="1">Si</mat-radio-button>
+                    <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
+                </mat-radio-group>
+                <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'DATE'">
+                    <input matInput [matDatepicker]="picker" formControlName="pregunta_{{serie_pregunta.id}}" readonly [required]="pregunta.serie_validador">
+                    <mat-hint align="start">&nbsp;<mat-icon>keyboard_arrow_up</mat-icon> Click para Seleccionar fecha</mat-hint>
+                    <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
+                    <input style="width: 100%;" matInput formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_validador">
+                </mat-form-field>
+                <section *ngIf="serie_pregunta.tipo_pregunta == 'MULTI'" class="" [formGroup]="serie_pregunta.obj_formulario" fxLayout="column">
+                    <mat-checkbox fxFlex="100" *ngFor="let serie_pregunta_respuesta of serie_pregunta.respuestas" class="formulario-checkbox" formControlName="serie_respuesta_{{serie_pregunta_respuesta.id}}">{{serie_pregunta_respuesta.descripcion}}</mat-checkbox>
+                </section>
+            </mat-card>
+        </section>
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <button mat-button matStepperPrevious>Atras</button>
+            <button mat-raised-button color="primary" matStepperNext>Siguiente</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <!--ng-template matStepLabel>Done</ng-template-->
+      <section fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
+        <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" appearance="standard" required>
+            <mat-label>Nombre</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="49" fxFlex.lt-sm="100" appearance="standard" required>
+            <mat-label>Correo Electronico</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" appearance="standard" required>
+            <mat-label>Municipio</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="29" fxFlex.lt-sm="100" appearance="standard" required>
+            <mat-label>Códico Postal</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="29" fxFlex.lt-sm="100" appearance="standard" required>
+            <mat-label>Telefono Celular</mat-label>
+            <input matInput>
+        </mat-form-field>
+
+      </section>
+      <div fxLayout="row">
+            <div fxFlex></div>
+            <button mat-button matStepperPrevious>Atras</button>
+            <!--button mat-button (click)="stepper.reset()">Resetear</button-->
+      </div>
+    </mat-step>
+</mat-horizontal-stepper>

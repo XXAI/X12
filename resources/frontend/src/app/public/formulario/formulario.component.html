@@ -12,7 +12,7 @@
         </section>
         <section *ngIf="pregunta.serie_activa" fxLayout="column" fxLayoutGap="5px">
             <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie')" fxFlex>
-                <h3>{{serie_pregunta.descripcion}} - {{pregunta.serie_activa && serie_pregunta.obligatorio}}</h3>
+                <h3>{{serie_pregunta.descripcion}}</h3>
                 <mat-radio-group *ngIf="serie_pregunta.tipo_pregunta == 'SINO'" class="formulario-radio-grupo" formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
                     <mat-radio-button class="formulario-radio-button" value="1">Si</mat-radio-button>
                     <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
@@ -26,7 +26,7 @@
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
                     <input style="width: 100%;" matInput formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
                 </mat-form-field>
-                <section *ngIf="serie_pregunta.tipo_pregunta == 'MULTI'" class="" [formGroup]="serie_pregunta.obj_formulario" fxLayout="column">
+                <section *ngIf="serie_pregunta.tipo_pregunta == 'MULTIO'" class="" [formGroup]="serie_pregunta.obj_formulario" fxLayout="column">
                     <mat-checkbox fxFlex="100" *ngFor="let serie_pregunta_respuesta of serie_pregunta.respuestas" class="formulario-checkbox" formControlName="serie_respuesta_{{serie_pregunta_respuesta.id}}">{{serie_pregunta_respuesta.descripcion}}</mat-checkbox>
                 </section>
             </mat-card>

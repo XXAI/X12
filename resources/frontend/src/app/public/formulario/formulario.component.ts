@@ -23,7 +23,7 @@ export class FormularioComponent implements OnInit {
 
         this.formulario.preguntas.forEach(pregunta => {
           let controles = {};
-          controles['pregunta_'+pregunta.id] = ['', Validators.required];
+          controles['pregunta_'+pregunta.id] = [''];
 
           if(pregunta.serie && pregunta.serie.preguntas && pregunta.serie.preguntas.length){
             controles['pregunta_'+pregunta.id+'_serie'] = [''];
@@ -128,18 +128,15 @@ export class FormularioComponent implements OnInit {
       }
       pregunta.serie_validador = pregunta.serie_activa;
 
-      /*if(pregunta.serie_activa){
-        pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').reset();
-        pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsUntouched();
-        pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsPristine();
+      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').reset();
+      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsUntouched();
+      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsPristine();
+
+      if(!pregunta.serie_activa){
         pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').disable();
-        //this.agregarSerieForm(pregunta);
       }else{
         pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').enable();
-        //this.quitarSerieForm(pregunta);
-      }*/
-
-      console.log(pregunta);
+      }
     }
   }
 

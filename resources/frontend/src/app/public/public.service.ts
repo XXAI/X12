@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 export class PublicService {
 
   url_formularios = `${environment.base_url}/obtener-formularios-app`;
+  url_guardado_formularios = `${environment.base_url}/guardar-llenado-formularios-app`;
 
   constructor(private http: HttpClient) { }
 
@@ -19,5 +20,13 @@ export class PublicService {
         return response;
       })
     );
+  }
+
+  guardarFormularios(payload) {
+    return this.http.post<any>(this.url_guardado_formularios,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
   }
 }

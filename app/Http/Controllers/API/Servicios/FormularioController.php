@@ -47,4 +47,18 @@ class FormularioController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+
+    public function guardarDatosFormulario(Request $request){
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $result = [];
+
+            $result = $parametros;
+
+            return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 }

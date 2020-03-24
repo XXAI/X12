@@ -24,7 +24,8 @@ Route::group([
 Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
-Route::get('obtener-formularios-app',       'API\Servicios\FormularioController@obtenerFormularios');
+Route::get('obtener-formularios-app',               'API\Servicios\FormularioController@obtenerFormularios');
+Route::post('guardar-llenado-formularios-app',      'API\Servicios\FormularioController@guardarDatosFormulario');
 
 Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('user',          'API\Admin\UserController');

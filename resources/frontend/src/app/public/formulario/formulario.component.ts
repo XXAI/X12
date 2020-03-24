@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PublicService } from '../public.service';
-//import {MatStepperModule} from '@angular/material/stepper';
 
 @Component({
   selector: 'app-formulario',
@@ -11,15 +10,31 @@ import { PublicService } from '../public.service';
 export class FormularioComponent implements OnInit {
   formulario: any;
   isLinear: boolean = true;
-  //formsGroups: FormGroup[];
+  encuestaForm: FormGroup;
+  infoContactoForm: FormGroup;
 
   constructor(private publicService: PublicService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.infoContactoForm = this.formBuilder.group({
+      apellido_paterno:[''],
+      apellido_materno:[''],
+      nombre:['',Validators.required],
+      email:['',Validators.email],
+      telefono_contacto:['',Validators.required],
+      es_celular:[''],
+      estado:['',Validators.required],
+      municipio:['',Validators.required],
+      localidad:['',Validators.required],
+      codigo_postal:['']
+    });
+
     this.publicService.getFormularios().subscribe(
       response => {
         console.log(response);
         this.formulario = response.data[0];
+
+        let controles_formulario = {};
 
         this.formulario.preguntas.forEach(pregunta => {
           let controles = {};
@@ -33,52 +48,50 @@ export class FormularioComponent implements OnInit {
 
             let serie_controles = {};
             pregunta.serie.preguntas.forEach(serie_pregunta => {
-              serie_controles['pregunta_'+serie_pregunta.id] = [''];
 
               if(serie_pregunta.respuestas && serie_pregunta.respuestas.length > 0){
-                let controler_respuestas = {};
+                let controles_respuestas = {};
                 serie_pregunta.respuestas.forEach(serie_pregunta_respuesta => {
-                  controler_respuestas['serie_respuesta_'+serie_pregunta_respuesta.id] = [''];
+                  controles_respuestas['respuesta_'+serie_pregunta_respuesta.id] = [''];
                 });
-                serie_pregunta.obj_formulario = this.formBuilder.group(controler_respuestas);
+                if(serie_pregunta.tipo_pregunta == 'MULTIO' || serie_pregunta.tipo_pregunta == 'UNICO'){
+                  controles_respuestas['respuesta_otro'] = [''];
+                  controles_respuestas['respuesta_otro_descripcion'] = [''];
+                }
+                serie_controles['pregunta_'+serie_pregunta.id] = this.formBuilder.group(controles_respuestas);
+              }else{
+                serie_controles['pregunta_'+serie_pregunta.id] = [''];
               }
             }); 
             controles['pregunta_'+pregunta.id+'_serie'] = this.formBuilder.group(serie_controles);
           }
-          pregunta.obj_formulario = this.formBuilder.group(controles);
-
+          controles_formulario['seccion_pregunta_'+pregunta.id] = this.formBuilder.group(controles);
         });
-
-        console.log(this.formulario.preguntas);
+        this.encuestaForm = this.formBuilder.group(controles_formulario);
       }
     );
   }
 
-  agregarSerieForm(pregunta:any){
-    //let controles = pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').value;
-    let serie_controles = {};
-    pregunta.serie.preguntas.forEach(serie_pregunta => {
-      serie_controles['pregunta_'+serie_pregunta.id] = [''];
+  enviarDatos(){
+    let contactData = JSON.parse(JSON.stringify(this.infoContactoForm.value));
+    let formularios = {};
+    formularios['formulario_'+this.formulario.id] = JSON.parse(JSON.stringify(this.encuestaForm.value));
 
-      if(serie_pregunta.respuestas && serie_pregunta.respuestas.length > 0){
-        let controler_respuestas = {};
-        serie_pregunta.respuestas.forEach(serie_pregunta_respuesta => {
-          controler_respuestas['serie_respuesta_'+serie_pregunta_respuesta.id] = [''];
-        });
-        serie_pregunta.obj_formulario = this.formBuilder.group(controler_respuestas);
-      }
-    }); 
-    //controles['pregunta_'+pregunta.id+'_serie'] = this.formBuilder.group(serie_controles);
-    pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').setValue(this.formBuilder.group(serie_controles));
-  }
+    let datoGuardado = {
+      persona: contactData,
+      formularios: formularios
+    }
 
-  quitarSerieForm(pregunta:any){
-    pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').setValue('');
+    this.publicService.guardarFormularios(datoGuardado).subscribe(
+      response => {
+        console.log('guardado===========================================');
+        console.log(response);
+    });
   }
 
   activarSerie(pregunta:any){
     if(pregunta.serie && pregunta.serie.preguntas && pregunta.serie.preguntas.length){
-      let valor_form = pregunta.obj_formulario.get('pregunta_'+pregunta.id).value;
+      let valor_form = this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id).value;
       let condicion_activar_serie = pregunta.serie.condicion_activar;
       let valor_activar_serie = pregunta.serie.valor_activar;
 
@@ -127,15 +140,15 @@ export class FormularioComponent implements OnInit {
           break;
       }
       pregunta.serie_validador = pregunta.serie_activa;
-
-      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').reset();
-      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsUntouched();
-      pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').markAsPristine();
+      
+      this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').reset();
+      this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').markAsUntouched();
+      this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').markAsPristine();
 
       if(!pregunta.serie_activa){
-        pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').disable();
+        this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').disable();
       }else{
-        pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie').enable();
+        this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').enable();
       }
     }
   }

@@ -1,7 +1,7 @@
 <h1 style="text-align: center;" *ngIf="formulario">{{formulario.descripcion}}</h1>
 <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="formulario">
-    <mat-step [stepControl]="pregunta.obj_formulario" *ngFor="let pregunta of formulario.preguntas">
-      <form [formGroup]="pregunta.obj_formulario">
+    <mat-step [stepControl]="encuestaForm.get('seccion_pregunta_'+pregunta.id)" *ngFor="let pregunta of formulario.preguntas">
+      <form [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id)">
         <!--ng-template matStepLabel></ng-template-->
         <section>
             <h2>{{pregunta.descripcion}}</h2>
@@ -11,7 +11,7 @@
             </mat-radio-group>
         </section>
         <section *ngIf="pregunta.serie_activa" fxLayout="column" fxLayoutGap="5px">
-            <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="pregunta.obj_formulario.get('pregunta_'+pregunta.id+'_serie')" fxFlex>
+            <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie')" fxFlex>
                 <h3>{{serie_pregunta.descripcion}}</h3>
                 <mat-radio-group *ngIf="serie_pregunta.tipo_pregunta == 'SINO'" class="formulario-radio-grupo" formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
                     <mat-radio-button class="formulario-radio-button" value="1">Si</mat-radio-button>
@@ -26,8 +26,9 @@
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
                     <input style="width: 100%;" matInput formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
                 </mat-form-field>
-                <section *ngIf="serie_pregunta.tipo_pregunta == 'MULTIO'" class="" [formGroup]="serie_pregunta.obj_formulario" fxLayout="column">
-                    <mat-checkbox fxFlex="100" *ngFor="let serie_pregunta_respuesta of serie_pregunta.respuestas" class="formulario-checkbox" formControlName="serie_respuesta_{{serie_pregunta_respuesta.id}}">{{serie_pregunta_respuesta.descripcion}}</mat-checkbox>
+                <section *ngIf="serie_pregunta.tipo_pregunta == 'MULTIO' || serie_pregunta.tipo_pregunta == 'MULTI'" class="" [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').get('pregunta_'+serie_pregunta.id)" fxLayout="column">
+                    <mat-checkbox fxFlex="100" *ngFor="let serie_pregunta_respuesta of serie_pregunta.respuestas" class="formulario-checkbox" formControlName="respuesta_{{serie_pregunta_respuesta.id}}">{{serie_pregunta_respuesta.descripcion}}</mat-checkbox>
+                    <mat-checkbox fxFlex="100" *ngIf="serie_pregunta.tipo_pregunta == 'MULTIO'" class="formulario-checkbox" formControlName="respuesta_otro">Otro <mat-form-field><input matInput placeholder="Especifique" formControlName="respuesta_otro_descripcion" [required]="(encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').get('pregunta_'+serie_pregunta.id).get('respuesta_otro').value)?'true':'false'"></mat-form-field></mat-checkbox>
                 </section>
             </mat-card>
         </section>
@@ -40,52 +41,58 @@
     </mat-step>
     <mat-step>
       <!--ng-template matStepLabel>Done</ng-template-->
-      <section fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
+      <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between" [formGroup]="infoContactoForm">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Apellido Paterno</mat-label>
-            <input matInput>
+            <input matInput formControlName="apellido_paterno">
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Apellido Materno</mat-label>
-            <input matInput>
+            <input matInput formControlName="apellido_materno">
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Nombre</mat-label>
-            <input matInput>
+            <input matInput formControlName="nombre" required>
+            <mat-error *ngIf="infoContactoForm.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Correo Electronico</mat-label>
-            <input matInput>
+            <input matInput formControlName="email">
+            <mat-error *ngIf="infoContactoForm.get('email').hasError('email')">Formato de Correo Electronico incorrecto</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
-            <mat-label>Télefono Celular</mat-label>
-            <input matInput>
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+            <mat-label>Télefono de Contacto</mat-label>
+            <input matInput formControlName="telefono_contacto" required>
+            <mat-error *ngIf="infoContactoForm.get('telefono_contacto').hasError('required')">Este campo es obligatorio</mat-error>
+            <mat-hint align="end"><mat-checkbox formControlName="es_celular">Es Télefono Celular</mat-checkbox></mat-hint>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard" required>
-            <mat-label>Télefono de Casa</mat-label>
-            <input matInput>
-        </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard" required>
+        <div fxFlex.gt-sm="33" fxFlex.lt-sm="100">
+            
+        </div>
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Estado</mat-label>
-            <input matInput>
+            <input matInput formControlName="estado" required>
+            <mat-error *ngIf="infoContactoForm.get('estado').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Municipio</mat-label>
-            <input matInput>
+            <input matInput formControlName="municipio" required>
+            <mat-error *ngIf="infoContactoForm.get('municipio').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Localidad</mat-label>
-            <input matInput>
+            <input matInput formControlName="localidad" required>
+            <mat-error *ngIf="infoContactoForm.get('localidad').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="24" fxFlex.lt-sm="100" appearance="standard" required>
+        <mat-form-field fxFlex.gt-sm="24" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Códico Postal</mat-label>
-            <input matInput>
+            <input matInput formControlName="codigo_postal">
         </mat-form-field>
-      </section>
+      </div>
       <div fxLayout="row">
             <div fxFlex></div>
             <button mat-button matStepperPrevious>Atras</button>
-            <!--button mat-button (click)="stepper.reset()">Resetear</button-->
+            <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!encuestaForm.valid || !infoContactoForm.valid"><mat-icon>send</mat-icon> Enviar</button>
       </div>
     </mat-step>
 </mat-horizontal-stepper>

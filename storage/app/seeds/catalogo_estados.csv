@@ -1,0 +1,33 @@
+id,clave,descripcion,created_at,updated_at,deleted_at
+1,01,Aguascalientes,NULL,NULL,NULL
+2,02,"Baja California",NULL,NULL,NULL
+3,03,"Baja California Sur",NULL,NULL,NULL
+4,04,Campeche,NULL,NULL,NULL
+5,05,Coahuila,NULL,NULL,NULL
+6,06,Colima,NULL,NULL,NULL
+7,07,Chiapas,NULL,NULL,NULL
+8,08,Chihuahua,NULL,NULL,NULL
+9,09,"México, D. F.",NULL,NULL,NULL
+10,10,Durango,NULL,NULL,NULL
+11,11,Guanajuato,NULL,NULL,NULL
+12,12,Guerrero,NULL,NULL,NULL
+13,13,"Estado de Hidalgo",NULL,NULL,NULL
+14,14,Jalisco,NULL,NULL,NULL
+15,15,"Estado de México",NULL,NULL,NULL
+16,16,Michoacán,NULL,NULL,NULL
+17,17,Morelos,NULL,NULL,NULL
+18,18,Nayarit,NULL,NULL,NULL
+19,19,"Nuevo León",NULL,NULL,NULL
+20,20,Oaxaca,NULL,NULL,NULL
+21,21,Puebla,NULL,NULL,NULL
+22,22,Querétaro,NULL,NULL,NULL
+23,23,"Quintana Roo",NULL,NULL,NULL
+24,24,"San Luis Potosí",NULL,NULL,NULL
+25,25,Sinaloa,NULL,NULL,NULL
+26,26,Sonora,NULL,NULL,NULL
+27,27,Tabasco,NULL,NULL,NULL
+28,28,Tamaulipas,NULL,NULL,NULL
+29,29,Tlaxcala,NULL,NULL,NULL
+30,30,Veracruz,NULL,NULL,NULL
+31,31,Yucatán,NULL,NULL,NULL
+32,32,Zacatecas,NULL,NULL,NULL

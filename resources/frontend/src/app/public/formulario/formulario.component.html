@@ -56,6 +56,12 @@
             <mat-error *ngIf="infoContactoForm.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
         <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+            <mat-label>Fecha de Nacimiento (aaaa-mm-dd)</mat-label>
+            <input matInput mascaraFecha formControlName="fecha_nacimiento" required>
+            <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+            <mat-error *ngIf="infoContactoForm.get('fecha_nacimiento').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Correo Electronico</mat-label>
             <input matInput formControlName="email">
             <mat-error *ngIf="infoContactoForm.get('email').hasError('email')">Formato de Correo Electronico incorrecto</mat-error>
@@ -66,9 +72,6 @@
             <mat-error *ngIf="infoContactoForm.get('telefono_contacto').hasError('required')">Este campo es obligatorio</mat-error>
             <mat-hint align="end"><mat-checkbox formControlName="es_celular">Es Télefono Celular</mat-checkbox></mat-hint>
         </mat-form-field>
-        <div fxFlex.gt-sm="33" fxFlex.lt-sm="100">
-            
-        </div>
         <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
             <mat-label>Estado</mat-label>
             <input matInput formControlName="estado" required>

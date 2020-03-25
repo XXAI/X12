@@ -9,7 +9,7 @@ import { PublicService } from '../public.service';
 })
 export class FormularioComponent implements OnInit {
   formulario: any;
-  isLinear: boolean = true;
+  isLinear: boolean = false;
   encuestaForm: FormGroup;
   infoContactoForm: FormGroup;
 
@@ -20,6 +20,7 @@ export class FormularioComponent implements OnInit {
       apellido_paterno:[''],
       apellido_materno:[''],
       nombre:['',Validators.required],
+      fecha_nacimiento:['',Validators.required],
       email:['',Validators.email],
       telefono_contacto:['',Validators.required],
       es_celular:[''],

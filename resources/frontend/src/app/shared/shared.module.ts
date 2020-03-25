@@ -5,9 +5,10 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { MaterialModule } from '../material/material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { IfHasPermissionDirective } from './if-has-permission.directive';
+import { MascaraFechaDirective } from './mascara-fecha.directive';
 
 @NgModule({
-  declarations: [IfHasPermissionDirective],
+  declarations: [IfHasPermissionDirective, MascaraFechaDirective],
   imports: [
     CommonModule,
     FormsModule,
@@ -23,7 +24,8 @@ import { IfHasPermissionDirective } from './if-has-permission.directive';
     MaterialModule,
     ReactiveFormsModule,
     HttpClientModule,
-    IfHasPermissionDirective
+    IfHasPermissionDirective,
+    MascaraFechaDirective
   ],
 })
 export class SharedModule { }

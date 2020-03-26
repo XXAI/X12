@@ -80,7 +80,7 @@ class FormularioController extends Controller
                     }
                 }
             }
-            
+
             $persona = Persona::create($datos_persona);
             $parametros['persona'] = $persona;
 
@@ -109,20 +109,55 @@ class FormularioController extends Controller
                     throw new \Exception("Formulario no encontrado: ".$formulario_id, 1);
                 }
 
-                /*$preguntas = $formulario->preguntas;
+                $preguntas = $formulario->preguntas;
+                $respuestas_persona = [];
                 for($i = 0; $i < count($preguntas); $i++){
+                    $pregunta = $preguntas[$i];
 
-                    if($preguntas[$i]->serie){
-                        $preguntas_serie = $preguntas[$i]->serie->preguntas;
+                    if(isset($encuesta['seccion_pregunta_'.$pregunta->id])){
+                        $preguntas_encuesta = $encuesta['seccion_pregunta_'.$pregunta->id];
+                    }else{
+                        $preguntas_encuesta = $encuesta;
+                    }
 
-                        for($j = 0; $j < count($preguntas_serie); $j++){
-                            //
+                    if(isset($preguntas_encuesta['pregunta_'.$pregunta->id])){
+                        if($pregunta->tipo_pregunta == 'SINO'){
+                            $respuestas_persona[] = ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta->id,'valor'=>$preguntas_encuesta['pregunta_'.$pregunta->id]];
+                        }else if($pregunta->tipo_pregunta == 'MULTI' || $pregunta->tipo_pregunta == 'MULTIO'){
+                            for($j = 0 ; $j < count($pregunta->respuestas); $j++){
+                                if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id]) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id] != null){
+                                    $respuestas_persona[] = $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id];
+                                }
+                            }
                         }
                     }
-                }*/
+                    
+                    if($pregunta->serie){
+                        if(isset($preguntas_encuesta['pregunta_'.$pregunta->id.'_serie'])){
+                            $preguntas_serie = $pregunta->serie->preguntas;
+                            $preguntas_serie_encuesta = $preguntas_encuesta['pregunta_'.$pregunta->id.'_serie'];
+                            for($j = 0; $j < count($preguntas_serie); $j++){
+                                $pregunta_serie = $preguntas_serie[$j];
+                                if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id])){
+                                    if($pregunta_serie->tipo_pregunta == 'SINO'){
+                                        $respuestas_persona[] = ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]];
+                                    }else if($pregunta_serie->tipo_pregunta == 'MULTI' || $pregunta_serie->tipo_pregunta == 'MULTIO'){
+                                        for($k = 0 ; $k < count($pregunta_serie->respuestas); $k++){
+                                            if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id]) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$j]->id] != null){
+                                                $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id]];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+                }
             }
 
             $parametros['formulario'] = $formulario;
+            $parametros['respuestas'] = $respuestas_persona;
             $result = $parametros;
 
             DB::commit();

@@ -5,10 +5,23 @@
         <!--ng-template matStepLabel></ng-template-->
         <section>
             <h2>{{pregunta.descripcion}}</h2>
-            <mat-radio-group class="formulario-radio-grupo" formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio" (change)="activarSerie(pregunta)">
+            <mat-radio-group *ngIf="pregunta.tipo_pregunta == 'SINO'" class="formulario-radio-grupo" formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio" (change)="activarSerie(pregunta)">
                 <mat-radio-button class="formulario-radio-button" value="1">Si</mat-radio-button>
                 <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
             </mat-radio-group>
+            <mat-form-field *ngIf="pregunta.tipo_pregunta == 'VAL' && pregunta.tipo_valor == 'DATE'">
+                <input matInput [matDatepicker]="picker" formControlName="pregunta_{{pregunta.id}}" readonly [required]="pregunta.obligatorio">
+                <mat-hint align="start">&nbsp;<mat-icon>keyboard_arrow_up</mat-icon> Click para Seleccionar fecha</mat-hint>
+                <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field *ngIf="pregunta.tipo_pregunta == 'VAL' && pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
+                <input style="width: 100%;" matInput formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio">
+            </mat-form-field>
+            <section *ngIf="pregunta.tipo_pregunta == 'MULTIO' || pregunta.tipo_pregunta == 'MULTI'" class="" [formGroup]="encuestaForm.get('pregunta_'+pregunta.id)" fxLayout="column">
+                <mat-checkbox fxFlex="100" *ngFor="let pregunta_respuesta of pregunta.respuestas" class="formulario-checkbox" formControlName="respuesta_{{pregunta_respuesta.id}}">{{pregunta_respuesta.descripcion}}</mat-checkbox>
+                <mat-checkbox fxFlex="100" *ngIf="pregunta.tipo_pregunta == 'MULTIO'" class="formulario-checkbox" formControlName="respuesta_otro">Otro <mat-form-field><input matInput placeholder="Especifique" formControlName="respuesta_otro_descripcion" [required]="(encuestaForm.get('pregunta_'+pregunta.id).get('respuesta_otro').value)?'true':'false'"></mat-form-field></mat-checkbox>
+            </section>
         </section>
         <section *ngIf="pregunta.serie_activa" fxLayout="column" fxLayoutGap="5px">
             <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie')" fxFlex>

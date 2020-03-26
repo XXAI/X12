@@ -24,6 +24,13 @@ Route::group([
 Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
+Route::post('obtener-catalogos',                    'API\Servicios\CatalogosController@getCatalogs');
+Route::post('obtener-infografias',                  'API\Servicios\InfografiaController@getInfografias');
+
+Route::get('autocomplete-estados',                  'API\Servicios\SearchCatalogsController@getEstadosAutocomplete');
+Route::get('autocomplete-municipios',               'API\Servicios\SearchCatalogsController@getMunicipiosAutocomplete');
+Route::get('autocomplete-localidades',              'API\Servicios\SearchCatalogsController@getLocalidadesAutocomplete');
+
 Route::get('obtener-formularios-app',               'API\Servicios\FormularioController@obtenerFormularios');
 Route::post('guardar-llenado-formularios-app',      'API\Servicios\FormularioController@guardarDatosFormulario');
 

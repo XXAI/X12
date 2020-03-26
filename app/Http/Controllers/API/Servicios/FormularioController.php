@@ -11,6 +11,9 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Formulario;
 use App\Models\Persona;
+use App\Models\Localidad;
+
+use DB;
 
 class FormularioController extends Controller
 {
@@ -51,6 +54,8 @@ class FormularioController extends Controller
 
     public function guardarDatosFormulario(Request $request){
         try{
+            DB::beginTransaction();
+
             $auth_user = auth()->user();
             $parametros = Input::all();
             $result = [];
@@ -65,8 +70,19 @@ class FormularioController extends Controller
                     $datos_persona['telefono_casa'] = $datos_persona['telefono_contacto'];
                 }
             }
-            //$persona = Persona::create($datos_persona);
-            $parametros['persona'] = $datos_persona;
+
+            if(!isset($datos_persona['longitud']) || !$datos_persona['longitud']){
+                if(isset($datos_persona['localidad_id']) && $datos_persona['localidad_id']){
+                    $localidad = Localidad::find($datos_persona['localidad_id']);
+                    if($localidad){
+                        $datos_persona['longitud'] = $localidad->longitud;
+                        $datos_persona['latitud'] = $localidad->latitud;
+                    }
+                }
+            }
+            
+            $persona = Persona::create($datos_persona);
+            $parametros['persona'] = $persona;
 
             //for($i = 0; $i <= count($parametros['formularios']); $i++ ){
             foreach ($parametros['formularios'] as $index => $encuesta) {
@@ -109,8 +125,11 @@ class FormularioController extends Controller
             $parametros['formulario'] = $formulario;
             $result = $parametros;
 
+            DB::commit();
+
             return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
+            DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }

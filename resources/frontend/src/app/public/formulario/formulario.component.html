@@ -42,60 +42,124 @@
     <mat-step>
       <!--ng-template matStepLabel>Done</ng-template-->
       <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between" [formGroup]="infoContactoForm">
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Apellido Paterno</mat-label>
             <input matInput formControlName="apellido_paterno">
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Apellido Materno</mat-label>
             <input matInput formControlName="apellido_materno">
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre" required>
             <mat-error *ngIf="infoContactoForm.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Fecha de Nacimiento (aaaa-mm-dd)</mat-label>
             <input matInput mascaraFecha formControlName="fecha_nacimiento" required>
             <mat-hint>Ejemplo: 1985-08-15</mat-hint>
             <mat-error *ngIf="infoContactoForm.get('fecha_nacimiento').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Correo Electronico</mat-label>
             <input matInput formControlName="email">
             <mat-error *ngIf="infoContactoForm.get('email').hasError('email')">Formato de Correo Electronico incorrecto</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" appearance="standard">
+        <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
             <mat-label>Télefono de Contacto</mat-label>
             <input matInput formControlName="telefono_contacto" required>
             <mat-error *ngIf="infoContactoForm.get('telefono_contacto').hasError('required')">Este campo es obligatorio</mat-error>
             <mat-hint align="end"><mat-checkbox formControlName="es_celular">Es Télefono Celular</mat-checkbox></mat-hint>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
+
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100">
             <mat-label>Estado</mat-label>
-            <input matInput formControlName="estado" required>
-            <mat-error *ngIf="infoContactoForm.get('estado').hasError('required')">Este campo es obligatorio</mat-error>
+            <mat-select formControlName="estado_id" (valueChange)="cargarMunicipios($event)" required>
+                <mat-option *ngFor="let item of catalogos['estados']" [value]="item.id">
+                    {{item.descripcion}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="infoContactoForm.get('estado_id').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
+
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="!catalogos['municipios']">
             <mat-label>Municipio</mat-label>
             <input matInput formControlName="municipio" required>
+            <mat-hint>Escribe el nombre del municipio</mat-hint>
             <mat-error *ngIf="infoContactoForm.get('municipio').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" appearance="standard">
+
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="catalogos['municipios']">
+            <mat-label>Municipio</mat-label>
+            <input type="text" aria-label="municipio" matInput formControlName="municipio_id" [matAutocomplete]="municipioAutocomplete" required (blur)="checkAutocompleteValue('municipio_id')">
+            <mat-autocomplete #municipioAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="cargarLocalidades($event)">
+                <mat-option *ngFor="let item of filteredCatalogs['municipios'] | async" [value]="item">
+                    {{item.descripcion}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!infoContactoForm.get('municipio_id').value">Selecciona un municipio de la lista</mat-hint>
+            <mat-hint align="end" *ngIf="infoContactoForm.get('municipio_id').value">[{{infoContactoForm.get('municipio_id').value.clave}}]</mat-hint>
+            <mat-error *ngIf="infoContactoForm.get('municipio_id').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="!catalogos['localidades']">
             <mat-label>Localidad</mat-label>
             <input matInput formControlName="localidad" required>
+            <mat-hint>Escribe el nombre de la localidad</mat-hint>
             <mat-error *ngIf="infoContactoForm.get('localidad').hasError('required')">Este campo es obligatorio</mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex.gt-sm="24" fxFlex.lt-sm="100" appearance="standard">
+
+        <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="catalogos['localidades']">
+            <mat-label>Localidad</mat-label>
+            <input type="text" aria-label="localidad" matInput formControlName="localidad_id" [matAutocomplete]="localidadAutocomplete" required (blur)="checkAutocompleteValue('localidad_id')">
+            <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+                <mat-option *ngFor="let item of filteredCatalogs['localidades'] | async" [value]="item">
+                    [{{item.clave}}] {{item.descripcion}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!infoContactoForm.get('localidad_id').value">Selecciona un localidad de la lista</mat-hint>
+            <mat-hint align="end" *ngIf="infoContactoForm.get('localidad_id').value">[{{infoContactoForm.get('localidad_id').value.clave}}]</mat-hint>
+            <mat-error *ngIf="infoContactoForm.get('localidad_id').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="24" fxFlex.lt-sm="100" >
             <mat-label>Códico Postal</mat-label>
             <input matInput formControlName="codigo_postal">
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="35" fxFlex.lt-sm="100" >
+            <mat-label>Colonia o Barrio</mat-label>
+            <input matInput formControlName="colonia">
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" >
+            <mat-label>Calle</mat-label>
+            <input matInput formControlName="calle" required>
+            <mat-error *ngIf="infoContactoForm.get('calle').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="10" fxFlex.lt-sm="50" >
+            <mat-label>No.Ext</mat-label>
+            <input matInput formControlName="no_exterior" required>
+            <mat-error *ngIf="infoContactoForm.get('no_exterior').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="10" fxFlex.lt-sm="50" >
+            <mat-label>No.Int</mat-label>
+            <input matInput formControlName="no_interior">
+        </mat-form-field>
+
+        <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
+            <mat-label>Referencia</mat-label>
+            <textarea matInput formControlName="referencia"></textarea>
+            <mat-hint>Ejemplo: Entre calle 1 y calle 2, a lado de una ferretería</mat-hint>
         </mat-form-field>
       </div>
       <div fxLayout="row">
             <div fxFlex></div>
             <button mat-button matStepperPrevious>Atras</button>
-            <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!encuestaForm.valid || !infoContactoForm.valid"><mat-icon>send</mat-icon> Enviar</button>
+            <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!infoContactoForm.valid"><mat-icon>send</mat-icon> Enviar</button>
       </div>
     </mat-step>
 </mat-horizontal-stepper>

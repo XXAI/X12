@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PublicService } from '../public.service';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-formulario',
@@ -12,6 +13,8 @@ export class FormularioComponent implements OnInit {
   isLinear: boolean = false;
   encuestaForm: FormGroup;
   infoContactoForm: FormGroup;
+  catalogos: any = {};
+  filteredCatalogs:any = {};
 
   constructor(private publicService: PublicService, private formBuilder: FormBuilder) { }
 
@@ -24,11 +27,34 @@ export class FormularioComponent implements OnInit {
       email:['',Validators.email],
       telefono_contacto:['',Validators.required],
       es_celular:[''],
-      estado:['',Validators.required],
+      estado_id:[7,Validators.required],
       municipio:['',Validators.required],
+      municipio_id:['',Validators.required],
       localidad:['',Validators.required],
-      codigo_postal:['']
+      localidad_id:['',Validators.required],
+      codigo_postal:[''],
+      calle: ['',Validators.required],
+      no_exterior: ['',Validators.required],
+      no_interior: [''],
+      colonia: [''],
+      referencia: ['']
     });
+
+    let carga_catalogos = [
+      {nombre:'estados',orden:'descripcion'},
+      {nombre:'municipios',orden:'descripcion',filtro_id:{campo:'estado_id',valor:7}},
+    ];
+
+    this.publicService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        this.catalogos = response.data;
+        console.log(this.catalogos);
+        this.actualizarValidacionesCatalogos('municipios');
+
+        this.filteredCatalogs['municipios'] = this.infoContactoForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
+        this.filteredCatalogs['localidades'] = this.infoContactoForm.controls['localidad_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'localidades','descripcion')));
+      }
+    );
 
     this.publicService.getFormularios().subscribe(
       response => {
@@ -73,11 +99,121 @@ export class FormularioComponent implements OnInit {
     );
   }
 
+  private _filter(value: any, catalog: string, valueField: string): string[] {
+    if(this.catalogos[catalog]){
+      let filterValue = '';
+    if(value){
+      if(typeof(value) == 'object'){
+        filterValue = value[valueField].toLowerCase();
+      }else{
+        filterValue = value.toLowerCase();
+      }
+    }
+    return this.catalogos[catalog].filter(option => option[valueField].toLowerCase().includes(filterValue));
+    }
+  }
+
+  checkAutocompleteValue(field_name) {
+    setTimeout(() => {
+      if (typeof(this.infoContactoForm.get(field_name).value) != 'object') {
+        this.infoContactoForm.get(field_name).reset();
+        if(field_name != 'localidad_id'){
+          this.catalogos['localidades'] = false;
+          this.actualizarValidacionesCatalogos('localidades');  
+        }
+      } 
+    }, 300);
+  }
+
+  actualizarValidacionesCatalogos(catalogo){
+    switch (catalogo) {
+      case 'municipios':
+        if(this.catalogos['municipios']){
+          this.infoContactoForm.get('municipio').setValidators(null);
+          this.infoContactoForm.get('municipio_id').setValidators([Validators.required]);
+        }else{
+          this.infoContactoForm.get('municipio').setValidators([Validators.required]);
+          this.infoContactoForm.get('municipio_id').setValidators(null);
+        }
+        this.infoContactoForm.get('municipio').updateValueAndValidity();
+        this.infoContactoForm.get('municipio_id').updateValueAndValidity();
+        break;
+      case 'localidades':
+        if(this.catalogos['localidades']){
+          this.infoContactoForm.get('localidad').setValidators(null);
+          this.infoContactoForm.get('localidad_id').setValidators([Validators.required]);
+        }else{
+          this.infoContactoForm.get('localidad').setValidators([Validators.required]);
+          this.infoContactoForm.get('localidad_id').setValidators(null);
+        }    
+        this.infoContactoForm.get('localidad').updateValueAndValidity();
+        this.infoContactoForm.get('localidad_id').updateValueAndValidity();
+        break;
+      default:
+        break;
+    }
+  }
+
+  cargarMunicipios(event){
+    let carga_catalogos = [
+      {nombre:'municipios',orden:'descripcion',filtro_id:{campo:'estado_id',valor:event}},
+    ];
+    this.catalogos['municipios'] = false;
+    this.catalogos['localidades'] = false;
+    this.infoContactoForm.get('municipio_id').reset();
+    this.infoContactoForm.get('municipio').reset();
+    this.infoContactoForm.get('localidad_id').reset();
+    this.infoContactoForm.get('localidad').reset();
+
+    this.publicService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        if(response.data['municipios'].length > 0){
+          this.catalogos['municipios'] = response.data['municipios'];
+        }
+        this.actualizarValidacionesCatalogos('municipios');
+        this.actualizarValidacionesCatalogos('localidades');
+      }
+    );
+  }
+
+  cargarLocalidades(event){
+    let municipio = event.option.value;
+
+    let carga_catalogos = [
+      {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
+    ];
+    this.catalogos['localidades'] = false;
+    this.infoContactoForm.get('localidad_id').reset();
+    this.infoContactoForm.get('localidad').reset();
+
+    this.publicService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        if(response.data['localidades'].length > 0){
+          this.catalogos['localidades'] = response.data['localidades'];
+        }
+        
+        this.actualizarValidacionesCatalogos('localidades');
+      }
+    );
+  }
+
   enviarDatos(){
     let contactData = JSON.parse(JSON.stringify(this.infoContactoForm.value));
     let formularios = {};
     formularios['formulario_'+this.formulario.id] = JSON.parse(JSON.stringify(this.encuestaForm.value));
 
+    if(contactData.municipio_id){
+      contactData.municipio_id = contactData.municipio_id.id;
+    }
+
+    if(contactData.localidad_id){
+      contactData.localidad_id = contactData.localidad_id.id;
+    }
+
+    //opcional puede ir latitud y longitud
+    /*contactData['latitud'] = '222222222';
+    contactData['longitud'] = '11111111';*/
+    
     let datoGuardado = {
       persona: contactData,
       formularios: formularios
@@ -152,6 +288,14 @@ export class FormularioComponent implements OnInit {
         this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').enable();
       }
     }
+  }
+
+  getDisplayFn(label: string){
+    return (val) => this.displayFn(val,label);
+  }
+
+  displayFn(value: any, valueLabel: string){
+    return value ? value[valueLabel] : value;
   }
 
 }

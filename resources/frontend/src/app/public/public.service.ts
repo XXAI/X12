@@ -11,6 +11,7 @@ export class PublicService {
 
   url_formularios = `${environment.base_url}/obtener-formularios-app`;
   url_guardado_formularios = `${environment.base_url}/guardar-llenado-formularios-app`;
+  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }
 
@@ -24,6 +25,14 @@ export class PublicService {
 
   guardarFormularios(payload) {
     return this.http.post<any>(this.url_guardado_formularios,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  obtenerCatalogos(payload) {
+    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
       map( (response) => {
         return response;
       }

@@ -9,14 +9,14 @@ import { map } from 'rxjs/operators';
 })
 export class PublicService {
 
-  url_formularios = `${environment.base_url}/obtener-formularios-app`;
+  url_formularios = `${environment.base_url}/obtener-formulario-app`;
   url_guardado_formularios = `${environment.base_url}/guardar-llenado-formularios-app`;
   url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }
 
-  getFormularios():Observable<any> {
-    return this.http.get<any>(this.url_formularios,{}).pipe(
+  getFormulario(id):Observable<any> {
+    return this.http.get<any>(this.url_formularios+'/'+id).pipe(
       map( response => {
         return response;
       })

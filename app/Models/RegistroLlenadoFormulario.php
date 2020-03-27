@@ -11,6 +11,10 @@ class RegistroLlenadoFormulario extends Model
     protected $table = 'registro_llenado_formularios';
     protected $fillable = ['id','formulario_id','persona_id','finalizado','fecha_finalizado'];
 
+    public function registroLlenadoRespuestas(){
+        return $this->hasMany('App\Models\RegistroLlenadoRespuesta','registro_llenado_id');
+    }
+    
     public function formulario(){
         return $this->belongsTo('App\Models\Formulario','formulario_id');
     }
@@ -18,5 +22,4 @@ class RegistroLlenadoFormulario extends Model
     public function persona(){
         return $this->belongsTo('App\Models\Persona','persona_id');
     }
-    
 }

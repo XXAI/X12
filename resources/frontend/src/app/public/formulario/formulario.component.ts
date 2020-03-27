@@ -56,16 +56,29 @@ export class FormularioComponent implements OnInit {
       }
     );
 
-    this.publicService.getFormularios().subscribe(
+    this.publicService.getFormulario(2).subscribe(
       response => {
         console.log(response);
-        this.formulario = response.data[0];
+        this.formulario = response.data;
 
         let controles_formulario = {};
 
         this.formulario.preguntas.forEach(pregunta => {
           let controles = {};
-          controles['pregunta_'+pregunta.id] = [''];
+          //controles['pregunta_'+pregunta.id] = [''];
+          if(pregunta.tipo_pregunta == 'MULTI' || pregunta.tipo_pregunta == 'MULTIO'){ //serie_pregunta.respuestas && serie_pregunta.respuestas.length > 0){
+            let controles_respuestas = {};
+            pregunta.respuestas.forEach(pregunta_respuesta => {
+              controles_respuestas['respuesta_'+pregunta_respuesta.id] = [''];
+            });
+            if(pregunta.tipo_pregunta == 'MULTIO' || pregunta.tipo_pregunta == 'UNICO'){
+              controles_respuestas['respuesta_otro'] = [''];
+              controles_respuestas['respuesta_otro_descripcion'] = [''];
+            }
+            controles['pregunta_'+pregunta.id] = this.formBuilder.group(controles_respuestas);
+          }else{
+            controles['pregunta_'+pregunta.id] = [''];
+          }
 
           if(pregunta.serie && pregunta.serie.preguntas && pregunta.serie.preguntas.length){
             controles['pregunta_'+pregunta.id+'_serie'] = [''];
@@ -94,6 +107,7 @@ export class FormularioComponent implements OnInit {
           }
           controles_formulario['seccion_pregunta_'+pregunta.id] = this.formBuilder.group(controles);
         });
+        console.log(controles_formulario);
         this.encuestaForm = this.formBuilder.group(controles_formulario);
       }
     );

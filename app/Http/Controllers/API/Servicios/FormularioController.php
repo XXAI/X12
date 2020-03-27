@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Formulario;
 use App\Models\Persona;
 use App\Models\Localidad;
+use App\Models\RegistroLlenadoFormulario;
+use App\Models\RegistroLlenadoRespuestas;
 
 use DB;
 
@@ -22,10 +24,12 @@ class FormularioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function obtenerFormularios(){
+    public function obtenerFormulario($id){
         try{
             $auth_user = auth()->user();
             $parametros = Input::all();
+
+            //return response()->json(['data'=>$parametros['id']],HttpResponse::HTTP_CONFLICT);
 
             $formulario = Formulario::with(['preguntas'=>function($preguntas){
                 return $preguntas->select('preguntas.*','catalogo_tipos_preguntas.llave as tipo_pregunta','catalogo_tipos_valores.llave as tipo_valor')
@@ -38,13 +42,13 @@ class FormularioController extends Controller
                 return $serie_preguntas->select('preguntas.*','catalogo_tipos_preguntas.llave as tipo_pregunta','catalogo_tipos_valores.llave as tipo_valor')
                                 ->leftjoin('catalogo_tipos_preguntas','preguntas.tipo_pregunta_id','=','catalogo_tipos_preguntas.id')
                                 ->leftjoin('catalogo_tipos_valores','preguntas.tipo_valor_id','=','catalogo_tipos_valores.id')->orderBy('orden')->with('respuestas');
-            }]);
+            }])->where('id',$id)->first();
 
-            if(isset($parametros['ids']) && $parametros['ids']){
+            /*if(isset($parametros['ids']) && $parametros['ids']){
                 $formulario = $formulario->whereIn('id',$parametros['ids']);
-            }
+            }*/
 
-            $formulario = $formulario->get();
+            //$formulario = $formulario->get();
 
             return response()->json(['data'=>$formulario],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -62,6 +66,8 @@ class FormularioController extends Controller
             $formulario_id = 0;
 
             $datos_persona = $parametros['persona'];
+
+            $datos_persona['fecha_nacimiento'] = substr($datos_persona['fecha_nacimiento'],0,10);
 
             if(isset($datos_persona['telefono_contacto'])){
                 if($datos_persona['es_celular']){
@@ -82,7 +88,7 @@ class FormularioController extends Controller
             }
 
             $persona = Persona::create($datos_persona);
-            $parametros['persona'] = $persona;
+            //$parametros['persona'] = $persona;
 
             //for($i = 0; $i <= count($parametros['formularios']); $i++ ){
             foreach ($parametros['formularios'] as $index => $encuesta) {
@@ -122,13 +128,27 @@ class FormularioController extends Controller
 
                     if(isset($preguntas_encuesta['pregunta_'.$pregunta->id])){
                         if($pregunta->tipo_pregunta == 'SINO'){
-                            $respuestas_persona[] = ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta->id,'valor'=>$preguntas_encuesta['pregunta_'.$pregunta->id]];
+                            $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor_respuesta'=>($preguntas_encuesta['pregunta_'.$pregunta->id])?true:false];
                         }else if($pregunta->tipo_pregunta == 'MULTI' || $pregunta->tipo_pregunta == 'MULTIO'){
                             for($j = 0 ; $j < count($pregunta->respuestas); $j++){
                                 if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id]) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id] != null){
-                                    $respuestas_persona[] = $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id];
+                                    $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor_respuesta'=>$pregunta->respuestas[$j]->valor];
                                 }
                             }
+                            if($pregunta->tipo_pregunta == 'MULTIO'){
+                                if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro']) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro']){
+                                    if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion']) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion'] != null){
+                                        $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor'=>$preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion']];
+                                    }
+                                }
+                            }
+                        }else if($pregunta->tipo_pregunta == 'VAL'){
+                            if($pregunta->tipo_valor == 'DATE'){
+                                $valor_persona = substr($preguntas_encuesta['pregunta_'.$pregunta->id],0,10);
+                            }else{
+                                $valor_persona = $preguntas_encuesta['pregunta_'.$pregunta->id];
+                            }
+                            $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor'=>$valor_persona];
                         }
                     }
                     
@@ -140,13 +160,27 @@ class FormularioController extends Controller
                                 $pregunta_serie = $preguntas_serie[$j];
                                 if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id])){
                                     if($pregunta_serie->tipo_pregunta == 'SINO'){
-                                        $respuestas_persona[] = ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]];
+                                        $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta_serie->id,'valor_respuesta'=>($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id])?true:false];
                                     }else if($pregunta_serie->tipo_pregunta == 'MULTI' || $pregunta_serie->tipo_pregunta == 'MULTIO'){
                                         for($k = 0 ; $k < count($pregunta_serie->respuestas); $k++){
-                                            if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id]) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$j]->id] != null){
-                                                $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id]];
+                                            if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id]) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_'.$pregunta_serie->respuestas[$k]->id] != null){
+                                                $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta_serie->id,'respuesta_id'=>$pregunta_serie->respuestas[$k]->id,'valor_respuesta'=>$pregunta_serie->respuestas[$k]->valor];
                                             }
                                         }
+                                        if($pregunta_serie->tipo_pregunta == 'MULTIO'){
+                                            if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro']) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro']){
+                                                if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion']) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion'] != null){
+                                                    $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion']];
+                                                }
+                                            }
+                                        }
+                                    }else if($pregunta_serie->tipo_pregunta == 'VAL'){
+                                        if($pregunta_serie->tipo_valor == 'DATE'){
+                                            $valor_persona = substr($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id],0,10);
+                                        }else{
+                                            $valor_persona = $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id];
+                                        }
+                                        $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$valor_persona];
                                     }
                                 }
                             }
@@ -156,9 +190,16 @@ class FormularioController extends Controller
                 }
             }
 
-            $parametros['formulario'] = $formulario;
-            $parametros['respuestas'] = $respuestas_persona;
-            $result = $parametros;
+            //$parametros['formulario'] = $formulario;
+            //$parametros['respuestas'] = $respuestas_persona;
+            //$parametros['hoy'] = date("Y-m-d");
+
+            $registro_llenado = RegistroLlenadoFormulario::create(['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'finalizado'=>1,'fecha_finalizado'=>date("Y-m-d H:i:s")]);
+            $registro_llenado->registroLlenadoRespuestas()->createMany($respuestas_persona);
+
+            //$parametros['registro_llenado'] = $registro_llenado;
+
+            $result = $registro_llenado;
 
             DB::commit();
 

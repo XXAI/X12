@@ -31,7 +31,7 @@ Route::get('autocomplete-estados',                  'API\Servicios\SearchCatalog
 Route::get('autocomplete-municipios',               'API\Servicios\SearchCatalogsController@getMunicipiosAutocomplete');
 Route::get('autocomplete-localidades',              'API\Servicios\SearchCatalogsController@getLocalidadesAutocomplete');
 
-Route::get('obtener-formularios-app',               'API\Servicios\FormularioController@obtenerFormularios');
+Route::get('obtener-formulario-app/{id}',               'API\Servicios\FormularioController@obtenerFormulario');
 Route::post('guardar-llenado-formularios-app',      'API\Servicios\FormularioController@guardarDatosFormulario');
 
 Route::group(['middleware'=>'auth'],function($router){

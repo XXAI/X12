@@ -51,6 +51,11 @@ Route::group(['middleware'=>'auth'],function($router){
      *  Modulo de Reportes
      */
     Route::apiResource('formulario',            'API\Modulos\FormularioController');
+
+    /**
+     * Modulo de Consulta de Datos
+     */
+    Route::apiResource('llenado-formularios',   'API\Modulos\LlenadoFormularioController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

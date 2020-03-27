@@ -1,4 +1,4 @@
-<h1 style="text-align: center;" *ngIf="formulario">{{formulario.descripcion}}</h1>
+<h1 style="text-align: center;" *ngIf="formulario && !llenado">{{formulario.descripcion}}</h1>
 <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="formulario">
     <mat-step [stepControl]="encuestaForm.get('seccion_pregunta_'+pregunta.id)" *ngFor="let pregunta of formulario.preguntas">
       <form [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id)">
@@ -31,10 +31,9 @@
                     <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
                 </mat-radio-group>
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'DATE'">
-                    <input matInput [matDatepicker]="picker" formControlName="pregunta_{{serie_pregunta.id}}" readonly [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
-                    <mat-hint align="start">&nbsp;<mat-icon>keyboard_arrow_up</mat-icon> Click para Seleccionar fecha</mat-hint>
-                    <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+                    <mat-label>Fecha (aaaa-mm-dd)</mat-label>
+                    <input matInput mascaraFecha formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
+                    <mat-hint>Ejemplo: 1985-08-15</mat-hint>
                 </mat-form-field>
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
                     <input style="width: 100%;" matInput formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
@@ -176,3 +175,18 @@
       </div>
     </mat-step>
 </mat-horizontal-stepper>
+
+<div fxLayout="row" *ngIf="llenado">
+    <mat-card fxFlexOffset.gt-sm="25%" fxFlex.gt-sm="50" fxFlex.lt-sm="100">
+        <mat-card-content>
+            <p>
+                Se ha completa el llenado del formulario. En caso de ser necesario una persona se contactara con usted.
+            </p>
+        </mat-card-content>
+        <!--mat-card-actions fxLayout="row">
+            <div fxFlex></div>
+            <button mat-raised-button color="primary" (click)="llenarDeNuevo()"><mat-icon>edit</mat-icon> Llenar de nuevo</button>
+        </mat-card-actions-->
+    </mat-card>
+</div>
+

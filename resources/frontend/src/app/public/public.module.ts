@@ -5,10 +5,11 @@ import { MatDatepickerModule, MatNativeDateModule, MAT_DATE_LOCALE  } from '@ang
 
 import { PublicRoutingModule } from './public-routing.module';
 import { FormularioComponent } from './formulario/formulario.component';
+import { ListaContingenciasComponent } from './lista-contingencias/lista-contingencias.component';
 
 
 @NgModule({
-  declarations: [FormularioComponent],
+  declarations: [FormularioComponent, ListaContingenciasComponent],
   imports: [
     CommonModule,
     PublicRoutingModule,

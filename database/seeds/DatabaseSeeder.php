@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::create([
             'name' => 'Usuario Root',
             'username' => 'root',
-            'password' => Hash::make('ssa.plataforma.2020'),
+            'password' => Hash::make('ssa.contingencia.2020'),
             'email' => 'root@localhost',
             'is_superuser' => 1,
             'avatar' => '/assets/avatars/50-king.svg'

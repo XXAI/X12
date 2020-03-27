@@ -33,6 +33,7 @@ import { DevToolsModule } from './dev-tools/dev-tools.module';
 
 //Modulos del Sistema
 import { PublicModule } from './public/public.module';
+import { FormulariosModule } from './formularios/formularios.module';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { PublicModule } from './public/public.module';
     DevToolsModule,
     ProfileModule,
     PublicModule,
+    FormulariosModule,
     AppRoutingModule,
     WildcardRoutingModule,
   ],

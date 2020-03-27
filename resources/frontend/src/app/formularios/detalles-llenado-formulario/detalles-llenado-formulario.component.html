@@ -1,0 +1,64 @@
+<div mat-dialog-title class="mat-typography">
+    <div class="credential-loading-shade" *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar><br>
+        <span>Cargando los datos de la persona</span>    
+    </div>
+    <div fxLayout="row"  *ngIf="!isLoading">
+        <div fxFlex="100"  fxLayout="column" style="padding-left:10px;" *ngIf="dataFormulario && dataFormulario.datos_persona">
+            <div fxFlex>
+                <h1 style="margin-bottom:0px; text-shadow: 1px 1px #AAAAAA;">Datos de la Persona</h1>
+            </div>
+            <div fxFlex>
+                <div fxLayout="row" class="tarjeta-info-formulario">
+                    <p fxFlex="50" class="mat-typography">
+                        <span class="label">CURP: </span><span class="value">{{ dataFormulario.datos_persona.curp }}</span><br>
+                        <span class="label">Apellido Paterno: </span><span class="value">{{ dataFormulario.datos_persona.apellido_paterno }}</span><br>
+                        <span class="label">Apellido Materno: </span><span class="value">{{ dataFormulario.datos_persona.apellido_materno }}</span><br>
+                        <span class="label">Nombre: </span><span class="value">{{ dataFormulario.datos_persona.nombre }}</span><br>
+                        <span class="label">Fecha de Nacimiento: </span><span class="value">{{ dataFormulario.datos_persona.fecha_nacimiento }}</span><br>
+                        <!--span class="label">Sexo: </span><span class="value">{{ (dataFormulario.sexo == 1)?'Hombre':'Mujer' }}</span><br-->
+                        <span class="label">Telefono Fijo: </span><span class="value">{{ dataFormulario.datos_persona.telefono_casa }}</span><br>
+                        <span class="label">Telefono Celular: </span><span class="value">{{ dataFormulario.datos_persona.telefono_celular }}</span><br>
+                        <span class="label">Correo Electronico: </span><span class="value">{{ dataFormulario.datos_persona.email }}</span><br>
+                    </p>
+                    <p fxFlex class="mat-typography">
+                        <span class="label">Estado: </span><span class="value">{{ dataFormulario.datos_persona.estado }}</span><br>
+                        <span class="label">Municipio: </span><span class="value">{{ dataFormulario.datos_persona.municipio }}</span><br>
+                        <span class="label">Localidad: </span><span class="value">{{ dataFormulario.datos_persona.localidad }}</span><br>
+                        <span class="label">Calle: </span><span class="value">{{ dataFormulario.datos_persona.calle }}</span><br>
+                        <span class="label">No. Exterior: </span><span class="value">{{ dataFormulario.datos_persona.no_exterior }}</span><br>
+                        <span class="label">No. Interior: </span><span class="value">{{ dataFormulario.datos_persona.no_interior }}</span><br>
+                        <span class="label">Colonia: </span><span class="value">{{ dataFormulario.datos_persona.colonia }}</span><br>
+                        <span class="label">Código Postal: </span><span class="value">{{ dataFormulario.datos_persona.codigo_postal }}</span><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
+<div mat-dialog-content style="max-height: 44vh; height:375px;">
+    <section fxLayout="column">
+        <section fxFlex="100">
+            <div class="loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
+            <div class="loading-shade" *ngIf="!isLoading && !dataFormulario">No se encontraron los datos del formulario</div>
+            <section *ngIf="!isLoading && dataFormulario" fxLayout="row raw" fxLayoutAlign="space-evenly start" fxLayoutGap="5px">
+                <div fxFlex="48" *ngFor="let item of dataFormulario.datos_preguntas" style="padding-bottom:5px;">
+                    {{item.pregunta}}<br>
+                    <span class="respuesta" *ngIf="item.tipo_pregunta != 'MULTI' && item.tipo_pregunta != 'MULTIO'">
+                        {{item.respuesta}}
+                    </span>
+                    <section *ngIf="item.tipo_pregunta == 'MULTI' || item.tipo_pregunta == 'MULTIO'" >
+                        <span class="respuesta" *ngFor="let respuesta of item.respuesta">
+                            {{respuesta.respuesta}}
+                        </span>
+                    </section>
+                </div>
+            </section>
+        </section>
+    </section>
+</div>
+<div mat-dialog-actions>
+    <span fxFlex></span>
+    <button mat-button (click)='cancel()'>Cerrar</button>
+</div>

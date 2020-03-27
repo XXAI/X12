@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PublicService } from '../public.service';
 import { map, startWith } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-formulario',
@@ -15,8 +16,9 @@ export class FormularioComponent implements OnInit {
   infoContactoForm: FormGroup;
   catalogos: any = {};
   filteredCatalogs:any = {};
+  llenado:boolean = false;
 
-  constructor(private publicService: PublicService, private formBuilder: FormBuilder) { }
+  constructor(private publicService: PublicService, private formBuilder: FormBuilder, private router: Router) { }
 
   ngOnInit() {
     this.infoContactoForm = this.formBuilder.group({
@@ -237,6 +239,8 @@ export class FormularioComponent implements OnInit {
       response => {
         console.log('guardado===========================================');
         console.log(response);
+        this.llenado = true;
+        this.formulario = undefined;
     });
   }
 
@@ -302,6 +306,10 @@ export class FormularioComponent implements OnInit {
         this.encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').enable();
       }
     }
+  }
+
+  llenarDeNuevo(){
+    this.router.navigate(['/llenar-formulario']);
   }
 
   getDisplayFn(label: string){

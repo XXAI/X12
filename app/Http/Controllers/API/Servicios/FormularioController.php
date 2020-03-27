@@ -49,8 +49,8 @@ class FormularioController extends Controller
             }*/
 
             //$formulario = $formulario->get();
-
-            return response()->json(['data'=>$formulario],HttpResponse::HTTP_OK);
+            
+            return response()->json(['data'=>$formulario],HttpResponse::HTTP_OK,['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableEstadisticasConcentradas extends Migration
+class CreateTableCatalogoEstatus extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateTableEstadisticasConcentradas extends Migration
      */
     public function up()
     {
-        Schema::create('estadisticas_concentradas', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('catalogo_estatus', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('clave',10);
+            $table->string('descripcion');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +29,6 @@ class CreateTableEstadisticasConcentradas extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estadisticas_concentradas');
+        Schema::dropIfExists('catalogo_estatus');
     }
 }

@@ -56,6 +56,13 @@ Route::group(['middleware'=>'auth'],function($router){
      * Modulo de Consulta de Datos
      */
     Route::apiResource('llenado-formularios',   'API\Modulos\LlenadoFormularioController');
+
+    /**
+     * Modulo de Casos por Contingencias
+     */
+    Route::get('listado-contingencias',             'API\Modulos\CasosContingenciasController@listadoContingencias');
+    Route::get('listado-casos-contingencia/{id}',   'API\Modulos\CasosContingenciasController@listadoCasosContingencia');
+    Route::get('obtener-datos-caso/{id}',           'API\Modulos\CasosContingenciasController@verCaso');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

@@ -13,6 +13,7 @@ export const APPS:App [] = [
     { name:'Permisos',              route: "permisos",                    icon: "assets/icons/security-shield.svg",    permission:"RGMUpFAiRuv7UFoJroHP6CtvmpoFlQXl" },
     { name:'Roles',                 route: "roles",                       icon: "assets/icons/users-roles.svg",        permission:"nrPqEhq2TX0mI7qT7glaOCJ7Iqx2QtPs" },
     { name:'Formularios Llenos',    route: "listado-llenado-formulario",  icon: "assets/icons/catalogos.svg" },
+    { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg" },
     { name:'Herramientas Dev', route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true, 
       children:[
         {name:'Reportes MySQL',route:'dev-tools/mysql-reportes', icon:'insert_drive_file', permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}

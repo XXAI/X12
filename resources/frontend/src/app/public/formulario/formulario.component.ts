@@ -17,6 +17,7 @@ export class FormularioComponent implements OnInit {
   catalogos: any = {};
   filteredCatalogs:any = {};
   llenado:boolean = false;
+  fechaEjemplo:string;
 
   constructor(private publicService: PublicService, private formBuilder: FormBuilder, private router: Router) { }
 
@@ -41,6 +42,8 @@ export class FormularioComponent implements OnInit {
       colonia: [''],
       referencia: ['']
     });
+
+    this.fechaEjemplo = Date();
 
     let carga_catalogos = [
       {nombre:'estados',orden:'descripcion'},

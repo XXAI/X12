@@ -1,0 +1,97 @@
+<div mat-dialog-title class="mat-typography">
+    <div class="credential-loading-shade" *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar><br>
+        <span>Cargando los datos de la persona</span>    
+    </div>
+    <div fxLayout="row"  *ngIf="!isLoading">
+        <div fxFlex="100"  fxLayout="column" style="padding-left:10px;" *ngIf="dataCaso && dataCaso.persona">
+            <div fxFlex>
+                <h1 style="margin-bottom:0px; text-shadow: 1px 1px #AAAAAA;">Datos de la Persona</h1>
+            </div>
+            <div fxFlex>
+                <div fxLayout="row" class="tarjeta-info-formulario">
+                    <p fxFlex="50" class="mat-typography">
+                        <span class="label">Nombre Completo: </span><span class="value">{{ dataCaso.persona.apellido_paterno }} {{dataCaso.persona.apellido_materno}} {{dataCaso.persona.nombre}} </span><br>                        
+                        <span class="label">Fecha de Nacimiento: </span><span class="value">{{ dataCaso.persona.fecha_nacimiento }}</span><br>
+                        <span class="label">Telefono de Contacto: </span><span class="value">{{ (dataCaso.persona.telefono_celular)?dataCaso.persona.telefono_celular:dataCaso.persona.telefono_casa }}</span><br>
+                        <span class="label">Correo Electronico: </span><span class="value">{{ dataCaso.persona.email }}</span><br>
+                        <span class="label">Estado: </span><span class="value">{{ dataCaso.persona.estado }}</span><br>
+                        <span class="label">Municipio: </span><span class="value">{{ dataCaso.persona.municipio }}</span><br>
+                        <span class="label">Localidad: </span><span class="value">{{ dataCaso.persona.localidad }}</span><br>
+                    </p>
+                    <p fxFlex class="mat-typography">
+                        <span class="label">Calle: </span><span class="value">{{ dataCaso.persona.calle }}</span><br>
+                        <span class="label">No. Exterior: </span><span class="value">{{ dataCaso.persona.no_exterior }}</span><br>
+                        <span class="label">No. Interior: </span><span class="value">{{ dataCaso.persona.no_interior }}</span><br>
+                        <span class="label">Colonia: </span><span class="value">{{ dataCaso.persona.colonia }}</span><br>
+                        <span class="label">Código Postal: </span><span class="value">{{ dataCaso.persona.codigo_postal }}</span><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
+<div mat-dialog-content style="max-height: 44vh; height:375px;">
+    <div fxLayout="column" fxLayoutGap="10px">
+        <div fxFlex fxLayout="row">
+            <button mat-raised-button color="accent"><mat-icon>record_voice_over</mat-icon> Indice</button>
+            <div fxFlex></div>
+            <button mat-raised-button fxFlex="none" color="primary"><mat-icon>create_new_folder</mat-icon> Agregar Nuevo Estatus</button>
+        </div>
+        <div fxFlex fxLayout="column">
+            <section fxFlex="100">
+                <div class="loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
+                <div class="data-container ">
+                    <div class="data-table-container">
+                        <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="descripcion" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">Descripción</th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.descripcion}} </td>
+                            </ng-container>
+                    
+                            <!-- Email Column -->
+                            <ng-container matColumnDef="fecha_atencion" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header width="1" fxHide.xs="true"> Fecha de Atención </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.fecha_atencion}} </td>
+                            </ng-container>
+    
+                            <ng-container matColumnDef="estatus" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header width="1" fxHide.xs="true"> Estatus </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.estatus_clave}}&nbsp;&nbsp; </td>
+                            </ng-container>
+    
+                            <ng-container matColumnDef="valoracion" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header width="1" fxHide.xs="true"> Valoración </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.valoracion_clave}} </td>
+                            </ng-container>
+    
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                                <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                    <button mat-stroked-button color="primary" (click)="verRespuestas(row.id,i)"><mat-icon>folder_shared</mat-icon></button>
+                                </td>
+                            </ng-container>
+    
+                            <ng-container matColumnDef="noResultsFound">
+                                <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                    No se encontraron registros 
+                                </td>
+                            </ng-container>
+                            
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+    
+                            <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(dataSource!=null && dataSource.length==0)}"></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <span fxFlex></span>
+    <button mat-button (click)='cancel()'>Cerrar</button>
+</div>

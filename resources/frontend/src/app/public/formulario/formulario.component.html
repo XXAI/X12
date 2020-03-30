@@ -10,10 +10,9 @@
                 <mat-radio-button class="formulario-radio-button" value="0">No</mat-radio-button>
             </mat-radio-group>
             <mat-form-field *ngIf="pregunta.tipo_pregunta == 'VAL' && pregunta.tipo_valor == 'DATE'">
-                <input matInput [matDatepicker]="picker" formControlName="pregunta_{{pregunta.id}}" readonly [required]="pregunta.obligatorio">
-                <mat-hint align="start">&nbsp;<mat-icon>keyboard_arrow_up</mat-icon> Click para Seleccionar fecha</mat-hint>
-                <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+                <mat-label>Fecha (aaaa-mm-dd)</mat-label>
+                <input matInput mascaraFecha formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio">
+                <mat-hint>Ejemplo: {{fechaEjemplo | date:'yyyy-MM-dd'}}</mat-hint>
             </mat-form-field>
             <mat-form-field *ngIf="pregunta.tipo_pregunta == 'VAL' && pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
                 <input style="width: 100%;" matInput formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio">
@@ -33,7 +32,7 @@
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'DATE'">
                     <mat-label>Fecha (aaaa-mm-dd)</mat-label>
                     <input matInput mascaraFecha formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">
-                    <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+                    <mat-hint>Ejemplo: {{fechaEjemplo | date:'yyyy-MM-dd'}}</mat-hint>
                 </mat-form-field>
                 <mat-form-field *ngIf="serie_pregunta.tipo_pregunta == 'VAL' && serie_pregunta.tipo_valor == 'STRING'" appearance="fill" style="width: 100%;">
                     <input style="width: 100%;" matInput formControlName="pregunta_{{serie_pregunta.id}}" [required]="pregunta.serie_activa && serie_pregunta.obligatorio">

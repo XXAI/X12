@@ -123,7 +123,7 @@
                         </mat-form-field>
                         <div fxFlex="100" fxLayout="row">
                             <div fxFlex></div>
-                            <button fxFlex="none" mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>
+                            <button fxFlex="none" mat-raised-button color="primary" [disabled]="!formCasoEstatus.valid" (click)="guardarEstatusCaso()"><mat-icon>save</mat-icon> Guardar</button>
                         </div>
                     </div>
                 </div>

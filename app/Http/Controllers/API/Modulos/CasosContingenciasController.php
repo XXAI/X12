@@ -90,6 +90,25 @@ class CasosContingenciasController extends Controller
         }
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function guardarNuevoEstatus($id)
+    {
+        try{
+            $parametros = Input::All();
+            
+            //$caso = Caso::with('persona','expediente')->find($id);
+            
+            return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
 
     /**
      * Store a newly created resource in storage.

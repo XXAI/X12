@@ -63,6 +63,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('listado-contingencias',             'API\Modulos\CasosContingenciasController@listadoContingencias');
     Route::get('listado-casos-contingencia/{id}',   'API\Modulos\CasosContingenciasController@listadoCasosContingencia');
     Route::get('obtener-datos-caso/{id}',           'API\Modulos\CasosContingenciasController@verCaso');
+    Route::post('guardar-estatus-caso/{id}',        'API\Modulos\CasosContingenciasController@guardarNuevoEstatus');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

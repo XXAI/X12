@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ContingenciasService } from '../contingencias.service';
 import { SharedService } from '../../shared/shared.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {formatDate} from '@angular/common';
 
 export interface ExpedienteCasoData {
   id: number;
@@ -18,7 +20,8 @@ export class ExpedienteCasoComponent implements OnInit {
     public dialogRef: MatDialogRef<ExpedienteCasoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ExpedienteCasoData,
     private contingenciasService: ContingenciasService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private formBuilder: FormBuilder
   ) { }
 
   dataCaso: any;
@@ -27,8 +30,49 @@ export class ExpedienteCasoComponent implements OnInit {
   displayedColumns: string[] = ['descripcion','fecha_atencion','estatus','valoracion'];
   dataSource: any = [];
 
+  verFormularioNuevoRegistro:boolean = false;
+  formCasoEstatus:FormGroup;
+  catalogos:any;
+
+  mostrarBotonIndice:boolean = false;
+
   ngOnInit() {
     this.loadDataCaso(this.data.id);
+
+    this.catalogos = {
+      'estatus':[],
+      'valoracion':[]
+    }
+
+    let carga_catalogos = [
+      {nombre:'estatus'},
+      {nombre:'valoracion'},
+    ];
+    
+    this.contingenciasService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        this.catalogos = response.data;
+      }
+    );
+
+    this.formCasoEstatus = this.formBuilder.group({
+      descripcion:['',Validators.required],
+      fecha_atencion:['',Validators.required],
+      estatus_clave:['',Validators.required],
+      valoracion_clave:['',Validators.required],
+    });
+  }
+
+  toggleFormularioDatos(){
+    if(this.verFormularioNuevoRegistro){
+      this.verFormularioNuevoRegistro = false;
+      this.formCasoEstatus.reset();
+    }else{
+      this.verFormularioNuevoRegistro = true;
+      let currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+      this.formCasoEstatus.get('fecha_atencion').patchValue(currentDate);      
+    }
+    
   }
   
   loadDataCaso(id:any){
@@ -38,6 +82,12 @@ export class ExpedienteCasoComponent implements OnInit {
       response =>{
         console.log(response);
         this.dataCaso = response.data;
+
+        if(this.dataCaso.es_indice){
+          this.mostrarBotonIndice = true;
+        }else if(this.dataCaso.estatus_clave != 'SOS' && this.dataCaso.estatus_clave != 'NEG'){
+          this.mostrarBotonIndice = true;
+        }
 
         this.dataSource = this.dataCaso.expediente;
         /*if(this.dataEmpleado.figf){

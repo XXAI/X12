@@ -104,7 +104,16 @@ class LlenadoFormularioController extends Controller
                     case 'VAL':
                         $datos_preguntas[$registro->pregunta_id]['respuesta'] = $registro->valor;
                     break;
+                    case 'MULTI':
                     case 'MULTIO':
+                        if($registro->respuesta_id){
+                            $datos_preguntas[$registro->pregunta_id]['respuesta'][] = ['respuesta' => $registro->respuesta, 'valor'=>$registro->valor_respuesta];
+                        }else{
+                            $datos_preguntas[$registro->pregunta_id]['respuesta'][] = ['respuesta' => 'Otro', 'valor'=>$registro->valor];
+                        }
+                    break;
+                    case 'UNIC':
+                    case 'UNICO':
                         if($registro->respuesta_id){
                             $datos_preguntas[$registro->pregunta_id]['respuesta'][] = ['respuesta' => $registro->respuesta, 'valor'=>$registro->valor_respuesta];
                         }else{

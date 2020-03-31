@@ -12,6 +12,7 @@ export class ContingenciasService {
   url_listado_contingencias = `${environment.base_url}/listado-contingencias`;
   url_listado_casos = `${environment.base_url}/listado-casos-contingencia/`;
   url_datos_caso = `${environment.base_url}/obtener-datos-caso/`;
+  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }
 
@@ -37,5 +38,13 @@ export class ContingenciasService {
         return response;
       })
     );
+  }
+
+  obtenerCatalogos(payload) {
+    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
   }
 }

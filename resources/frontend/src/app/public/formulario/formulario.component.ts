@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class FormularioComponent implements OnInit {
   formulario: any;
-  isLinear: boolean = false;
+  isLinear: boolean = true;
   encuestaForm: FormGroup;
   infoContactoForm: FormGroup;
   catalogos: any = {};

@@ -132,7 +132,7 @@ class FormularioController extends Controller
                         }else if($pregunta->tipo_pregunta == 'MULTI' || $pregunta->tipo_pregunta == 'MULTIO'){
                             for($j = 0 ; $j < count($pregunta->respuestas); $j++){
                                 if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id]) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_'.$pregunta->respuestas[$j]->id] != null){
-                                    $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor_respuesta'=>$pregunta->respuestas[$j]->valor];
+                                    $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'respuesta_id'=>$pregunta->respuestas[$j]->id,'pregunta_id'=>$pregunta->id,'valor_respuesta'=>$pregunta->respuestas[$j]->valor];
                                 }
                             }
                             if($pregunta->tipo_pregunta == 'MULTIO'){
@@ -140,6 +140,13 @@ class FormularioController extends Controller
                                     if(isset($preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion']) && $preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion'] != null){
                                         $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta->id,'valor'=>$preguntas_encuesta['pregunta_'.$pregunta->id]['respuesta_otro_descripcion']];
                                     }
+                                }
+                            }
+                        }else if($pregunta->tipo_pregunta == 'UNIC' || $pregunta->tipo_pregunta == 'UNICO'){
+                            for($j = 0 ; $j < count($pregunta->respuestas); $j++){
+                                if($preguntas_encuesta['pregunta_'.$pregunta->id] == $pregunta->respuestas[$j]->valor){
+                                    $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id, 'respuesta_id'=>$pregunta->respuestas[$j]->id,'pregunta_id'=>$pregunta->id,'valor_respuesta'=>$pregunta->respuestas[$j]->valor];
+                                    break;
                                 }
                             }
                         }else if($pregunta->tipo_pregunta == 'VAL'){
@@ -172,6 +179,13 @@ class FormularioController extends Controller
                                                 if(isset($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion']) && $preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion'] != null){
                                                     $respuestas_persona[] =  ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'pregunta_id'=>$pregunta_serie->id,'valor'=>$preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id]['respuesta_otro_descripcion']];
                                                 }
+                                            }
+                                        }
+                                    }else if($pregunta_serie->tipo_pregunta == 'UNIC' || $pregunta_serie->tipo_pregunta == 'UNICO'){
+                                        for($k = 0 ; $k < count($pregunta_serie->respuestas); $k++){
+                                            if($preguntas_serie_encuesta['pregunta_'.$pregunta_serie->id] == $pregunta_serie->respuestas[$k]->valor){
+                                                $respuestas_persona[] = ['formulario_id'=>$formulario->id,'persona_id'=>$persona->id, 'respuesta_id'=>$pregunta_serie->respuestas[$k]->id,'pregunta_id'=>$pregunta_serie->id,'valor_respuesta'=>$pregunta_serie->respuestas[$k]->valor];
+                                                break;
                                             }
                                         }
                                     }else if($pregunta_serie->tipo_pregunta == 'VAL'){

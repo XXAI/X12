@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
+use App\Models\Estatus;
+use App\Models\Valoracion;
 
 class CatalogosController extends Controller
 {
@@ -22,6 +24,8 @@ class CatalogosController extends Controller
                 'estados' => Estado::getModel(),
                 'municipios' => Municipio::getModel(),
                 'localidades' => Localidad::getModel(),
+                'estatus' => Estatus::getModel(),
+                'valoracion' => Valoracion::getModel(),
             ];
 
             $parametros = Input::all();

@@ -45,10 +45,10 @@
             <section *ngIf="!isLoading && dataFormulario" fxLayout="row raw" fxLayoutAlign="space-evenly start" fxLayoutGap="5px">
                 <div fxFlex="48" *ngFor="let item of dataFormulario.datos_preguntas" style="padding-bottom:5px;">
                     {{item.pregunta}}<br>
-                    <span class="respuesta" *ngIf="item.tipo_pregunta != 'MULTI' && item.tipo_pregunta != 'MULTIO'">
+                    <span class="respuesta" *ngIf="item.tipo_pregunta != 'MULTI' && item.tipo_pregunta != 'MULTIO' && item.tipo_pregunta != 'UNIC' && item.tipo_pregunta != 'UNICO'">
                         {{item.respuesta}}
                     </span>
-                    <section *ngIf="item.tipo_pregunta == 'MULTI' || item.tipo_pregunta == 'MULTIO'" >
+                    <section *ngIf="item.tipo_pregunta == 'MULTI' || item.tipo_pregunta == 'MULTIO' || item.tipo_pregunta == 'UNIC' || item.tipo_pregunta == 'UNICO'" >
                         <span class="respuesta" *ngFor="let respuesta of item.respuesta">
                             {{respuesta.respuesta}}
                         </span>

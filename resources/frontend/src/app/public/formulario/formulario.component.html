@@ -21,6 +21,9 @@
                 <mat-checkbox fxFlex="100" *ngFor="let pregunta_respuesta of pregunta.respuestas" class="formulario-checkbox" formControlName="respuesta_{{pregunta_respuesta.id}}">{{pregunta_respuesta.descripcion}}</mat-checkbox>
                 <mat-checkbox fxFlex="100" *ngIf="pregunta.tipo_pregunta == 'MULTIO'" class="formulario-checkbox" formControlName="respuesta_otro">Otro <mat-form-field><input matInput placeholder="Especifique" formControlName="respuesta_otro_descripcion" [required]="(encuestaForm.get('pregunta_'+pregunta.id).get('respuesta_otro').value)?'true':'false'"></mat-form-field></mat-checkbox>
             </section>
+            <mat-radio-group *ngIf="pregunta.tipo_pregunta == 'UNICO' || pregunta.tipo_pregunta == 'UNIC'" class="formulario-radio-grupo" formControlName="pregunta_{{pregunta.id}}" [required]="pregunta.obligatorio" (change)="activarSerie(pregunta)">
+                <mat-radio-button class="formulario-radio-button" *ngFor="let pregunta_respuesta of pregunta.respuestas" value="{{pregunta_respuesta.valor}}">{{pregunta_respuesta.descripcion}}</mat-radio-button>
+            </mat-radio-group>
         </section>
         <section *ngIf="pregunta.serie_activa" fxLayout="column" fxLayoutGap="5px">
             <mat-card *ngFor="let serie_pregunta of pregunta.serie.preguntas" [formGroup]="encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie')" fxFlex>
@@ -41,6 +44,9 @@
                     <mat-checkbox fxFlex="100" *ngFor="let serie_pregunta_respuesta of serie_pregunta.respuestas" class="formulario-checkbox" formControlName="respuesta_{{serie_pregunta_respuesta.id}}">{{serie_pregunta_respuesta.descripcion}}</mat-checkbox>
                     <mat-checkbox fxFlex="100" *ngIf="serie_pregunta.tipo_pregunta == 'MULTIO'" class="formulario-checkbox" formControlName="respuesta_otro">Otro <mat-form-field><input matInput placeholder="Especifique" formControlName="respuesta_otro_descripcion" [required]="(encuestaForm.get('seccion_pregunta_'+pregunta.id).get('pregunta_'+pregunta.id+'_serie').get('pregunta_'+serie_pregunta.id).get('respuesta_otro').value)?'true':'false'"></mat-form-field></mat-checkbox>
                 </section>
+                <mat-radio-group *ngIf="serie_pregunta.tipo_pregunta == 'UNICO' || serie_pregunta.tipo_pregunta == 'UNIC'" class="formulario-radio-grupo" formControlName="pregunta_{{serie_pregunta.id}}" [required]="serie_pregunta.obligatorio">
+                    <mat-radio-button class="formulario-radio-button" *ngFor="let pregunta_respuesta of serie_pregunta.respuestas" value="{{pregunta_respuesta.valor}}">{{pregunta_respuesta.descripcion}}</mat-radio-button>
+                </mat-radio-group>
             </mat-card>
         </section>
         <div fxLayout="row">
@@ -170,7 +176,7 @@
       <div fxLayout="row">
             <div fxFlex></div>
             <button mat-button matStepperPrevious>Atras</button>
-            <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!infoContactoForm.valid"><mat-icon>send</mat-icon> Enviar</button>
+            <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!encuestaForm.valid || !infoContactoForm.valid"><mat-icon>send</mat-icon> Enviar</button>
       </div>
     </mat-step>
 </mat-horizontal-stepper>
@@ -182,10 +188,6 @@
                 Se ha completa el llenado del formulario. En caso de ser necesario una persona se contactara con usted.
             </p>
         </mat-card-content>
-        <!--mat-card-actions fxLayout="row">
-            <div fxFlex></div>
-            <button mat-raised-button color="primary" (click)="llenarDeNuevo()"><mat-icon>edit</mat-icon> Llenar de nuevo</button>
-        </mat-card-actions-->
     </mat-card>
 </div>
 

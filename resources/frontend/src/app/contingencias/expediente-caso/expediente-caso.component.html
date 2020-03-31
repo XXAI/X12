@@ -32,17 +32,18 @@
     </div>
     <mat-divider></mat-divider>
 </div>
-<div mat-dialog-content style="max-height: 44vh; height:375px;">
+<div mat-dialog-content style="max-height: 44vh; height:360px;">
     <div fxLayout="column" fxLayoutGap="10px">
         <div fxFlex fxLayout="row">
-            <button mat-raised-button color="accent"><mat-icon>record_voice_over</mat-icon> Indice</button>
+            <button *ngIf="mostrarBotonIndice" mat-raised-button color="accent"><mat-icon>record_voice_over</mat-icon> Indice</button>
             <div fxFlex></div>
-            <button mat-raised-button fxFlex="none" color="primary"><mat-icon>create_new_folder</mat-icon> Agregar Nuevo Estatus</button>
+            <button *ngIf="!verFormularioNuevoRegistro" mat-raised-button fxFlex="none" color="primary" (click)="toggleFormularioDatos()"><mat-icon>create_new_folder</mat-icon> Agregar Nuevo Estatus</button>
+            <button *ngIf="verFormularioNuevoRegistro" mat-raised-button fxFlex="none" (click)="toggleFormularioDatos()">Cancelar</button>
         </div>
         <div fxFlex fxLayout="column">
             <section fxFlex="100">
                 <div class="loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
-                <div class="data-container ">
+                <div class="data-container" *ngIf="!verFormularioNuevoRegistro">
                     <div class="data-table-container">
                         <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
                             <!-- Name Column -->
@@ -85,6 +86,45 @@
     
                             <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(dataSource!=null && dataSource.length==0)}"></tr>
                         </table>
+                    </div>
+                </div>
+                <div class="data-container" *ngIf="verFormularioNuevoRegistro">
+                    <div [formGroup]="formCasoEstatus" fxLayout="column">
+                        <div fxFlex="100" fxLayout="row">
+                            <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100">
+                                <mat-label>Fecha de Atención (aaaa-mm-dd)</mat-label>
+                                <input matInput mascaraFecha formControlName="fecha_atencion" required>
+                                <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+                                <mat-error *ngIf="formCasoEstatus.get('fecha_atencion').hasError('required')">Este campo es obligatorio</mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100">
+                                <mat-label>Estatus</mat-label>
+                                <mat-select formControlName="estatus_clave" required>
+                                    <mat-option *ngFor="let item of catalogos['estatus']" [value]="item.clave">
+                                        {{item.descripcion}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="formCasoEstatus.get('estatus_clave').hasError('required')">Este campo es obligatorio</mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100">
+                                <mat-label>Valoración</mat-label>
+                                <mat-select formControlName="valoracion_clave" required>
+                                    <mat-option *ngFor="let item of catalogos['valoracion']" [value]="item.clave">
+                                        {{item.descripcion}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="formCasoEstatus.get('valoracion_clave').hasError('required')">Este campo es obligatorio</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <mat-form-field  fxFlex="100" appearance="outline">
+                            <mat-label>Descripción</mat-label>
+                            <textarea matInput formControlName="descripcion" rows="5" required></textarea>
+                            <mat-error *ngIf="formCasoEstatus.get('descripcion').hasError('required')">Este campo es obligatorio</mat-error>
+                        </mat-form-field>
+                        <div fxFlex="100" fxLayout="row">
+                            <div fxFlex></div>
+                            <button fxFlex="none" mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>
+                        </div>
                     </div>
                 </div>
             </section>

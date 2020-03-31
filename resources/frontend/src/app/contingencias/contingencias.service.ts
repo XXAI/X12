@@ -12,6 +12,8 @@ export class ContingenciasService {
   url_listado_contingencias = `${environment.base_url}/listado-contingencias`;
   url_listado_casos = `${environment.base_url}/listado-casos-contingencia/`;
   url_datos_caso = `${environment.base_url}/obtener-datos-caso/`;
+  url_guardar_estatus =  `${environment.base_url}/guardar-estatus-caso/`;
+
   url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }
@@ -34,6 +36,14 @@ export class ContingenciasService {
 
   getCaso(id:number):Observable<any>{
     return this.http.get<any>(this.url_datos_caso+id).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  postNuevoEstatusCaso(id:number,payload:any):Observable<any>{
+    return this.http.post<any>(this.url_guardar_estatus+id,payload).pipe(
       map( response => {
         return response;
       })

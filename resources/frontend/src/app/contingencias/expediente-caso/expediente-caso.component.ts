@@ -74,7 +74,7 @@ export class ExpedienteCasoComponent implements OnInit {
     }
     
   }
-  
+
   loadDataCaso(id:any){
     this.isLoading = true;
 
@@ -107,6 +107,17 @@ export class ExpedienteCasoComponent implements OnInit {
         }*/
         this.isLoading = false;
       });
+  }
+
+  guardarEstatusCaso(){
+    let id = this.dataCaso.id;
+    let datosForm = JSON.parse(JSON.stringify(this.formCasoEstatus.value));
+
+    this.contingenciasService.postNuevoEstatusCaso(id,datosForm).subscribe(
+      response => {
+        console.log(response);
+      }
+    )
   }
 
   cancel(): void {

@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PublicService } from '../public.service';
 import { map, startWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-formulario',
@@ -19,7 +21,7 @@ export class FormularioComponent implements OnInit {
   llenado:boolean = false;
   fechaEjemplo:string;
 
-  constructor(private publicService: PublicService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(private publicService: PublicService, public dialog: MatDialog,  private formBuilder: FormBuilder, private router: Router) { }
 
   ngOnInit() {
     this.infoContactoForm = this.formBuilder.group({
@@ -36,6 +38,8 @@ export class FormularioComponent implements OnInit {
       localidad:['',Validators.required],
       localidad_id:['',Validators.required],
       codigo_postal:[''],
+      latitud:['',Validators.required],
+      longitud:['',Validators.required],
       calle: ['',Validators.required],
       no_exterior: ['',Validators.required],
       no_interior: [''],
@@ -131,6 +135,41 @@ export class FormularioComponent implements OnInit {
     return this.catalogos[catalog].filter(option => option[valueField].toLowerCase().includes(filterValue));
     }
   }
+
+  localizarPersona()
+  {
+    let configDialog = {};
+    let lat = this.infoContactoForm.controls['latitud'].value;
+    let lng = this.infoContactoForm.controls['longitud'].value;
+    if(lat != null && lat !="" && lng != null && lng != "")
+    {
+      configDialog['data'] = {id:1, latitud: lat, longitud: lng};
+      
+    }else{
+      
+      if(this.infoContactoForm.controls['municipio_id'].value)
+      {
+        lat = this.infoContactoForm.controls['municipio_id'].value.latitud;
+        lng = this.infoContactoForm.controls['municipio_id'].value.longitud;
+        configDialog['data'] = {id:1, latitud: lat, longitud: lng};
+        
+      }else{
+        configDialog['data'] = {id:1, latitud: 16.75305556, longitud: -93.11555556};
+        
+      }
+    }
+   
+    const dialogRef = this.dialog.open(MapaComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        this.infoContactoForm.controls['latitud'].setValue(valid.latitud);
+        this.infoContactoForm.controls['longitud'].setValue(valid.longitud);
+        
+      }
+    });
+  }
+
 
   checkAutocompleteValue(field_name) {
     setTimeout(() => {

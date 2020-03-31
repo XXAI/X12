@@ -166,6 +166,19 @@
             <textarea matInput formControlName="referencia"></textarea>
             <mat-hint>Ejemplo: Entre calle 1 y calle 2, a lado de una ferretería</mat-hint>
         </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
+            <mat-label>Latitud</mat-label>
+            <input matInput formControlName="latitud" [readonly]="true">
+            <mat-error *ngIf="infoContactoForm.get('latitud').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
+            <mat-label>Longitud</mat-label>
+            <input matInput formControlName="longitud" [readonly]="true">
+            <mat-error *ngIf="infoContactoForm.get('longitud').hasError('required')">Este campo es obligatorio</mat-error>
+        </mat-form-field>
+        <div  fxFlex.gt-sm="10" fxFlex.lt-sm="100" >
+            <button mat-raised-button color="primary" (click)="localizarPersona()"><mat-icon>not_listed_location</mat-icon><br> Localizar</button>
+        </div>
       </div>
       <div fxLayout="row">
             <div fxFlex></div>

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FormularioComponent } from './formulario/formulario.component';
+import { MapaComponent } from './mapa/mapa.component';
 import { ListaContingenciasComponent } from './lista-contingencias/lista-contingencias.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { GuessGuard } from '../auth/guess.guard';
@@ -8,7 +9,8 @@ import { GuessGuard } from '../auth/guess.guard';
 
 const routes: Routes = [
   { path: 'contingencias', component: ListaContingenciasComponent },
-  { path: 'llenar-formulario', component: FormularioComponent }//canActivate: [GuessGuard]
+  { path: 'llenar-formulario', component: FormularioComponent },//canActivate: [GuessGuard]
+  { path: 'mapa', component: MapaComponent }//canActivate: [GuessGuard]
 ];
 
 @NgModule({

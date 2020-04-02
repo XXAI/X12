@@ -8,6 +8,7 @@ import { getEspPaginatorIntl } from '../esp-paginator-intl';
 import { FormulariosRoutingModule } from './formularios-routing.module';
 import { ListadoLlenadoComponent } from './listado-llenado/listado-llenado.component';
 import { DetallesLlenadoFormularioComponent } from './detalles-llenado-formulario/detalles-llenado-formulario.component';
+import { AgmCoreModule } from '@agm/core';
 
 
 @NgModule({
@@ -15,7 +16,10 @@ import { DetallesLlenadoFormularioComponent } from './detalles-llenado-formulari
   imports: [
     CommonModule,
     FormulariosRoutingModule,
-    SharedModule
+    SharedModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyAxA1oj37u__DPFiOqbTaYBGCyN04uDdIc'
+    })
   ],
   entryComponents:[
     DetallesLlenadoFormularioComponent

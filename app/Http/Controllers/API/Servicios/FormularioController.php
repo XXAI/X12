@@ -223,4 +223,29 @@ class FormularioController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+
+    public function actualizaUbicacion(Request $request, $id)
+    {
+        try{
+            DB::beginTransaction();
+            $parametros = Input::all();
+
+            $persona = Persona::find($id);
+            if($id)
+            {
+                $persona->latitud = $parametros['latitud'];
+                $persona->longitud = $parametros['longitud'];
+                $persona->save();
+                DB::commit();
+                return response()->json(['data'=>$persona],HttpResponse::HTTP_OK);
+            }else{
+                DB::rollback();
+                return response()->json(['error'=>['message'=>'No existe el elemento, favor de verificar','line'=>0]], HttpResponse::HTTP_CONFLICT);
+            }
+            
+    }catch(\Exception $e){
+        DB::rollback();
+        return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+    }
+    }
 }

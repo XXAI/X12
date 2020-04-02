@@ -107,17 +107,17 @@ export class ListadoLlenadoComponent implements OnInit {
     let configDialog = {};
     if(this.mediaSize == 'xs'){
       configDialog = {
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        height: '100%',
+        //maxWidth: '100vw',
+        //maxHeight: '100vh',
+        //height: '100%',
         width: '100%',
         data:{id: id, scSize:this.mediaSize}
       };
     }else{
       configDialog = {
         width: '99%',
-        maxHeight: '90vh',
-        height: '643px',
+        //maxHeight: '90vh',
+        //height: '643px',
         data:{id: id}
       }
     }

@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class FormulariosService {
   url_llenado_formularios = `${environment.base_url}/llenado-formularios`;
+  url_actualizar_ubicacion = `${environment.base_url}/actualiza-ubicacion`;
 
   constructor(private http: HttpClient) { }
 
@@ -26,5 +27,13 @@ export class FormulariosService {
         return response;
       })
     );
+  }
+
+  actualizarUbicacion(id, datos):Observable<any>{
+    return this.http.put<any>(this.url_actualizar_ubicacion+'/'+id,datos).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
   }
 }

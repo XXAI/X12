@@ -35,6 +35,7 @@ import { DevToolsModule } from './dev-tools/dev-tools.module';
 import { PublicModule } from './public/public.module';
 import { FormulariosModule } from './formularios/formularios.module';
 import { ContingenciasModule } from './contingencias/contingencias.module';
+import { MapaModule } from './mapa/mapa.module';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { ContingenciasModule } from './contingencias/contingencias.module';
     FormulariosModule,
     ContingenciasModule,
     AppRoutingModule,
+    MapaModule,
     WildcardRoutingModule,
   ],
   providers: [

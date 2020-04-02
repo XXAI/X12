@@ -146,8 +146,13 @@ export class FormularioComponent implements OnInit {
       configDialog['data'] = {id:1, latitud: lat, longitud: lng};
       
     }else{
-      
-      if(this.infoContactoForm.controls['municipio_id'].value)
+      if(this.infoContactoForm.controls['localidad_id'].value)
+      {
+        lat = this.infoContactoForm.controls['localidad_id'].value.latitud;
+        lng = this.infoContactoForm.controls['localidad_id'].value.longitud;
+        configDialog['data'] = {id:1, latitud: lat, longitud: lng};
+        
+      }else if(this.infoContactoForm.controls['municipio_id'].value)
       {
         lat = this.infoContactoForm.controls['municipio_id'].value.latitud;
         lng = this.infoContactoForm.controls['municipio_id'].value.longitud;

@@ -12,12 +12,13 @@ export const APPS:App [] = [
     { name:"Usuarios",              route: "usuarios",                    icon: "assets/icons/users.svg",              permission:"nTSk4Y4SFKMyQmRD4ku0UCiNWIDe8OEt" },
     { name:'Permisos',              route: "permisos",                    icon: "assets/icons/security-shield.svg",    permission:"RGMUpFAiRuv7UFoJroHP6CtvmpoFlQXl" },
     { name:'Roles',                 route: "roles",                       icon: "assets/icons/users-roles.svg",        permission:"nrPqEhq2TX0mI7qT7glaOCJ7Iqx2QtPs" },
-    { name:'Llenar Formulario',      route:'llenar-formulario',           icon: 'assets/icons/clipboard.svg'},
-    { name:'Formularios Llenos',    route: "listado-llenado-formulario",  icon: "assets/icons/catalogos.svg" ,},
+    { name:'Formularios Llenos',    route: "listado-llenado-formulario",  icon: "assets/icons/catalogos.svg"},
+    { name:'Call Center',           route: "call-center",                 icon: "assets/icons/phone.svg",              permission:"roEJ83ekTBadrqqh24zvZqe1XOFIQHJk" },
     { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg", permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
-    { name:'Herramientas Dev', route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true, 
+    { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true, 
       children:[
-        {name:'Reportes MySQL',route:'dev-tools/mysql-reportes', icon:'insert_drive_file', permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}
+        {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file', permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}
       ],
-    }
+    },
+    { name:'Llenar Formulario',     route:'llenar-formulario',            icon: 'assets/icons/clipboard.svg'},
 ]

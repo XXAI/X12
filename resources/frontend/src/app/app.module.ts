@@ -36,6 +36,7 @@ import { PublicModule } from './public/public.module';
 import { FormulariosModule } from './formularios/formularios.module';
 import { ContingenciasModule } from './contingencias/contingencias.module';
 import { MapaModule } from './mapa/mapa.module';
+import { CallCenterModule } from './call-center/call-center.module';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { MapaModule } from './mapa/mapa.module';
     PublicModule,
     FormulariosModule,
     ContingenciasModule,
+    CallCenterModule,
     AppRoutingModule,
     MapaModule,
     WildcardRoutingModule,

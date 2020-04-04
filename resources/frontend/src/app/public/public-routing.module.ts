@@ -8,8 +8,9 @@ import { GuessGuard } from '../auth/guess.guard';
 
 
 const routes: Routes = [
+  { path: 'llenar-formulario', component: FormularioComponent, data: { hideHeader: true } },//canActivate: [GuessGuard]
+  { path: 'llenar-formulario-sistema', component: FormularioComponent },//canActivate: [GuessGuard]
   { path: 'contingencias', component: ListaContingenciasComponent },
-  { path: 'llenar-formulario', component: FormularioComponent },//canActivate: [GuessGuard]
   { path: 'mapa', component: MapaComponent }//canActivate: [GuessGuard]
 ];
 

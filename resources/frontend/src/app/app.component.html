@@ -3,10 +3,10 @@
       <app-sidenav-list (onCloseSidenav)="sidenav.close()"></app-sidenav-list>
   </mat-sidenav>
   <mat-sidenav-content fxLayout="column" fxFlexFill>
-      <app-header (onSidenavToggle)="sidenav.toggle()" fxFlex.gt-xs="64px" fxFlex.xs="56px"></app-header>
+      <app-header *ngIf="showHeader" (onSidenavToggle)="sidenav.toggle()" fxFlex.gt-xs="64px" fxFlex.xs="56px"></app-header>
       <main fxFlex style="overflow:auto">
 
-          <mat-drawer-container class="app-children-container" autosize>
+          <mat-drawer-container class="app-children-container" [ngStyle]="{'top':(showHeader)?'60px':'0px'}" autosize>
               <mat-drawer #drawer class="app-children-sidenav"  mode="side" opened>
                   <drawer-list></drawer-list>
               </mat-drawer>

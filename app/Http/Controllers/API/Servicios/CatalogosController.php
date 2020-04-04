@@ -14,6 +14,8 @@ use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Estatus;
 use App\Models\Valoracion;
+use App\Models\CategoriaLlamada;
+use App\Models\Turno;
 
 class CatalogosController extends Controller
 {
@@ -26,6 +28,8 @@ class CatalogosController extends Controller
                 'localidades' => Localidad::getModel(),
                 'estatus' => Estatus::getModel(),
                 'valoracion' => Valoracion::getModel(),
+                'categoria_llamada' => CategoriaLlamada::getModel(),
+                'turnos' => Turno::getModel()
             ];
 
             $parametros = Input::all();

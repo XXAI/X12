@@ -28,7 +28,7 @@ class AlterCatalogoMunicipios extends Migration
     public function down()
     {
         Schema::table('catalogo_municipios', function (Blueprint $table) {
-            $table->dropColumn(['poblacion']);
+            $table->dropColumn('poblacion');
             $table->dropColumn('longitud');
             $table->dropColumn('latitud');
         });

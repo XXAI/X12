@@ -67,7 +67,22 @@ class CallCenterLLamadasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+
+            $ultimo_folio = LLamadaCallCenter::max('folio');
+
+            $ultimo_folio = $ultimo_folio+1;
+            $parametros['folio'] = $ultimo_folio;
+            $parametros['recibio_llamada'] = $auth_user->id;
+
+            $llamada = LlamadaCallCenter::create($parametros);
+            
+            return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 
     /**

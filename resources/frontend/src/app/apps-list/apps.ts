@@ -20,5 +20,5 @@ export const APPS:App [] = [
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file', permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}
       ],
     },
-    { name:'Llenar Formulario',     route:'llenar-formulario',            icon: 'assets/icons/clipboard.svg'},
+    { name:'Llenar Formulario',     route:'llenar-formulario-sistema',            icon: 'assets/icons/clipboard.svg'},
 ]

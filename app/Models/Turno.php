@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Turno extends Model
 {
     use SoftDeletes;
-    protected $table = 'catalogo_turnos';
+    protected $table = 'catalogo_turno';
     protected $fillable = ['id','descripcion'];
 
 }

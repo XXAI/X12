@@ -1,1 +1,111 @@
-<p>llamada works!</p>
+<div style="padding-top:10px;" fxLayout="row" fxLayoutAlign="space-evenly">
+    <mat-card fxFlex="98">
+        <section fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">{{fechaHoraActual | date:'dd/MM/yyyy, h:mm a'}}</div>
+        </section>
+        <div fxLayout="column" [formGroup]="infoLlamadaForm">
+            <section fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
+                <mat-form-field fxFlex.gt-xs="50" fxFlex.lt-sm="100">
+                    <mat-label>Categoria Llamada</mat-label>
+                    <mat-select formControlName="categoria_llamada_id" (valueChange)="cargarContingencias($event)">
+                        <mat-option *ngFor="let item of catalogos['categoria_llamada']" [value]="item.id">
+                            [{{item.categoria}}] {{item.descripcion}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div fxFlex="49" *ngIf="!formularioContingencia"></div>
+                <mat-form-field *ngIf="formularioContingencia" fxFlex.gt-xs="30" fxFlex.lt-sm="100">
+                    <mat-label>Contingencias/Formulario</mat-label>
+                    <mat-select formControlName="formulario_id">
+                        <mat-option *ngIf="listaContingencias.length == 0">-- Sin Contingencias --</mat-option>
+                        <mat-optgroup *ngFor="let group of listaContingencias" [label]="group.titulo">
+                            <mat-option *ngIf="group.formularios.length == 0">-- Sin Formularios --</mat-option>
+                            <mat-option *ngFor="let item of group.formularios" [value]="item.id">
+                                {{item.descripcion}}
+                            </mat-option>
+                        </mat-optgroup>
+                    </mat-select>
+                </mat-form-field>
+                <div  *ngIf="formularioContingencia" fxFlex.gt-xs="none" fxFlex.lt-sm="100" style="border-top: .84375em solid transparent;">
+                    <button *ngIf="!formularioContingenciaLleno" mat-button color="accent" [disabled]="!infoLlamadaForm.get('formulario_id').value" (click)="mostrarFormulario()"><mat-icon>list_alt</mat-icon> <span fxHide.sm>Llenar Formulario</span></button>
+                    <mat-chip-list *ngIf="formularioContingenciaLleno" [selectable]="false">
+                        <mat-chip><mat-icon>playlist_add_check</mat-icon> Formulario Lleno</mat-chip>
+                    </mat-chip-list>
+                </div>
+            </section>
+
+            <fieldset class="grupo">
+                <legend>Persona que Llama:</legend>
+                <section fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
+                    <mat-form-field fxFlex.gt-xs="42" fxFlex.lt-sm="100" >
+                        <mat-label>Nombre</mat-label>
+                        <input matInput formControlName="nombre_llamada">
+                    </mat-form-field>
+                    <mat-form-field fxFlex.gt-xs="37" fxFlex.lt-sm="100" >
+                        <mat-label>Dirección</mat-label>
+                        <input matInput formControlName="direccion_llamada">
+                    </mat-form-field>
+                    <mat-form-field fxFlex.gt-xs="20" fxFlex.lt-sm="100" >
+                        <mat-label>Telefono</mat-label>
+                        <input matInput formControlName="telefono_llamada">
+                    </mat-form-field>
+                </section>
+            </fieldset>
+            
+            <fieldset class="grupo">
+                <legend><mat-checkbox (change)="pedirDatosPaciente($event)">Paciente:</mat-checkbox></legend>
+                <section *ngIf="datosPaciente" fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
+                    <mat-form-field fxFlex.gt-sm="42" fxFlex.lt-sm="100" >
+                        <mat-label>Nombre del Paciente</mat-label>
+                        <input matInput formControlName="nombre_paciente">
+                    </mat-form-field>
+                    <mat-form-field fxFlex.gt-sm="10" fxFlex.lt-sm="100" >
+                        <mat-label>Edad</mat-label>
+                        <input matInput formControlName="edad_paciente">
+                    </mat-form-field>
+                    <mat-form-field fxFlex.gt-sm="15" fxFlex.lt-sm="100" >
+                        <mat-label>Sexo</mat-label>
+                        <mat-select formControlName="sexo">
+                            <mat-option [value]="'H'">Hombre</mat-option>
+                            <mat-option [value]="'M'">Mujer</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </section>
+            </fieldset>
+            
+            <section fxFlex fxLayoutGap="5px" fxLayout="row">
+                <mat-form-field fxFlex="100" appearance="outline">
+                    <mat-label>Asunto</mat-label>
+                    <textarea matInput formControlName="asunto" rows="5"></textarea>
+                </mat-form-field>
+            </section>
+            
+            <section fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
+                <mat-form-field fxFlex="70" appearance="outline">
+                    <mat-label>Seguimiento</mat-label>
+                    <textarea matInput formControlName="seguimiento" rows="5"></textarea>
+                </mat-form-field>
+                <div fxFlex="30" fxLayout="column">
+                    <mat-form-field fxFlex="100" >
+                        <mat-label>Unidad Aplicativa</mat-label>
+                        <input matInput formControlName="unidad_aplicativa">
+                    </mat-form-field>
+                    <mat-form-field fxFlex="100" >
+                        <mat-label>Oficio Enviado A</mat-label>
+                        <input matInput formControlName="oficio_enviado_a">
+                    </mat-form-field>
+                </div>
+            </section>
+        </div>
+        <mat-card-actions>
+            <section fxLayout="row">
+                <div fxFlex><mat-checkbox [(ngModel)]="isSolventado">Solventado</mat-checkbox></div>
+                <div fxFlex="none">
+                    <button mat-button routerLink="/call-center">Cancelar</button>
+                    <button mat-raised-button color="primary" (click)="guardarLlamada()"><mat-icon>save</mat-icon> Guardar</button>
+                </div>
+            </section>
+        </mat-card-actions>
+    </mat-card>
+</div>

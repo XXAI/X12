@@ -32,7 +32,27 @@ class CasosContingenciasController extends Controller
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['page'])){
-                $contingencias = $contingencias->orderBy('fecha_finalizado','DESC');
+                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+                $contingencias = $contingencias->paginate($resultadosPorPagina);
+            } else {
+                $contingencias = $contingencias->get();
+            }
+
+            return response()->json(['data'=>$contingencias],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function listadoContingenciasFormularios()
+    {
+        try{
+            //$storage_images_path = 'imagenes/contingencias-imagenes/';
+
+            $contingencias = Contingencia::select('id','titulo','descripcion')->with('formularios');
+            
+            //Filtros, busquedas, ordenamiento
+            if(isset($parametros['page'])){
                 $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
                 $contingencias = $contingencias->paginate($resultadosPorPagina);
             } else {

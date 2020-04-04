@@ -11,6 +11,9 @@ import { map } from 'rxjs/operators';
 export class CallCenterService {
   url_llamadas = `${environment.base_url}/call-center-llamadas`;
 
+  url_listado_contingencias = `${environment.base_url}/listado-contingencias-formularios`;
+  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+
   constructor(private http: HttpClient) { }
 
   getListadoLlamadas(payload):Observable<any> {
@@ -19,5 +22,29 @@ export class CallCenterService {
         return response;
       })
     );
+  }
+
+  guardarLlamada(payload) {
+    return this.http.post<any>(this.url_llamadas,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  getListadoContingencias():Observable<any> {
+    return this.http.get<any>(this.url_listado_contingencias).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  obtenerCatalogos(payload) {
+    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
   }
 }

@@ -15,4 +15,7 @@ class Contingencia extends Model
         return $this->hasMany('App\Models\Caso','contingencia_id','id');
     }
     
+    public function formularios(){
+        return $this->hasMany('App\Models\Formulario','contingencia_id','id');
+    }
 }

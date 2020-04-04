@@ -12,14 +12,14 @@ export class ListaContingenciasComponent implements OnInit {
 
   constructor(private contingenciasService: ContingenciasService) { }
 
-  listaContingenias:any[] = [];
+  listaContingencias:any[] = [];
   homeUrl = environment.home_url;
 
   ngOnInit() {
     this.contingenciasService.getListadoContingencias().subscribe(
       response => {
         console.log(response);
-        this.listaContingenias = response.data;
+        this.listaContingencias = response.data;
       }
     )
   }

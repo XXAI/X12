@@ -16,7 +16,10 @@ import { FormularioDialogoComponent } from './formulario-dialogo/formulario-dial
   imports: [
     CommonModule,
     CallCenterRoutingModule,
-    SharedModule
+    SharedModule,
+  ],
+  entryComponents:[
+    FormularioDialogoComponent
   ],
   providers:[
     { provide: MatPaginatorIntl, useValue: getEspPaginatorIntl() }

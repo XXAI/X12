@@ -36,9 +36,16 @@
                                     <span *ngIf="usuarioForm.get('username').errors.minlength">Debe contener al menos 4 caracteres</span>
                                 </mat-error>
                             </mat-form-field>
-                        </div>
+                        </div>                        
                         <div fxLayout="row" fxLayout.xs="column">
-                            <mat-form-field  fxFlex fxFlex.xs="100" appearance="fill">
+                            <mat-form-field fxFlex="20" fxFlex.xs="100">
+                                <mat-label>Turno</mat-label>
+                                <mat-select formControlName="turno_id">
+                                    <mat-option *ngFor="let turno of catalogTurnos" [value]="turno.id">{{turno.descripcion}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field  fxFlex fxFlex.xs="100">
                                 <mat-label>Contraseña</mat-label>
                                 <input matInput id="password" formControlName="password" placeholder="Contraseña" [type]="hidePassword ? 'password' : 'text'" >
                                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">

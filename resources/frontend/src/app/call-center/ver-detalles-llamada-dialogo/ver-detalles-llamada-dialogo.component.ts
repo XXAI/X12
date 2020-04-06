@@ -43,7 +43,7 @@ export class VerDetallesLlamadaDialogoComponent implements OnInit {
           this.mostrarBotonEditar = true;
         }
       }
-    )
+    );
   }
 
   close(): void {

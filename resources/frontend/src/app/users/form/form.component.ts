@@ -40,6 +40,7 @@ export class FormComponent implements OnInit {
     'email': ['',[Validators.required, Validators.email]],
     'username': ['',[Validators.required, Validators.minLength(4)]],
     'password': ['',[Validators.minLength(6)]],
+    'turno_id': [''],
     'is_superuser': [false],
     'avatar': [''],
     'roles': [[]],
@@ -47,6 +48,7 @@ export class FormComponent implements OnInit {
   });
 
   avatarList: any[] = [];
+  catalogTurnos: any[] = [];
 
   //Para el filtro de Roles
   catalogRoles: any[] = [];
@@ -79,8 +81,9 @@ export class FormComponent implements OnInit {
 
     let callRolesCatalog = this.usersService.getAllRoles();
     let callPermissionsCatalog = this.usersService.getAllPermissions();
+    let callTurnoCatalog = this.usersService.getTurnos();
     
-    let httpCalls = [callRolesCatalog, callPermissionsCatalog];
+    let httpCalls = [callRolesCatalog, callPermissionsCatalog,callTurnoCatalog];
 
     this.route.paramMap.subscribe(params => {
       if(params.get('id')){
@@ -125,9 +128,14 @@ export class FormComponent implements OnInit {
           );
           //Ends: Permissions
 
+
+          //Starts: Turnos
+          this.catalogTurnos = results[2].data.turnos;
+          //Ends: Turnos
+
           //Starts: User
-          if(results[2]){
-            this.usuario = results[2];
+          if(results[3]){
+            this.usuario = results[3];
             this.usuarioForm.patchValue(this.usuario);
 
             this.selectedAvatar = this.usuario.avatar;

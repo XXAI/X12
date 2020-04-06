@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MediaObserver } from '@angular/flex-layout';
 import { formatDate } from '@angular/common';
 import { SharedService } from '../../shared/shared.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-llamada',
@@ -13,7 +14,7 @@ import { SharedService } from '../../shared/shared.service';
 })
 export class LlamadaComponent implements OnInit {
 
-  constructor(private formBuilder: FormBuilder, public dialog: MatDialog, public mediaObserver: MediaObserver, private callCenterService: CallCenterService, private sharedService:SharedService) { }
+  constructor(private formBuilder: FormBuilder, public dialog: MatDialog, public mediaObserver: MediaObserver, private callCenterService: CallCenterService, private sharedService:SharedService, private route: ActivatedRoute) { }
 
   isSolventado:boolean = false;
 
@@ -39,9 +40,9 @@ export class LlamadaComponent implements OnInit {
 
   ngOnInit() {
     this.infoLlamadaForm = this.formBuilder.group({
-      nombre_llamada:[''],
-      direccion_llamada:[''],
-      telefono_llamada:[''],
+      nombre_llamada:['',Validators.required],
+      direccion_llamada:['',Validators.required],
+      telefono_llamada:['',Validators.required],
       nombre_paciente:[''],
       edad_paciente:[''],
       sexo:[''],
@@ -70,6 +71,40 @@ export class LlamadaComponent implements OnInit {
         this.catalogos = response.data;
       }
     );
+
+    this.route.paramMap.subscribe(params => {
+      if(params.get('id')){
+        this.llamadaId = parseInt(params.get('id'));
+        this.mostrarFormularioLlamada = true;
+        
+        this.callCenterService.getDatosLlamada(this.llamadaId).subscribe(
+          response => {
+            console.log(response);
+            this.infoLlamadaForm.patchValue(response.data);
+
+            if(response.data.formulario_id){
+              this.infoLlamadaForm.get('categoria_llamada_id').disable();
+              this.infoLlamadaForm.get('formulario_id').disable();
+              this.formularioId = response.data.formulario_id;
+              this.formularioContingenciaLleno = true;
+              this.formularioContingencia = true;
+              this.isLoadingContingencias = true;
+
+              this.callCenterService.getListadoContingencias().subscribe(
+                response => {
+                  this.listaContingencias = response.data;
+                  this.isLoadingContingencias = false;
+                }
+              );
+            }
+            
+            if(response.data.nombre_paciente || response.data.edad_paciente || response.data.sexo){
+              this.datosPaciente = true;
+            }
+          }
+        ) 
+      }
+    });
   }
 
   guardarLlamada(){

@@ -260,10 +260,13 @@ class FormularioController extends Controller
                     'categoria_llamada_id' => 13,
                     'estatus_denuncia' => 'P',
                     'nombre_paciente' => $persona->apellido_paterno . ' ' . $persona->apellido_materno . ' ' . $persona->nombre,
+                    'nombre_llamada' => $persona->apellido_paterno . ' ' . $persona->apellido_materno . ' ' . $persona->nombre,
+                    'direccion_llamada' => $persona->calle . ' #' . $persona->no_externo . ' , ' . $persona->colonia,
                     'sexo' => $persona->sexo,
                     'edad_paciente' => $edad,
                     'telefono_llamada' => ($persona->telefono_celular)?$persona->telefono_celular:$persona->telefono_casa,
                     'recibio_llamada' => ($auth_user)?$auth_user->id:null,
+                    'turno_id' => ($auth_user)?$auth_user->turno_id:null,
                 ];
 
                 $llamada = LlamadaCallCenter::create($datos_llamada);

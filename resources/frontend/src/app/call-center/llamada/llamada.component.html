@@ -44,23 +44,23 @@
                 <fieldset class="grupo">
                     <legend>Persona que Llama:</legend>
                     <section fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
-                        <mat-form-field fxFlex.gt-xs="42" fxFlex.lt-sm="100" >
+                        <mat-form-field fxFlex.gt-xs="42" fxFlex.lt-sm="100">
                             <mat-label>Nombre</mat-label>
-                            <input matInput formControlName="nombre_llamada">
+                            <input matInput formControlName="nombre_llamada" required>
                         </mat-form-field>
-                        <mat-form-field fxFlex.gt-xs="37" fxFlex.lt-sm="100" >
+                        <mat-form-field fxFlex.gt-xs="37" fxFlex.lt-sm="100">
                             <mat-label>Dirección</mat-label>
-                            <input matInput formControlName="direccion_llamada">
+                            <input matInput formControlName="direccion_llamada" required>
                         </mat-form-field>
-                        <mat-form-field fxFlex.gt-xs="20" fxFlex.lt-sm="100" >
+                        <mat-form-field fxFlex.gt-xs="20" fxFlex.lt-sm="100">
                             <mat-label>Telefono</mat-label>
-                            <input matInput formControlName="telefono_llamada">
+                            <input matInput formControlName="telefono_llamada" required>
                         </mat-form-field>
                     </section>
                 </fieldset>
                 
                 <fieldset class="grupo">
-                    <legend><mat-checkbox (change)="pedirDatosPaciente($event)">Paciente:</mat-checkbox></legend>
+                    <legend><mat-checkbox (change)="pedirDatosPaciente($event)" [checked]="datosPaciente">Paciente:</mat-checkbox></legend>
                     <section *ngIf="datosPaciente" fxFlex fxLayoutGap="5px" fxLayout.gt-xs="row" fxLayout.lt-sm="column">
                         <mat-form-field fxFlex.gt-sm="42" fxFlex.lt-sm="100" >
                             <mat-label>Nombre del Paciente</mat-label>

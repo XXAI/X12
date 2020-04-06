@@ -13,8 +13,18 @@ export class UsersService {
   url_role = `${environment.base_url}/role`;
   url_permission = `${environment.base_url}/permission`;
   url_avatars = `${environment.base_url}/avatar-images`;
+  url_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }
+
+  getTurnos():Observable<any>{
+    let payload = [{nombre:'turnos'}];
+    return this.http.post<any>(this.url_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
 
   getAvatars():Observable<any> {
     return this.http.get<any>(this.url_avatars,{}).pipe(

@@ -74,7 +74,11 @@ class CallCenterLLamadasController extends Controller
             if(isset($parametros['id']) && $parametros['id']){
                 $llamada = LlamadaCallCenter::find($parametros['id']);
                 $parametros['recibio_llamada'] = $auth_user->id;
-                
+                $parametros['turno_id'] = $auth_user->turno_id;
+
+                unset($parametros['hora_llamada']);
+                unset($parametros['fecha_llamada']);
+
                 $llamada->update($parametros);
             }else{
                 $ultimo_folio = LLamadaCallCenter::max('folio');
@@ -82,6 +86,7 @@ class CallCenterLLamadasController extends Controller
 
                 $parametros['folio'] = $ultimo_folio;
                 $parametros['recibio_llamada'] = $auth_user->id;
+                $parametros['turno_id'] = $auth_user->turno_id;
 
                 $llamada = LlamadaCallCenter::create($parametros);
             }

@@ -46,10 +46,10 @@
     <mat-divider></mat-divider>
 </div>
 <div mat-dialog-content style="max-height: 44vh; height:360px;">
-    <!--section fxLayout="row">
+    <section fxLayout="row">
         <div fxFlex></div>
-        <button *ngIf="mostrarBotonEditar" mat-button color="accent"><mat-icon>edit</mat-icon> Editar</button>
-    </section-->
+        <button *ngIf="mostrarBotonEditar" mat-button color="accent" routerLink="/call-center/llamada/{{dataLlamada.id}}" [mat-dialog-close]="dataLlamada.id"><mat-icon>edit</mat-icon> Editar</button>
+    </section>
     <section *ngIf="dataLlamada">
         <fieldset class="grupo">
             <legend>Asunto:</legend>

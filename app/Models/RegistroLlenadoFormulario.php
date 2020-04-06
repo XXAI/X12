@@ -9,7 +9,7 @@ class RegistroLlenadoFormulario extends Model
 {
     use SoftDeletes;
     protected $table = 'registro_llenado_formularios';
-    protected $fillable = ['id','formulario_id','persona_id','finalizado','fecha_finalizado'];
+    protected $fillable = ['id','formulario_id','persona_id','caso_id','finalizado','fecha_finalizado'];
 
     public function registroLlenadoRespuestas(){
         return $this->hasMany('App\Models\RegistroLlenadoRespuesta','registro_llenado_id');

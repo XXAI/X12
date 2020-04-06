@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CallCenterService } from '../call-center.service';
-import { FormularioDialogoComponent } from '../formulario-dialogo/formulario-dialogo.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MediaObserver } from '@angular/flex-layout';
 import { formatDate } from '@angular/common';
+import { SharedService } from '../../shared/shared.service';
 
 @Component({
   selector: 'app-llamada',
@@ -13,14 +13,20 @@ import { formatDate } from '@angular/common';
 })
 export class LlamadaComponent implements OnInit {
 
-  constructor(private formBuilder: FormBuilder, public dialog: MatDialog, public mediaObserver: MediaObserver, private callCenterService: CallCenterService) { }
+  constructor(private formBuilder: FormBuilder, public dialog: MatDialog, public mediaObserver: MediaObserver, private callCenterService: CallCenterService, private sharedService:SharedService) { }
 
   isSolventado:boolean = false;
+
+  llamadaId:number;
 
   mediaSize: string;
   infoLlamadaForm: FormGroup;
   catalogos:any = {};
   listaContingencias:[] = [];
+
+  mostrarFormularioContingencia:boolean = false;
+  mostrarFormularioLlamada:boolean = false;
+  formularioId:number;
 
   fechaHoraActual:Date;
 
@@ -41,7 +47,7 @@ export class LlamadaComponent implements OnInit {
       sexo:[''],
       fecha_llamada:[''],
       hora_llamada:[''],
-      asunto:[''],
+      asunto:['',Validators.required],
       estatus_denuncia:[''],
       unidad_aplicativa:[''],
       distrito:[''],
@@ -75,6 +81,10 @@ export class LlamadaComponent implements OnInit {
       formData.estatus_denuncia = 'P';
     }
 
+    if(this.llamadaId){
+      formData.id = this.llamadaId;
+    }
+
     formData.fecha_llamada = formatDate(this.fechaHoraActual, 'yyyy-MM-dd', 'en');
     formData.hora_llamada = formatDate(this.fechaHoraActual, 'hh:mm', 'en');
 
@@ -82,7 +92,21 @@ export class LlamadaComponent implements OnInit {
       response => {
         console.log('guardado===========================================');
         console.log(response);
+        this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
     });
+  }
+
+  formularioTerminado(event){
+    console.log(event);
+    this.formularioContingenciaLleno = true;
+    this.llamadaId = event.data.llamada.id;
+
+    this.sharedService.showSnackBar('Formulario guardado con éxito', null, 3000);
+
+    this.infoLlamadaForm.patchValue(event.data.llamada);
+    this.mostrarFormularioContingencia = false;
+    this.mostrarFormularioLlamada = true;
+    this.datosPaciente = true;
   }
 
   pedirDatosPaciente(event){
@@ -93,38 +117,26 @@ export class LlamadaComponent implements OnInit {
     }
   }
 
+  ocultarFormulario(){
+    this.infoLlamadaForm.get('categoria_llamada_id').enable();
+    this.infoLlamadaForm.get('formulario_id').enable();
+    this.mostrarFormularioContingencia = false;
+    this.mostrarFormularioLlamada = false;
+    this.formularioId = undefined;
+  }
+
   mostrarFormulario(){
-    let configDialog = {};
-    if(this.mediaSize == 'xs'){
-      configDialog = {
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        height: '100%',
-        width: '100%',
-        data:{id: this.infoLlamadaForm.get('formulario_id').value, scSize:this.mediaSize}
-      };
-    }else{
-      configDialog = {
-        width: '99%',
-        maxHeight: '90vh',
-        height: '643px',
-        data:{id: this.infoLlamadaForm.get('formulario_id').value}
-      }
-    }
-
-    const dialogRef = this.dialog.open(FormularioDialogoComponent, configDialog);
-
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        this.formularioContingenciaLleno = true;
-      }else{
-        this.formularioContingenciaLleno = false;
-      }
-    });
+    this.infoLlamadaForm.get('categoria_llamada_id').disable();
+    this.infoLlamadaForm.get('formulario_id').disable();
+    this.formularioId = this.infoLlamadaForm.get('formulario_id').value;
+    this.mostrarFormularioContingencia = true;
+    this.mostrarFormularioLlamada = false;
   }
 
   cargarContingencias(event){
     if(event == 13){ //id de Llenar formulario
+      this.mostrarFormularioContingencia = false;
+      this.mostrarFormularioLlamada = false;
       this.formularioContingencia = true;
       this.isLoadingContingencias = true;
       this.callCenterService.getListadoContingencias().subscribe(
@@ -134,6 +146,8 @@ export class LlamadaComponent implements OnInit {
         }
       );
     }else{
+      this.mostrarFormularioContingencia = false;
+      this.mostrarFormularioLlamada = true;
       this.formularioContingencia = false;
       this.formularioContingenciaLleno = false;
       this.infoLlamadaForm.get('formulario_id').reset();

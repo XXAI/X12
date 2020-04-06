@@ -45,7 +45,7 @@ class CallCenterLLamadasController extends Controller
             }
 
             if(isset($parametros['page'])){
-                $llamadas = $llamadas->orderBy('fecha_llamada','DESC');
+                $llamadas = $llamadas->orderBy('fecha_llamada','DESC')->orderBy('hora_llamada','DESC');
                 $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
                 $llamadas = $llamadas->paginate($resultadosPorPagina);
 
@@ -71,14 +71,21 @@ class CallCenterLLamadasController extends Controller
             $auth_user = auth()->user();
             $parametros = Input::all();
 
-            $ultimo_folio = LLamadaCallCenter::max('folio');
+            if(isset($parametros['id']) && $parametros['id']){
+                $llamada = LlamadaCallCenter::find($parametros['id']);
+                $parametros['recibio_llamada'] = $auth_user->id;
+                
+                $llamada->update($parametros);
+            }else{
+                $ultimo_folio = LLamadaCallCenter::max('folio');
+                $ultimo_folio = $ultimo_folio+1;
 
-            $ultimo_folio = $ultimo_folio+1;
-            $parametros['folio'] = $ultimo_folio;
-            $parametros['recibio_llamada'] = $auth_user->id;
+                $parametros['folio'] = $ultimo_folio;
+                $parametros['recibio_llamada'] = $auth_user->id;
 
-            $llamada = LlamadaCallCenter::create($parametros);
-            
+                $llamada = LlamadaCallCenter::create($parametros);
+            }
+
             return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

@@ -14,6 +14,8 @@ use App\Models\Persona;
 use App\Models\Localidad;
 use App\Models\RegistroLlenadoFormulario;
 use App\Models\RegistroLlenadoRespuestas;
+use App\Models\LlamadaCallCenter;
+use App\Models\Caso;
 
 use DB;
 
@@ -59,7 +61,7 @@ class FormularioController extends Controller
     public function guardarDatosFormulario(Request $request){
         try{
             DB::beginTransaction();
-
+            
             $auth_user = auth()->user();
             $parametros = Input::all();
             $result = [];
@@ -204,16 +206,70 @@ class FormularioController extends Controller
                 }
             }
 
-            //$parametros['formulario'] = $formulario;
-            //$parametros['respuestas'] = $respuestas_persona;
-            //$parametros['hoy'] = date("Y-m-d");
+            //Crear caso pendiente
+            $caso = Caso::create(
+                [
+                    'persona_id' => $persona->id,
+                    'contingencia_id' => $formulario->contingencia_id,
+                    'fecha_deteccion' => date("Y-m-d"),
+                    'estatus_clave' => 'PTE',
+                    'latitud' => $persona->latitud,
+                    'longitud' => $persona->longitud,
+                    'capturado_por' => ($auth_user)?$auth_user->id:null
+                ]
+            );
 
-            $registro_llenado = RegistroLlenadoFormulario::create(['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'finalizado'=>1,'fecha_finalizado'=>date("Y-m-d H:i:s")]);
+            $registro_llenado = RegistroLlenadoFormulario::create(['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'caso_id'=>$caso->id,'finalizado'=>1,'fecha_finalizado'=>date("Y-m-d H:i:s")]);
             $registro_llenado->registroLlenadoRespuestas()->createMany($respuestas_persona);
 
             //$parametros['registro_llenado'] = $registro_llenado;
+            //$result = $registro_llenado;
+            $result = [
+                'persona' => $persona,
+                'formulario_id' => $formulario->id
+            ];
 
-            $result = $registro_llenado;
+            if(isset($parametros['config']['llamada_id'])){
+                $llamada = LlamadaCallCenter::find($parametros['config']['llamada_id']);
+                $llamada->formulario_id = $formulario->id;
+                $llamada->persona_id = $persona->id;
+                $llamada->caso_id = $caso->id;
+
+                $result['llamada'] = $llamada;
+            }else if(isset($parametros['config']['crear_llamada'])){
+
+                $folio = LlamadaCallCenter::max('folio');
+
+                $edad = null;
+                if($persona->fecha_nacimiento){
+                    $date = new \DateTime($persona->fecha_nacimiento);
+                    $now = new \DateTime();
+                    $interval = $now->diff($date);
+                    $edad = $interval->y;
+                }
+                
+
+                $datos_llamada = [
+                    'formulario_id'=>$formulario->id,
+                    'persona_id'=>$persona->id,
+                    'caso_id'=>$caso->id,
+                    'folio'=> $folio+1,
+                    'asunto'=>'Llenado de Formulario: '.$formulario->descripcion,
+                    'fecha_llamada' => date("Y-m-d"),
+                    'hora_llamada' => date("H:i:s"),
+                    'categoria_llamada_id' => 13,
+                    'estatus_denuncia' => 'P',
+                    'nombre_paciente' => $persona->apellido_paterno . ' ' . $persona->apellido_materno . ' ' . $persona->nombre,
+                    'sexo' => $persona->sexo,
+                    'edad_paciente' => $edad,
+                    'telefono_llamada' => ($persona->telefono_celular)?$persona->telefono_celular:$persona->telefono_casa,
+                    'recibio_llamada' => $auth_user->id,
+                ];
+
+                $llamada = LlamadaCallCenter::create($datos_llamada);
+
+                $result['llamada'] = $llamada;
+            }
 
             DB::commit();
 

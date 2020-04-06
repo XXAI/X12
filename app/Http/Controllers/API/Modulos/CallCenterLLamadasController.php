@@ -100,7 +100,20 @@ class CallCenterLLamadasController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+            $parametros = Input::all();
+            
+            $llamada = LlamadaCallCenter::select('llamadas_call_center.*','catalogo_categoria_llamada.categoria as categoria_llamada','catalogo_categoria_llamada.descripcion as categoria_llamada_desc','users.name as recibio_llamada_nombre')
+                                        ->leftjoin('catalogo_categoria_llamada','catalogo_categoria_llamada.id','=','llamadas_call_center.categoria_llamada_id')
+                                        ->leftjoin('users','users.id','=','llamadas_call_center.recibio_llamada')
+                                        ->where('llamadas_call_center.id',$id)
+                                        ->first();
+            
+            
+            return response()->json(['data'=>$llamada],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 
     /**

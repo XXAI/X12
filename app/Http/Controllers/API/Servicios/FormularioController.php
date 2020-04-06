@@ -263,7 +263,7 @@ class FormularioController extends Controller
                     'sexo' => $persona->sexo,
                     'edad_paciente' => $edad,
                     'telefono_llamada' => ($persona->telefono_celular)?$persona->telefono_celular:$persona->telefono_casa,
-                    'recibio_llamada' => $auth_user->id,
+                    'recibio_llamada' => ($auth_user)?$auth_user->id:null,
                 ];
 
                 $llamada = LlamadaCallCenter::create($datos_llamada);

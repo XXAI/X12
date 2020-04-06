@@ -24,6 +24,14 @@ export class CallCenterService {
     );
   }
 
+  getDatosLlamada(id):Observable<any>{
+    return this.http.get<any>(this.url_llamadas+'/'+id).pipe(
+      map( response=> {
+        return response;
+      } )
+    );
+  }
+
   guardarLlamada(payload) {
     return this.http.post<any>(this.url_llamadas,payload).pipe(
       map( (response) => {

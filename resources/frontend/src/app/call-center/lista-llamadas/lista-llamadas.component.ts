@@ -10,6 +10,7 @@ import { map, startWith } from 'rxjs/operators';
 import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
 import { CallCenterService } from '../call-center.service';
+import { VerDetallesLlamadaDialogoComponent } from '../ver-detalles-llamada-dialogo/ver-detalles-llamada-dialogo.component';
 
 @Component({
   selector: 'app-lista-llamadas',
@@ -34,7 +35,7 @@ export class ListaLlamadasComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['folio','telefono_llamada','fecha_llamada','hora_llamada','estatus_denuncia','categoria_llamada','actions'];
+  displayedColumns: string[] = ['folio','telefono_llamada','nombre','fecha_hora_llamada','estatus_denuncia','categoria_llamada','actions'];
   dataSource: any = [];
 
   ngOnInit() {
@@ -103,7 +104,35 @@ export class ListaLlamadasComponent implements OnInit {
   }
 
   verRegistro(id: number, index: number){
+    this.selectedItemIndex = index;
     
+    let configDialog = {};
+    if(this.mediaSize == 'xs'){
+      configDialog = {
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        data:{id: id, scSize:this.mediaSize}
+      };
+    }else{
+      configDialog = {
+        width: '99%',
+        maxHeight: '90vh',
+        height: '643px',
+        data:{id: id}
+      }
+    }
+
+    const dialogRef = this.dialog.open(VerDetallesLlamadaDialogoComponent, configDialog);
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        console.log('Aceptar');
+      }else{
+        console.log('Cancelar');
+      }
+    });
   }
 
 }

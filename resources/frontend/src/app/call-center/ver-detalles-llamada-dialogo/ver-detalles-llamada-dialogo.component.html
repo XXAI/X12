@@ -1,0 +1,79 @@
+<div mat-dialog-title class="mat-typography">
+    <div fxLayout="row" *ngIf="dataLlamada">
+        <div fxFlex>
+            <mat-chip-list aria-label="Fish selection">
+                <mat-chip color="primary" [selected]="!mostrarBotonEditar">
+                    <mat-icon>{{dataLlamada.estatus_icono}}</mat-icon> &nbsp;{{dataLlamada.estatus}}
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+        <div fxFlex="none">
+            <button mat-icon-button (click)='close()' aria-label="Close Dialog">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="credential-loading-shade" *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar><br>
+        <span>Cargando los datos de la llamada</span>    
+    </div>
+    <div fxLayout="row"  *ngIf="!isLoading">
+        <div fxFlex="100"  fxLayout="column" style="padding-left:10px;" *ngIf="dataLlamada">
+            <div fxFlex>
+                <h1 style="margin-bottom:0px; text-shadow: 1px 1px #AAAAAA;">Datos de la Llamada</h1>
+            </div>
+            <div fxFlex>
+                <div fxLayout="row" class="tarjeta-info-formulario">
+                    <p fxFlex="50" class="mat-typography">
+                        <span class="label">Nombre: </span><span class="value">{{ dataLlamada.nombre_llamada }}</span><br>
+                        <span class="label">Dirección: </span><span class="value">{{ dataLlamada.direccion_llamada }}</span><br>
+                        <span class="label">Telefono: </span><span class="value">{{ dataLlamada.telefono_llamada }}</span><br>
+                        <span class="label">Nombre Paciente: </span><span class="value">{{ dataLlamada.nombre_paciente }}</span><br>
+                        <span class="label">Sexo Paciente: </span><span class="value">{{ (dataLlamada.sexo == 'H')?'Hombre':'Mujer' }}</span><br>
+                        <span class="label">Edad Paciente: </span><span class="value">{{ dataLlamada.edad_paciente }}</span><br>
+                    </p>
+                    <p fxFlex class="mat-typography">
+                        <span class="label">Folio: </span><span class="value">{{ dataLlamada.folio }}</span><br>
+                        <span class="label">Fecha: </span><span class="value">{{ dataLlamada.fecha_llamada }}</span><br>
+                        <span class="label">Hora: </span><span class="value">{{ dataLlamada.hora_llamada }}</span><br>
+                        <span class="label">Categoria: </span><span class="value">{{ dataLlamada.categoria_llamada_desc }}</span><br>
+                        <span class="label">Recibió: </span><span class="value">{{ dataLlamada.recibio_llamada_nombre }}</span><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
+<div mat-dialog-content style="max-height: 44vh; height:360px;">
+    <!--section fxLayout="row">
+        <div fxFlex></div>
+        <button *ngIf="mostrarBotonEditar" mat-button color="accent"><mat-icon>edit</mat-icon> Editar</button>
+    </section-->
+    <section *ngIf="dataLlamada">
+        <fieldset class="grupo">
+            <legend>Asunto:</legend>
+            <p>
+                {{dataLlamada.asunto}}
+            </p>
+        </fieldset>
+        <br>
+        <fieldset class="grupo">
+            <legend>Seguimiento:</legend>
+            <p>
+                {{dataLlamada.seguimiento}}
+            </p>
+        </fieldset>
+        <br>
+        <div fxLayout="row">
+            <mat-form-field fxFlex="50">
+                <mat-label>Unidad Aplicativa</mat-label>
+                <input matInput value="{{dataLlamada.unidad_aplicativa}}" readonly>
+            </mat-form-field>
+            <mat-form-field fxFlex="50">
+                <mat-label>Oficio Enviado A</mat-label>
+                <input matInput value="{{dataLlamada.oficio_enviado_a}}" readonly>
+            </mat-form-field>
+        </div>
+    </section>
+</div>

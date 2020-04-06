@@ -8,18 +8,18 @@ import { getEspPaginatorIntl } from '../esp-paginator-intl';
 import { CallCenterRoutingModule } from './call-center-routing.module';
 import { ListaLlamadasComponent } from './lista-llamadas/lista-llamadas.component';
 import { LlamadaComponent } from './llamada/llamada.component';
-//import { FormularioDialogoComponent } from './formulario-dialogo/formulario-dialogo.component';
+import { VerDetallesLlamadaDialogoComponent } from './ver-detalles-llamada-dialogo/ver-detalles-llamada-dialogo.component';
 
 
 @NgModule({
-  declarations: [ListaLlamadasComponent, LlamadaComponent], //, FormularioDialogoComponent
+  declarations: [ListaLlamadasComponent, LlamadaComponent, VerDetallesLlamadaDialogoComponent], //, FormularioDialogoComponent
   imports: [
     CommonModule,
     CallCenterRoutingModule,
     SharedModule,
   ],
   entryComponents:[
-    //FormularioDialogoComponent
+    VerDetallesLlamadaDialogoComponent
   ],
   providers:[
     { provide: MatPaginatorIntl, useValue: getEspPaginatorIntl() }

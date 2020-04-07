@@ -144,15 +144,15 @@
     </mat-form-field>
     <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100">
         <mat-label>Tipo Contacto</mat-label>
-        <mat-select formControlName="tipo_contacto_id"  [(value)]="valor_tipo">
+        <mat-select formControlName="tipo_contacto_id"  [(value)]="valor_tipo" required>
             <mat-option  [value]="1">EXTRADOMICILIARIO</mat-option>
             <mat-option  [value]="2">INTRADOMICILIARIO</mat-option>
         </mat-select>
         <mat-error *ngIf="infoContactoForm.get('tipo_contacto_id').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
     <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100">
-        <mat-label>Estatus Contacto</mat-label>
-        <mat-select formControlName="estatus_contacto_id"  [(value)]="valor_contacto" #estatusContacto (valueChange)="estatusContactoChange(1, estatusContacto.value)">
+        <mat-label>Estatus Contacto</mat-label >
+        <mat-select formControlName="estatus_contacto_id"  [(value)]="valor_contacto" #estatusContacto (valueChange)="estatusContactoChange(1, estatusContacto.value)" required>
             <mat-option  [value]="1">PENDIENTE</mat-option>
             <mat-option  [value]="2">CONTACTADO</mat-option>
             <mat-option  [value]="3">VISITADO</mat-option>

@@ -95,13 +95,13 @@ export class AgregarContactoDialogComponent implements OnInit {
       no_interior: [''],
       colonia: [''],
       referencia: [''],
-      estatus_contacto_id: [''],
+      estatus_contacto_id: [1,Validators.required],
       estatus_seguimiento_id: [''],
       estatus_salud_id: [''],
       observaciones: ['',Validators.required],
       estatus_sistomatologia_id: [''],
       no_caso: [''],
-      tipo_contacto_id: ['']
+      tipo_contacto_id: [1,Validators.required]
     });
 
     

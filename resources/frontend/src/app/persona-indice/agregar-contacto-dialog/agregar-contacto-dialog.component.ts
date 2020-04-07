@@ -447,4 +447,26 @@ export class AgregarContactoDialogComponent implements OnInit {
     
   }
 
+  cargarMunicipios(event){
+    let carga_catalogos = [
+      {nombre:'municipios',orden:'descripcion',filtro_id:{campo:'estado_id',valor:event}},
+    ];
+    this.catalogos['municipios'] = false;
+    this.catalogos['localidades'] = false;
+    this.infoContactoForm.get('municipio_id').reset();
+    this.infoContactoForm.get('municipio').reset();
+    this.infoContactoForm.get('localidad_id').reset();
+    this.infoContactoForm.get('localidad').reset();
+
+    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        if(response.data['municipios'].length > 0){
+          this.catalogos['municipios'] = response.data['municipios'];
+        }
+        this.actualizarValidacionesCatalogos('municipios');
+        this.actualizarValidacionesCatalogos('localidades');
+      }
+    );
+  }
+
 }

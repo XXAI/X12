@@ -127,6 +127,10 @@ export class IndiceContactoComponent implements OnInit {
     });
   }
 
+  cleanSearch(){
+    this.searchQuery = '';
+  }
+  
   editarContacto(obj_indice:any)
   {
     let configDialog = {};

@@ -45,6 +45,7 @@ class CreatePersonaContacto extends Migration
             $table->smallInteger('estatus_salud_id')->unsigned()->nullable()->comment('1 negativo, 2 positivo');
             $table->smallInteger('estatus_ubicacion_id')->nullable()->unsigned()->comment('1 hospitalario, 2 domiciliaria');
             $table->smallInteger('estatus_sistomatologia_id')->nullable()->unsigned()->comment('1 sintomatico, 2 asintomatico');
+            $table->smallInteger('tipo_contacto_id')->nullable()->unsigned()->comment('1 extracomunitario, 2 intracomunitario');
             $table->string('no_caso',100)->nullable();
             $table->softDeletes();
             $table->timestamps();

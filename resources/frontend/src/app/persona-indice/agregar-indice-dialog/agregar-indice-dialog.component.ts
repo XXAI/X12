@@ -326,4 +326,26 @@ export class AgregarIndiceDialogComponent implements OnInit {
       }
     });
   }
+
+  cargarMunicipios(event){
+    let carga_catalogos = [
+      {nombre:'municipios',orden:'descripcion',filtro_id:{campo:'estado_id',valor:event}},
+    ];
+    this.catalogos['municipios'] = false;
+    this.catalogos['localidades'] = false;
+    this.infoIndiceForm.get('municipio_id').reset();
+    this.infoIndiceForm.get('municipio').reset();
+    this.infoIndiceForm.get('localidad_id').reset();
+    this.infoIndiceForm.get('localidad').reset();
+
+    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        if(response.data['municipios'].length > 0){
+          this.catalogos['municipios'] = response.data['municipios'];
+        }
+        this.actualizarValidacionesCatalogos('municipios');
+        this.actualizarValidacionesCatalogos('localidades');
+      }
+    );
+  }
 }

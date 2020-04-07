@@ -9,19 +9,21 @@ import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/
 import { map, startWith } from 'rxjs/operators';
 import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
-import { CallCenterService } from '../call-center.service';
+import { IndiceService } from '../indice.service';
+import { AgregarContactoDialogComponent} from '../agregar-contacto-dialog/agregar-contacto-dialog.component';
+
 
 @Component({
-  selector: 'app-lista-llamadas',
-  templateUrl: './lista-llamadas.component.html',
-  styleUrls: ['./lista-llamadas.component.css']
+  selector: 'app-indice-contacto',
+  templateUrl: './indice-contacto.component.html',
+  styleUrls: ['./indice-contacto.component.css']
 })
-export class ListaLlamadasComponent implements OnInit {
+export class IndiceContactoComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatTable, {static:false}) usersTable: MatTable<any>;
 
-  constructor(private sharedService: SharedService, private callCenterService: CallCenterService, public dialog: MatDialog, public mediaObserver: MediaObserver, private route: ActivatedRoute) { }
+  constructor(private sharedService: SharedService, private indiceService: IndiceService, public dialog: MatDialog, public mediaObserver: MediaObserver, private route: ActivatedRoute) { }
 
   isLoading: boolean = false;
   mediaSize: string;
@@ -34,19 +36,26 @@ export class ListaLlamadasComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['folio','telefono_llamada','fecha_llamada','hora_llamada','estatus_denuncia','categoria_llamada','actions'];
+  displayedColumns: string[] = ['id','persona','email','telefono_casa','telefono_celular','municipio_localidad','actions'];
+  columna_indice: string[] = ['nombre'];
   dataSource: any = [];
-
+  indiceID:any;
+  persona_indice:any = [];
+  
   ngOnInit() {
     this.mediaObserver.media$.subscribe(
       response => {
         this.mediaSize = response.mqAlias;
     });
 
-    this.loadListadoLlamadas();
+    this.route.paramMap.subscribe(params => {
+      this.indiceID = params.get('id');
+
+      this.loadListadoContacto();
+    });
   }
 
-  loadListadoLlamadas(event?){
+  loadListadoContacto(event?){
     this.isLoading = true;
     let params:any;
     if(!event){
@@ -63,18 +72,24 @@ export class ListaLlamadasComponent implements OnInit {
     }
     
     params.query = this.searchQuery;
+    params.persona_indice = this.indiceID;
     this.dataSource = [];
     this.resultsLength = 0;
 
-    this.callCenterService.getListadoLlamadas(params).subscribe(
-      response =>{
+    this.indiceService.getListadoContactos(params).subscribe(
+      response => {
+        console.log(response.data);
         if(response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          if(response.data.total > 0){
+          this.persona_indice = response.indice;
+          if(response.data.data.length > 0){
             this.dataSource = response.data.data;
-            this.resultsLength = response.data.total;
+            console.log(response.data);
+            console.log(this.dataSource);
+
+            this.resultsLength = response.data.length;
           }
         }
         this.isLoading = false;
@@ -95,11 +110,35 @@ export class ListaLlamadasComponent implements OnInit {
     this.selectedItemIndex = -1;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = this.pageSize;
-    this.loadListadoLlamadas(null);
+    this.loadListadoContacto(null);
   }
 
-  cleanSearch(){
-    this.searchQuery = '';
+  agregarContacto()
+  {
+    let configDialog = {};
+    configDialog['data'] = {indiceId: parseInt(this.indiceID), editar: false};
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(AgregarContactoDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        this.loadListadoContacto();
+      }
+    });
   }
 
+  editarContacto(obj_indice:any)
+  {
+    let configDialog = {};
+    obj_indice.editar = true;
+    configDialog['data'] = obj_indice;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(AgregarContactoDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        this.loadListadoContacto();
+      }
+    });
+  } 
 }

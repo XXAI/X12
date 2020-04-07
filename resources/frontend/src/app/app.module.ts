@@ -37,6 +37,7 @@ import { FormulariosModule } from './formularios/formularios.module';
 import { ContingenciasModule } from './contingencias/contingencias.module';
 import { MapaModule } from './mapa/mapa.module';
 import { CallCenterModule } from './call-center/call-center.module';
+import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { CallCenterModule } from './call-center/call-center.module';
     ContingenciasModule,
     CallCenterModule,
     AppRoutingModule,
+    PersonaIndiceModule,
     MapaModule,
     WildcardRoutingModule,
   ],

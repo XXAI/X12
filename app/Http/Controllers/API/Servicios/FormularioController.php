@@ -11,6 +11,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Formulario;
 use App\Models\Persona;
+use App\Models\PersonaContacto;
+use App\Models\PersonaIndice;
 use App\Models\Localidad;
 use App\Models\RegistroLlenadoFormulario;
 use App\Models\RegistroLlenadoRespuestas;
@@ -215,6 +217,259 @@ class FormularioController extends Controller
 
             $result = $registro_llenado;
 
+            DB::commit();
+
+            return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function guardarDatosIndice(Request $request){//aqui debe de hacerse el cambio
+        
+        try{
+            DB::beginTransaction();
+
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $result = [];
+            $formulario_id = 0;
+
+            $datos_persona = $parametros['persona'];
+
+            $datos_persona['fecha_nacimiento'] = substr($datos_persona['fecha_nacimiento'],0,10);
+
+            if(isset($datos_persona['telefono_contacto'])){
+                if($datos_persona['es_celular']){
+                    $datos_persona['telefono_celular'] = $datos_persona['telefono_contacto'];
+                }else{
+                    $datos_persona['telefono_casa'] = $datos_persona['telefono_contacto'];
+                }
+            }
+
+            if(!isset($datos_persona['longitud']) || !$datos_persona['longitud']){
+                if(isset($datos_persona['localidad_id']) && $datos_persona['localidad_id']){
+                    $localidad = Localidad::find($datos_persona['localidad_id']);
+                    if($localidad){
+                        $datos_persona['longitud'] = $localidad->longitud;
+                        $datos_persona['latitud'] = $localidad->latitud;
+                    }
+                }
+            }
+
+            $persona = PersonaIndice::create($datos_persona);
+            
+
+            DB::commit();
+
+            return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+
+    public function editarDatosIndice(Request $request, $id){//aqui debe de hacerse el cambio
+        
+        try{
+            DB::beginTransaction();
+
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $result = [];
+            $formulario_id = 0;
+
+            $datos_persona = $parametros['persona'];
+
+            $datos_persona['fecha_nacimiento'] = substr($datos_persona['fecha_nacimiento'],0,10);
+
+            $persona = PersonaIndice::find($id);
+
+            if(isset($datos_persona['telefono_contacto'])){
+                if(isset($datos_persona['es_celular'])){
+                    $persona->telefono_celular = $datos_persona['telefono_contacto'];
+                    $persona->telefono_casa = null;
+                }else{
+                    $persona->telefono_casa = $datos_persona['telefono_contacto'];
+                    $persona->telefono_celular = null;
+            
+                }
+            }
+
+            if(!isset($datos_persona['longitud']) || !$datos_persona['longitud']){
+                if(isset($datos_persona['localidad_id']) && $datos_persona['localidad_id']){
+                    $localidad = Localidad::find($datos_persona['localidad_id']);
+                    if($localidad){
+                        $datos_persona['longitud'] = $localidad->longitud;
+                        $datos_persona['latitud'] = $localidad->latitud;
+                    }
+                }
+            }
+
+            
+            $persona->apellido_paterno = $datos_persona['apellido_paterno'];
+            $persona->apellido_materno = $datos_persona['apellido_materno'];
+            $persona->nombre = $datos_persona['nombre'];
+            $persona->fecha_nacimiento = $datos_persona['fecha_nacimiento'];
+            $persona->email = $datos_persona['email'];
+            $persona->estado_id = $datos_persona['estado_id'];
+            $persona->municipio_id = $datos_persona['municipio_id'];
+            $persona->municipio = $datos_persona['municipio'];
+            $persona->localidad_id = $datos_persona['localidad_id'];
+            $persona->localidad = $datos_persona['localidad'];
+            $persona->colonia = $datos_persona['colonia'];
+            $persona->calle = $datos_persona['calle'];
+            $persona->no_exterior = $datos_persona['no_exterior'];
+            $persona->no_interior = $datos_persona['no_interior'];
+            $persona->codigo_postal = $datos_persona['codigo_postal'];
+            $persona->referencia = $datos_persona['referencia'];
+            $persona->latitud = $datos_persona['latitud'];
+            $persona->longitud = $datos_persona['longitud'];
+            $persona->observaciones = $datos_persona['observaciones'];
+            $persona->no_caso = $datos_persona['no_caso'];
+            $persona->save();
+            
+
+            DB::commit();
+
+            return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+
+    public function guardarDatosContacto(Request $request){//aqui debe de hacerse el cambio
+        
+        try{
+            DB::beginTransaction();
+
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $result = [];
+            $formulario_id = 0;
+
+            $datos_persona = $parametros['persona'];
+
+            //return response()->json(['data'=>$datos_persona],HttpResponse::HTTP_OK);
+            $datos_persona['fecha_nacimiento'] = substr($datos_persona['fecha_nacimiento'],0,10);
+
+            if(isset($datos_persona['telefono_contacto'])){
+                if(isset($datos_persona['es_celular'])){
+                    $persona->telefono_celular = $datos_persona['telefono_contacto'];
+                    $persona->telefono_casa = null;
+                }else{
+                    $persona->telefono_casa = $datos_persona['telefono_contacto'];
+                    $persona->telefono_celular = null;
+            
+                }
+            }
+
+            if(!isset($datos_persona['longitud']) || !$datos_persona['longitud']){
+                if(isset($datos_persona['localidad_id']) && $datos_persona['localidad_id']){
+                    $localidad = Localidad::find($datos_persona['localidad_id']);
+                    if($localidad){
+                        $datos_persona['longitud'] = $localidad->longitud;
+                        $datos_persona['latitud'] = $localidad->latitud;
+                    }
+                }
+            }
+
+            $persona = PersonaContacto::create($datos_persona);
+            if($datos_persona['estatus_salud_id'] == 2)
+            {
+                $persona_indice = PersonaIndice::create($datos_persona);
+                $persona->persona_nuevo_indice_id = $persona_indice->id;
+                $persona->save();
+            }
+
+            DB::commit();
+
+            return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function editarDatosContacto(Request $request, $id){//aqui debe de hacerse el cambio
+        
+        try{
+            DB::beginTransaction();
+
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $result = [];
+            $formulario_id = 0;
+
+            $datos_persona = $parametros['persona'];
+
+            $datos_persona['fecha_nacimiento'] = substr($datos_persona['fecha_nacimiento'],0,10);
+
+            $persona = PersonaContacto::find($id);
+
+            if(isset($datos_persona['telefono_contacto'])){
+                if(isset($datos_persona['es_celular'])){
+                    $persona->telefono_celular = $datos_persona['telefono_contacto'];
+                    $persona->telefono_casa = null;
+                }else{
+                    $persona->telefono_casa = $datos_persona['telefono_contacto'];
+                    $persona->telefono_celular = null;
+            
+                }
+            }
+
+            if(!isset($datos_persona['longitud']) || !$datos_persona['longitud']){
+                if(isset($datos_persona['localidad_id']) && $datos_persona['localidad_id']){
+                    $localidad = Localidad::find($datos_persona['localidad_id']);
+                    if($localidad){
+                        $datos_persona['longitud'] = $localidad->longitud;
+                        $datos_persona['latitud'] = $localidad->latitud;
+                    }
+                }
+            }
+
+            
+            $persona->apellido_paterno = $datos_persona['apellido_paterno'];
+            $persona->apellido_materno = $datos_persona['apellido_materno'];
+            $persona->nombre = $datos_persona['nombre'];
+            $persona->alias = $datos_persona['alias'];
+            if($datos_persona['fecha_nacimiento'] != "" ) { $persona->fecha_nacimiento = $datos_persona['fecha_nacimiento']; }
+            if($datos_persona['estatus_contacto_id'] != "" ) { $persona->estatus_contacto_id = $datos_persona['estatus_contacto_id']; }
+            if($datos_persona['estatus_salud_id'] != "" ) { $persona->estatus_salud_id = $datos_persona['estatus_salud_id']; }
+            if($datos_persona['estatus_sistomatologia_id'] != "" ) { $persona->estatus_sistomatologia_id = $datos_persona['estatus_sistomatologia_id']; }
+            $persona->email = $datos_persona['email'];
+            $persona->estado_id = $datos_persona['estado_id'];
+            $persona->municipio_id = $datos_persona['municipio_id'];
+            $persona->municipio = $datos_persona['municipio'];
+            $persona->localidad_id = $datos_persona['localidad_id'];
+            $persona->localidad = $datos_persona['localidad'];
+            $persona->colonia = $datos_persona['colonia'];
+            $persona->calle = $datos_persona['calle'];
+            $persona->no_exterior = $datos_persona['no_exterior'];
+            $persona->no_interior = $datos_persona['no_interior'];
+            $persona->codigo_postal = $datos_persona['codigo_postal'];
+            $persona->referencia = $datos_persona['referencia'];
+            $persona->latitud = $datos_persona['latitud'];
+            $persona->longitud = $datos_persona['longitud'];
+            $persona->observaciones = $datos_persona['observaciones'];
+            $persona->tipo_contacto_id = $datos_persona['tipo_contacto_id'];
+
+            if($datos_persona['estatus_salud_id'] == 2 && $persona->estatus_salud_id != 2)
+            {
+                $persona_indice = PersonaIndice::create($datos_persona);
+                $persona->persona_nuevo_indice_id = $persona_indice->id;
+                $persona->estatus_sistomatologia_id = $datos_persona['estatus_sistomatologia_id'];
+                $persona->no_caso = $datos_persona['no_caso'];
+            }else{
+                $persona->estatus_sistomatologia_id = $datos_persona['estatus_sistomatologia_id'];
+                $persona->no_caso = $datos_persona['no_caso'];
+            }
+            
+            $persona->save();
             DB::commit();
 
             return response()->json(['data'=>$result],HttpResponse::HTTP_OK);

@@ -9,19 +9,20 @@ import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/
 import { map, startWith } from 'rxjs/operators';
 import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
-import { CallCenterService } from '../call-center.service';
+import { IndiceService } from '../indice.service';
+import { AgregarIndiceDialogComponent} from '../agregar-indice-dialog/agregar-indice-dialog.component';
 
 @Component({
-  selector: 'app-lista-llamadas',
-  templateUrl: './lista-llamadas.component.html',
-  styleUrls: ['./lista-llamadas.component.css']
+  selector: 'app-lista-indices',
+  templateUrl: './lista-indices.component.html',
+  styleUrls: ['./lista-indices.component.css']
 })
-export class ListaLlamadasComponent implements OnInit {
+export class ListaIndicesComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatTable, {static:false}) usersTable: MatTable<any>;
 
-  constructor(private sharedService: SharedService, private callCenterService: CallCenterService, public dialog: MatDialog, public mediaObserver: MediaObserver, private route: ActivatedRoute) { }
+  constructor(private sharedService: SharedService, private indiceService: IndiceService, public dialog: MatDialog, public mediaObserver: MediaObserver, private route: ActivatedRoute) { }
 
   isLoading: boolean = false;
   mediaSize: string;
@@ -34,19 +35,14 @@ export class ListaLlamadasComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['folio','telefono_llamada','fecha_llamada','hora_llamada','estatus_denuncia','categoria_llamada','actions'];
+  displayedColumns: string[] = ['no_caso','persona','email','telefono_casa','telefono_celular','municipio_localidad', 'contacto','actions'];
   dataSource: any = [];
 
   ngOnInit() {
-    this.mediaObserver.media$.subscribe(
-      response => {
-        this.mediaSize = response.mqAlias;
-    });
-
-    this.loadListadoLlamadas();
+    this.loadListadoCasos();
   }
 
-  loadListadoLlamadas(event?){
+  loadListadoCasos(event?){
     this.isLoading = true;
     let params:any;
     if(!event){
@@ -66,15 +62,18 @@ export class ListaLlamadasComponent implements OnInit {
     this.dataSource = [];
     this.resultsLength = 0;
 
-    this.callCenterService.getListadoLlamadas(params).subscribe(
-      response =>{
+    this.indiceService.getListadoIndices(params).subscribe(
+      response => {
+        console.log(response);
         if(response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          if(response.data.total > 0){
+          console.log(response.data);
+          if(response.data.data.length > 0){
             this.dataSource = response.data.data;
-            this.resultsLength = response.data.total;
+
+            this.resultsLength = response.data.data.length;
           }
         }
         this.isLoading = false;
@@ -95,11 +94,36 @@ export class ListaLlamadasComponent implements OnInit {
     this.selectedItemIndex = -1;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = this.pageSize;
-    this.loadListadoLlamadas(null);
+    this.loadListadoCasos(null);
   }
 
   cleanSearch(){
     this.searchQuery = '';
   }
 
+  
+  nuevoIndice()
+  {
+    let configDialog = {};
+    const dialogRef = this.dialog.open(AgregarIndiceDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        this.loadListadoCasos();
+      }
+    });
+  }
+
+  editarIndice(obj_indice:any)
+  {
+    let configDialog = {};
+    configDialog['data'] = obj_indice;
+    const dialogRef = this.dialog.open(AgregarIndiceDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        this.loadListadoCasos();
+      }
+    });
+  } 
 }

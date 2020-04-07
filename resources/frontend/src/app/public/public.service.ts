@@ -11,6 +11,10 @@ export class PublicService {
 
   url_formularios = `${environment.base_url}/obtener-formulario-app`;
   url_guardado_formularios = `${environment.base_url}/guardar-llenado-formularios-app`;
+  url_guardado_contacto = `${environment.base_url}/guardar-contacto-indice`;
+  url_editar_contacto = `${environment.base_url}/editar-contacto-indice`;
+  url_guardado_indice = `${environment.base_url}/guardar-indice`;
+  url_editar_indice = `${environment.base_url}/editar-indice`;
   url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
 
   constructor(private http: HttpClient) { }

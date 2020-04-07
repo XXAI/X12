@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
+use App\Models\Persona;
+use App\Models\PersonaIndice;
 
 class SearchCatalogsController extends Controller
 {
@@ -102,6 +104,25 @@ class SearchCatalogsController extends Controller
             }
 
             return response()->json(['data'=>$estados],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function getPersonas(){
+        /*if (\Gate::denies('has-permission', \Permissions::VER_ROL) && \Gate::denies('has-permission', \Permissions::SELECCIONAR_ROL)){
+            return response()->json(['message'=>'No esta autorizado para ver este contenido'],HttpResponse::HTTP_FORBIDDEN);
+        }*/
+
+        try{
+            $parametros = Input::all();
+            $personas = Persona::where(function($query)use($parametros){
+                return $query->whereRaw('concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
+                ->orWhere('telefono_casa','LIKE','%'.$parametros['query'].'%')
+                ->orWhere('telefono_celular ','LIKE','%'.$parametros['query'].'%');
+            });
+            
+            return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

@@ -32,7 +32,12 @@ Route::get('autocomplete-municipios',               'API\Servicios\SearchCatalog
 Route::get('autocomplete-localidades',              'API\Servicios\SearchCatalogsController@getLocalidadesAutocomplete');
 
 Route::get('obtener-formulario-app/{id}',               'API\Servicios\FormularioController@obtenerFormulario');
+Route::get('search-personas',                           'API\Servicios\SearchCatalogsController@getPersonas');
 Route::post('guardar-llenado-formularios-app',          'API\Servicios\FormularioController@guardarDatosFormulario');
+Route::post('guardar-contacto-indice',                  'API\Servicios\FormularioController@guardarDatosContacto');
+Route::put('editar-contacto-indice/{id}',                  'API\Servicios\FormularioController@editarDatosContacto');
+Route::post('guardar-indice',                           'API\Servicios\FormularioController@guardarDatosIndice');
+Route::put('editar-indice/{id}',                           'API\Servicios\FormularioController@editarDatosIndice');
 Route::put('actualiza-ubicacion/{id}',                     'API\Servicios\FormularioController@actualizaUbicacion');
 
 Route::group(['middleware'=>'auth'],function($router){
@@ -70,6 +75,9 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('listado-casos-contingencia/{id}',   'API\Modulos\CasosContingenciasController@listadoCasosContingencia');
     Route::get('obtener-datos-caso/{id}',           'API\Modulos\CasosContingenciasController@verCaso');
     Route::post('guardar-estatus-caso/{id}',        'API\Modulos\CasosContingenciasController@guardarNuevoEstatus');
+
+    Route::apiResource('persona-indice',   'API\Modulos\PersonaContactoController');
+    Route::apiResource('indice-contacto',   'API\Modulos\IndicecontactoController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

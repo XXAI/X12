@@ -78,7 +78,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::post('guardar-estatus-caso/{id}',        'API\Modulos\CasosContingenciasController@guardarNuevoEstatus');
 
     Route::apiResource('persona-indice',   'API\Modulos\PersonaContactoController');
-    Route::apiResource('indice-contacto',   'API\Modulos\IndicecontactoController');
+    Route::apiResource('indice-contacto',   'API\Modulos\IndiceContactoController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

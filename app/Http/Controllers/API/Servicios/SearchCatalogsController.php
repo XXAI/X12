@@ -113,16 +113,23 @@ class SearchCatalogsController extends Controller
         /*if (\Gate::denies('has-permission', \Permissions::VER_ROL) && \Gate::denies('has-permission', \Permissions::SELECCIONAR_ROL)){
             return response()->json(['message'=>'No esta autorizado para ver este contenido'],HttpResponse::HTTP_FORBIDDEN);
         }*/
-
+        $parametros = Input::all();
         try{
             $parametros = Input::all();
-            $personas = Persona::where(function($query)use($parametros){
-                return $query->whereRaw('concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
-                ->orWhere('telefono_casa','LIKE','%'.$parametros['query'].'%')
-                ->orWhere('telefono_celular ','LIKE','%'.$parametros['query'].'%');
-            });
-            
-            return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
+            if(isset($parametros['query']))
+            {
+                $personas = Persona::where(function($query)use($parametros){
+                    return $query->whereRaw('concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
+                    ->orWhere('telefono_casa','LIKE','%'.$parametros['query'].'%')
+                    ->orWhere('telefono_celular','LIKE','%'.$parametros['query'].'%');
+                });
+
+                $personas = $personas->get();
+                
+                return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
+            }
+
+            return response()->json(['data'=>[]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

@@ -15,7 +15,8 @@ export const APPS:App [] = [
     { name:'Formularios Llenos',    route: "listado-llenado-formulario",  icon: "assets/icons/catalogos.svg",             permission:"aTRn5wKRr1iwaknd4ZtNmVRwG5dSYrRJ" },
     { name:'Call Center',           route: "call-center",                 icon: "assets/icons/phone.svg",                 permission:"roEJ83ekTBadrqqh24zvZqe1XOFIQHJk" },
     { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg",  permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
-    { name:'Contagios',             route: "listado-indices",            icon: "assets/icons/indice_contacto.svg",        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i" },
+    { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg",  permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
+    { name:'Mapa',                  route: "mapa-visor",                  icon: "assets/icons/mapa.png"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
     { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true, 
       children:[
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file',                       permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}

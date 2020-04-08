@@ -16,6 +16,7 @@ use DB;
 use App\Models\PersonaIndice;
 use App\Models\PersonaContacto;
 use App\Models\Localidad;
+use App\Models\Persona;
 
 class IndiceContactoController extends Controller
 {
@@ -236,5 +237,16 @@ class IndiceContactoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function mapaGeneral()
+    {
+        try{
+            $persona = Persona::all();
+            return response()->json(['data'=>$persona],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 }

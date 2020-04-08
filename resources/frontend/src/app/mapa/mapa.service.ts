@@ -9,12 +9,12 @@ import { map } from 'rxjs/operators';
 })
 export class MapaService {
 
-  url_formularios = `${environment.base_url}/obtener-formulario-app`;
+  url_personas_contagios = `${environment.base_url}/personas-contagios`;
   
   constructor(private http: HttpClient) { }
 
-  getFormulario(id):Observable<any> {
-    return this.http.get<any>(this.url_formularios+'/'+id).pipe(
+  getContagios():Observable<any> {
+    return this.http.get<any>(this.url_personas_contagios).pipe(
       map( response => {
         return response;
       })

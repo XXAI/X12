@@ -76,8 +76,10 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('listado-contingencias-formularios', 'API\Modulos\CasosContingenciasController@listadoContingenciasFormularios');
     Route::get('listado-casos-contingencia/{id}',   'API\Modulos\CasosContingenciasController@listadoCasosContingencia');
     Route::get('obtener-datos-caso/{id}',           'API\Modulos\CasosContingenciasController@verCaso');
+    
     Route::post('guardar-estatus-caso/{id}',        'API\Modulos\CasosContingenciasController@guardarNuevoEstatus');
 
+    Route::get('personas-contagios',       'API\Modulos\IndiceContactoController@mapaGeneral');
     Route::apiResource('persona-indice',   'API\Modulos\PersonaContactoController');
     Route::apiResource('indice-contacto',   'API\Modulos\IndiceContactoController');
 });

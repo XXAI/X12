@@ -6,6 +6,7 @@ import { VisorComponent } from './visor/visor.component';
 import { AgmCoreModule } from '@agm/core';
 
 
+
 @NgModule({
   declarations: [VisorComponent],
   imports: [

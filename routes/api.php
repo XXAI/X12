@@ -33,6 +33,7 @@ Route::get('autocomplete-localidades',              'API\Servicios\SearchCatalog
 
 Route::get('obtener-formulario-app/{id}',               'API\Servicios\FormularioController@obtenerFormulario');
 Route::get('search-personas',                           'API\Servicios\SearchCatalogsController@getPersonas');
+Route::get('search-personas/{id}',                      'API\Servicios\SearchCatalogsController@getPersonasSearch');
 Route::post('guardar-llenado-formularios-app',          'API\Servicios\FormularioController@guardarDatosFormulario');
 Route::post('guardar-contacto-indice',                  'API\Servicios\FormularioController@guardarDatosContacto');
 Route::put('editar-contacto-indice/{id}',                  'API\Servicios\FormularioController@editarDatosContacto');

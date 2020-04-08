@@ -14,6 +14,7 @@ use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Persona;
 use App\Models\PersonaIndice;
+use DB;
 
 class SearchCatalogsController extends Controller
 {
@@ -110,28 +111,50 @@ class SearchCatalogsController extends Controller
     }
     
     public function getPersonas(){
-        /*if (\Gate::denies('has-permission', \Permissions::VER_ROL) && \Gate::denies('has-permission', \Permissions::SELECCIONAR_ROL)){
-            return response()->json(['message'=>'No esta autorizado para ver este contenido'],HttpResponse::HTTP_FORBIDDEN);
-        }*/
-        $parametros = Input::all();
         try{
             $parametros = Input::all();
-            if(isset($parametros['query']))
-            {
-                $personas = Persona::where(function($query)use($parametros){
-                    return $query->whereRaw('concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
-                    ->orWhere('telefono_casa','LIKE','%'.$parametros['query'].'%')
-                    ->orWhere('telefono_celular','LIKE','%'.$parametros['query'].'%');
-                });
+            /*$personas = Persona::with("callcenter")->where(function($query)use($parametros){
+                return $query->whereRaw('concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
+                ->orWhere('telefono_casa','LIKE','%'.$parametros['query'].'%')
+                ->orWhere('telefono_celular','LIKE','%'.$parametros['query'].'%');
+            });*/
 
-                $personas = $personas->get();
-                
-                return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
+            $personas = DB::table("personas")->leftJoin("llamadas_call_center", "llamadas_call_center.persona_id", "=", "personas.id")
+                        ->whereNull("personas.deleted_at")
+                        ->whereNull("llamadas_call_center.deleted_at")
+                        ->where(function($query)use($parametros){
+                            return $query->whereRaw('concat(personas.nombre," ", personas.apellido_paterno, " ", personas.apellido_materno) like "%'.$parametros['query'].'%"' )
+                            ->orWhere('personas.telefono_casa','LIKE','%'.$parametros['query'].'%')
+                            ->orWhere('personas.telefono_celular','LIKE','%'.$parametros['query'].'%')
+                            ->orWhere('llamadas_call_center.folio','LIKE','%'.$parametros['query'].'%')
+                            ->orWhere('personas.id','LIKE','%'.$parametros['query'].'%');
+                            
+                        })
+                        ->select("personas.*", "llamadas_call_center.folio");
+
+            if(isset($parametros['page'])){
+                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+                $personas = $personas->paginate($resultadosPorPagina);
+            } else {
+                $personas = $personas->with("callcenter")->get();
             }
-
-            return response()->json(['data'=>[]],HttpResponse::HTTP_OK);
+            
+            return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+    
+    public function getPersonasSearch($id){
+        try{
+            $parametros = Input::all();
+            $personas = Persona::with("callcenter")->find($id);
+            
+            return response()->json(['data'=>$personas],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    
 }

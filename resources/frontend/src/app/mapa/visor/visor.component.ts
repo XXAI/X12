@@ -138,7 +138,7 @@ export class VisorComponent implements OnInit {
             let municipio = this.datosMunicipio.data[response[i].municipio_id];
             console.log(response[i].municipio_id);
             obj = { latitud: municipio.latitud, longitud: municipio.longitud, marcable:1, nombre: municipio.descripcion, casos: response[i].casos, tasa: response[i].tasa };
-            this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa/'+response[i].municipio_id+'.kml'});
+            this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_covid/'+response[i].municipio_id+'.kml'});
              
           }else
           {
@@ -146,8 +146,8 @@ export class VisorComponent implements OnInit {
           }
           this.dataSource.push(obj);
         }
-        //this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas/100x.kml'});
-        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa/e8.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa/59_.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa/e8.kml'});
         this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa/e3.kml'});
           
         

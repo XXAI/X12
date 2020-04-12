@@ -43,6 +43,7 @@ Route::put('actualiza-ubicacion/{id}',                     'API\Servicios\Formul
 
 Route::get('ubicacion-municipios',       'API\Modulos\ConsultaMapaController@mapaUbicacion');
 Route::get('informacion-covid',       'API\Modulos\ConsultaMapaController@informacionCovid');
+Route::get('casos-dias',       'API\Modulos\ConsultaMapaController@informacionCasosAcumulado');
 
 Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('user',          'API\Admin\UserController');

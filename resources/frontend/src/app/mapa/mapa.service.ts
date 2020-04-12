@@ -12,6 +12,7 @@ export class MapaService {
   url_personas_contagios = `${environment.base_url}/personas-contagios`;
   url_municipios = `${environment.base_url}/ubicacion-municipios`;
   informacion_covid = `${environment.base_url}/informacion-covid`;
+  informacion_casos = `${environment.base_url}/casos-dias`;
   url_informacion = 'http://contingencia.saludchiapas.gob.mx/manualapi/municipios.php';
   
   constructor(private http: HttpClient) { }
@@ -34,6 +35,14 @@ export class MapaService {
 
   getInformacionCovid():Observable<any> {
     return this.http.get<any>(this.informacion_covid).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+  
+  getCasosDias():Observable<any> {
+    return this.http.get<any>(this.informacion_casos).pipe(
       map( response => {
         return response;
       })

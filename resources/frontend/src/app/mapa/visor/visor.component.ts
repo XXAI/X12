@@ -44,10 +44,6 @@ export class VisorComponent implements OnInit {
       text: 'Fuente: Secretaría de Salud del Estado de Chiapas'
   },
   xAxis: {
-      categories: ['29-02','01-03', '02-03', '03-03', '04-03', '05-03', '06-03', '07-03','08-03','09-03','10-03','11-03','12-03','13-03','14-03','15-03','16-03','17-03','18-03',
-                    '19-03','20-03','21-03','22-03','23-03','24-03','25-03','26-03','27-03','28-03','29-03','30-03','31-03','01-04','02-04','03-04','04-04','05-04','06-04','07-04',
-                    '08-04','09-04','10-04','11-04'
-                  ],
       title: {
         text: 'Días Transcurridos'
     }
@@ -72,21 +68,40 @@ export class VisorComponent implements OnInit {
           }
       }
   },
-  series: [{
-      name: 'Acumulado',
-      data: [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,4,6,6,7,11,12,13,15,15,18,19,25,26,28,32,34,38,40]
-  }, {
-      name: 'Diario',
-      data: [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,2,2,0,1,4,1,1,2,0,3,1,6,1,2,4,2,4,2]
-  }]
+  series: []
   }
 
   constructor(private mapaService: MapaService) { }
 
   ngOnInit() {
     this.cargarMunicipios();
-    Highcharts.chart('container', this.options);
+    
     this.CargarInformacionCovid();
+    this.CargarCasos();
+  }
+
+  CargarCasos(){
+    this.mapaService.getCasosDias().subscribe(
+      response => {
+        let datos = response.data;
+        let fechas:any = [];
+        let datos_dia:any = [];
+        let datos_acumulado:any = [];
+        let acumulado:number = 0;
+        for(let i = 0; i < datos.length; i++)
+        {
+          fechas.push(datos[i].fecha);
+          datos_dia.push(datos[i].casos);
+          acumulado = acumulado + parseInt(datos[i].casos);
+          datos_acumulado.push(acumulado);
+        }
+
+        this.options.xAxis.categories = fechas;
+        this.options.series.push({ name: 'Acumulado', data: datos_acumulado});
+        this.options.series.push({ name: 'Diario', data: datos_dia});
+        Highcharts.chart('container', this.options);
+      }
+    );
   }
 
   CargarInformacionCovid()
@@ -122,7 +137,7 @@ export class VisorComponent implements OnInit {
           {
             let municipio = this.datosMunicipio.data[response[i].municipio_id];
             console.log(response[i].municipio_id);
-            obj = { latitud: municipio.latitud, longitud: municipio.longitud, marcable:1, nombre: response[i].descripcion, casos: response[i].casos, tasa: response[i].tasa };
+            obj = { latitud: municipio.latitud, longitud: municipio.longitud, marcable:1, nombre: municipio.descripcion, casos: response[i].casos, tasa: response[i].tasa };
             this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa/'+response[i].municipio_id+'.kml'});
              
           }else

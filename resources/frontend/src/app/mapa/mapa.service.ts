@@ -10,11 +10,38 @@ import { map } from 'rxjs/operators';
 export class MapaService {
 
   url_personas_contagios = `${environment.base_url}/personas-contagios`;
+  url_municipios = `${environment.base_url}/ubicacion-municipios`;
+  informacion_covid = `${environment.base_url}/informacion-covid`;
+  url_informacion = 'http://contingencia.saludchiapas.gob.mx/manualapi/municipios.php';
   
   constructor(private http: HttpClient) { }
 
   getContagios():Observable<any> {
     return this.http.get<any>(this.url_personas_contagios).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  getInformacion():Observable<any> {
+    return this.http.get<any>(this.url_informacion).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  getInformacionCovid():Observable<any> {
+    return this.http.get<any>(this.informacion_covid).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  getUbicacion():Observable<any> {
+    return this.http.get<any>(this.url_municipios,{}).pipe(
       map( response => {
         return response;
       })

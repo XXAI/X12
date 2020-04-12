@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use \DB;
 use App\Models\Persona;
+use App\Models\Municipio;
+use App\Models\InformacionCovid;
 
 class ConsultaMapaController extends Controller
 {
@@ -35,6 +37,35 @@ class ConsultaMapaController extends Controller
                         ->limit(30)
                         ->get();
             return response()->json(['data'=>$municipio],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function mapaUbicacion(){
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $municipios = Municipio::whereNull("deleted_at")->get();
+
+            $arreglo_municipios = array();
+            foreach ($municipios as $key => $value) {
+                $arreglo_municipios[$value->id]= $value;
+            }
+
+            return response()->json(['data'=>$arreglo_municipios],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    public function informacionCovid(){
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $informacion = InformacionCovid::whereNull("deleted_at")->first();
+
+            
+            return response()->json(['data'=>$informacion],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

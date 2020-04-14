@@ -11,9 +11,10 @@ export class MapaService {
 
   url_personas_contagios = `${environment.base_url}/personas-contagios`;
   url_municipios = `${environment.base_url}/ubicacion-municipios`;
-  informacion_covid = `${environment.base_url}/informacion-covid`;
+  //informacion_covid = `${environment.base_url}/informacion-covid`;
   informacion_casos = `${environment.base_url}/casos-dias`;
   url_informacion = 'http://contingencia.saludchiapas.gob.mx/manualapi/municipios.php';
+  informacion_covid = 'http://contingencia.saludchiapas.gob.mx/manualapi/estadisticas.php';
   
   constructor(private http: HttpClient) { }
 

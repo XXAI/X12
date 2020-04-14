@@ -25,7 +25,7 @@ export class VisorComponent implements OnInit {
   previous;
 
   datosMunicipio:any = [];
-  informacionCovid:any = { 'sospechosos':0};
+  informacionCovid:any = { casos_sospechosos:0, casos_confirmados:0, casos_negativos:0, recuperados:0, defunciones:0 };
 
   dataSource:any = [];
   nombre_municipio:string = "";
@@ -108,7 +108,8 @@ export class VisorComponent implements OnInit {
   {
     this.mapaService.getInformacionCovid().subscribe(
       response => {
-        this.informacionCovid = response.data;
+        console.log(response);
+        this.informacionCovid = response;
       }
     );
   }
@@ -138,7 +139,7 @@ export class VisorComponent implements OnInit {
             let municipio = this.datosMunicipio.data[response[i].municipio_id];
             console.log(response[i].municipio_id);
             obj = { latitud: municipio.latitud, longitud: municipio.longitud, marcable:1, nombre: municipio.descripcion, casos: response[i].casos, tasa: response[i].tasa };
-            this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_covid/'+response[i].municipio_id+'.kml'});
+            this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_mapa_salud/'+response[i].municipio_id+'.kml'});
              
           }else
           {
@@ -146,9 +147,12 @@ export class VisorComponent implements OnInit {
           }
           this.dataSource.push(obj);
         }
-        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa/59_.kml'});
-        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa/e8.kml'});
-        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa/e3.kml'});
+        //this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa_chiapas/121a.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_mapa_salud/96_.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_mapa_salud/59_.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_mapa_salud/capa2x.kml'});
+        this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capas_mapa_salud/capa1x.kml'});
+        
           
         
       }

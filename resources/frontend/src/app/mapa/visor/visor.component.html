@@ -34,11 +34,11 @@
                         </div>
                         
                         <mat-card-content class='cantidad'>
-                            {{ informacionCovid.sospechosos}}
+                            {{ informacionCovid.casos_sospechosos}}
                         </mat-card-content>
                     </mat-card>
                 </div>
-                <div class="hijo is-12 top">
+                <!--<div class="hijo is-12 top">
                     <mat-card class="example-card estilo_tarjeta">
                         <div class="tarjeta">
                             <mat-card-title  class="titulo">Total de Muestras Procesadas</mat-card-title>
@@ -57,14 +57,14 @@
                             {{ informacionCovid.pendientes }}
                         </mat-card-content>
                     </mat-card>
-                </div>
+                </div>-->
                 <div class="hijo is-12 top">
                     <mat-card class="example-card estilo_tarjeta">
                         <div class="tarjeta">
                             <mat-card-title class="titulo">Positivos</mat-card-title>
                         </div>
                         <mat-card-content class='cantidad'>
-                            {{ informacionCovid.positivos }}
+                            {{ informacionCovid.casos_confirmados }}
                         </mat-card-content>
                     </mat-card>
                 </div>
@@ -74,7 +74,7 @@
                             <mat-card-title  class="titulo">Negativos</mat-card-title>
                         </div>
                         <mat-card-content class='cantidad'>
-                            {{ informacionCovid.negativos }}
+                            {{ informacionCovid.casos_negativos }}
                         </mat-card-content>
                     </mat-card>
                 </div>
@@ -147,6 +147,7 @@
         
     </div>
     <div class="contenedor">
+        <div class='titulo_grafica'>Gráfica de Casos por Día</div>
         <div class="hijo is-12 top">
             <div id="container"></div>
         </div>

@@ -267,3 +267,12 @@ table {
     padding: 10px 0px;
     background-color: white;
 }
+
+.titulo_grafica
+{
+  width: 100%;
+    text-align: center;
+    padding: 10px 0px;
+    background-color: burlywood;
+    font-size: 15pt;
+}

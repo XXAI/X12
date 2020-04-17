@@ -150,6 +150,7 @@ export class VisorComponent implements OnInit {
         //this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa_chiapas/121a.kml'});
         this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/96a.kml'});
         this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/41_.kml'});
+        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/15_.kml'});
         this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/74_.kml'});
         this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/9_.kml'});
         this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/94a.kml'});

@@ -26,80 +26,86 @@
     </div>
     <div class="hijo is-6  is-sm-12 top">
         <div class="contenedor">
-            <div class="hijo is-4 is-sm-12 top">
+            <div class="hijo is-4  top">
+                <mat-card class="example-card estilo_tarjeta">
+                    <div class="tarjeta">
+                        <mat-card-title  class="titulo">Total de Sospechosos</mat-card-title>
+                    </div>
+                    
+                    <mat-card-content class='cantidad'>
+                        {{ informacionCovid.casos_sospechosos}}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            
+            <div class="hijo is-2 top">
+                <mat-card class="example-card estilo_tarjeta">
+                    <div class="tarjeta">
+                        <mat-card-title class="titulo">Positivos</mat-card-title>
+                    </div>
+                    <mat-card-content class='cantidad'>
+                        {{ informacionCovid.casos_confirmados }}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="hijo is-2 top">
+                <mat-card class="example-card estilo_tarjeta">
+                    <div class="tarjeta">
+                        <mat-card-title  class="titulo">Negativos</mat-card-title>
+                    </div>
+                    <mat-card-content class='cantidad'>
+                        {{ informacionCovid.casos_negativos }}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="hijo is-2 top">
+                <mat-card class="example-card estilo_tarjeta">
+                    <div class="tarjeta">
+                        <mat-card-title class="titulo">Recuperados</mat-card-title>
+                    </div>
+                    <mat-card-content class='cantidad'>
+                        {{ informacionCovid.recuperados}}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="hijo is-2 top">
+                <mat-card class="example-card estilo_tarjeta">
+                    <div class="tarjeta">
+                        <mat-card-title class="titulo">Defunciones</mat-card-title>
+                    </div>
+                    <mat-card-content class='cantidad'>
+                        {{ informacionCovid.defunciones }}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="contenedor">
+                <div class='titulo_grafica'>Gráfica de Casos por Día</div>
                 <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title  class="titulo">Total de Sospechosos</mat-card-title>
-                        </div>
-                        
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.casos_sospechosos}}
-                        </mat-card-content>
-                    </mat-card>
+                    <div id="container"></div>
                 </div>
-                <!--<div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title  class="titulo">Total de Muestras Procesadas</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.muestras}}
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title  class="titulo">Muestras Pendientes de Resultados</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.pendientes }}
-                        </mat-card-content>
-                    </mat-card>
-                </div>-->
-                <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title class="titulo">Positivos</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.casos_confirmados }}
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title  class="titulo">Negativos</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.casos_negativos }}
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title class="titulo">Recuperados</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.recuperados}}
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="hijo is-12 top">
-                    <mat-card class="example-card estilo_tarjeta">
-                        <div class="tarjeta">
-                            <mat-card-title class="titulo">Defunciones</mat-card-title>
-                        </div>
-                        <mat-card-content class='cantidad'>
-                            {{ informacionCovid.defunciones }}
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>    
-            <div class="hijo is-8 is-sm-12 top">
+            </div>
+            <div class="hijo is-12">
+                <table>
+                    <thead>
+                        <th class="cabecera_tabla titulo" colspan="4" style="text-align: center; background-color: burlywood;">CASOS POR MUNICIPIO</th>
+                    </thead>
+                    <thead>
+                        <th class="cabecera_tabla">#</th>
+                        <th class="cabecera_tabla">Municipio</th>
+                        <th class="cabecera_tabla">Casos</th>
+                        <th class="cabecera_tabla">Tasa</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of dataSource; let i = index;" >
+                            <td class="cabecera_tabla"> {{ i + 1 }}</td>
+                            <td class="cabecera_tabla"> {{ data.nombre }}</td>
+                            <td class="cabecera_tabla"> {{ data.casos }}</td>
+                            <td class="cabecera_tabla"> {{ data.tasa }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--<div class="hijo is-8 is-sm-12 top">
                 <div class="hijo is-12">
                     <table>
                         <thead>
@@ -121,7 +127,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>    
+            </div>-->    
         </div>
         
         
@@ -146,12 +152,7 @@
         </div>-->
         
     </div>
-    <div class="contenedor">
-        <div class='titulo_grafica'>Gráfica de Casos por Día</div>
-        <div class="hijo is-12 top">
-            <div id="container"></div>
-        </div>
-    </div>
+    
     
     
 </div>

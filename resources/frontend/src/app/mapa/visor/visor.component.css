@@ -82,7 +82,8 @@ table {
 	width: 100%;
 }
 .contenedor .hijo{  /*hijos*/
-	display: inline-block;
+  display: inline-block;
+  margin: 5px 0px;
 }
 
 .is-1
@@ -150,7 +151,7 @@ table {
   width: 100%;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 950px) {
   .is-sm-1
   {
     width: 8.3%;
@@ -275,4 +276,85 @@ table {
     padding: 10px 0px;
     background-color: burlywood;
     font-size: 15pt;
+}
+
+.card{
+  padding: 5px;
+}
+
+.card-title
+{
+  
+  border-radius: 5px 5px 0px 0px;
+  background-color: #e6e6fb;
+  padding: 10px 0px;
+  border-bottom: 1px solid #babafa;
+}
+
+.card-title-principal
+{
+  font-weight: bold;
+  font-size: 12pt;
+  color: #4e73df;
+  padding: 7px 0px 7px 7px;
+}
+
+.card-info
+{
+  padding: 5px;
+  background-color: white;
+  border: 1px solid #cfcfcf;
+}
+
+.card-pie
+{
+  text-align: right;
+  font-size: 10pt;
+  font-style: italic;
+  color:#5F5F5F;
+  padding: 5px 10px;
+}
+
+.info{
+  border: 1px solid #cfcfcf;
+  padding: 5px;
+  border-radius: 10px;
+  width: 90%;
+  background-color: white;
+  -webkit-box-shadow: 2px 0px 5px 1px rgba(209,209,209,1);
+-moz-box-shadow: 2px 0px 5px 1px rgba(209,209,209,1);
+box-shadow: 2px 0px 5px 1px rgba(209,209,209,1);
+}
+
+.grey
+{
+  border-left: 2px solid #5f5f5f;
+}
+
+.black
+{
+  border-left: 2px solid black;
+}
+
+.red
+{
+  border-left: 2px solid red;
+}
+
+.green
+{
+  border-left: 2px solid green;
+}
+
+.titulo-info
+{
+  font-size: 8pt;
+  padding: 10px 0px;
+  font-weight: bold;
+}
+
+.cantidad-info
+{
+  font-size: 20pt;
+  padding: 0px 10px;
 }

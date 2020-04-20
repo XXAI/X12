@@ -13,6 +13,7 @@ use App\Models\Persona;
 use App\Models\Municipio;
 use App\Models\InformacionCovid;
 use App\Models\CasosDias;
+use App\Models\CasosRepublica;
 
 class ConsultaMapaController extends Controller
 {
@@ -76,6 +77,19 @@ class ConsultaMapaController extends Controller
             $auth_user = auth()->user();
             $parametros = Input::all();
             $casos = CasosDias::whereNull("deleted_at")->get();
+
+            
+            return response()->json(['data'=>$casos],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function informacionCasosRepublica(){
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+            $casos = CasosRepublica::with("estado")->orderBy("cantidad", "desc")->get();
 
             
             return response()->json(['data'=>$casos],HttpResponse::HTTP_OK);

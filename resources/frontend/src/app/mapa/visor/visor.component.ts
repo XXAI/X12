@@ -32,6 +32,7 @@ export class VisorComponent implements OnInit {
   cantidad_total:number = 0;
   cantidad_tasa:number = 0;
   capas_chiapas:any = [];
+  capas_republica:any = [];
 
   public options: any = {
     chart: {
@@ -41,12 +42,18 @@ export class VisorComponent implements OnInit {
       text: ''
   },
   subtitle: {
-      text: 'Fuente: Secretaría de Salud del Estado de Chiapas'
+      //text: 'Fuente: Secretaría de Salud del Estado de Chiapas'
+      text: ''
   },
   xAxis: {
       title: {
-        text: 'Días Transcurridos'
-    }
+        //text: 'Días Transcurridos'
+        text: ''
+      },
+      labels:
+      {
+        style: { color: "#000000", fontSize: '12px' }
+      }
   },
   yAxis: {
       title: {
@@ -71,6 +78,36 @@ export class VisorComponent implements OnInit {
   series: []
   }
 
+  public opcionesRepublica : any = {
+    title: {
+      text: ''
+    },
+
+    xAxis: {
+        categories: [],
+        labels:
+        {
+          style: { color: "#000000", fontSize: '12px' }
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Personas Positivas a covid'
+        }
+    },
+
+    series: [{
+        type: 'column',
+        name: "Personas",
+        colorByPoint: true,
+        data: [],
+        showInLegend: false,
+        dataLabels: { enabled: true }
+    }],
+    colors:[]
+  }
+
+
   constructor(private mapaService: MapaService) { }
 
   ngOnInit() {
@@ -78,6 +115,64 @@ export class VisorComponent implements OnInit {
     
     this.CargarInformacionCovid();
     this.CargarCasos();
+    this.cargarCapaRepublica();
+    this.cargarDatosRepublica();
+  }
+
+  cargarCapaRepublica()
+  {
+    this.mapaService.getlayers().subscribe(
+      response => {
+        //console.log(response);
+        for(let i=0; i< response.length; i++)
+        {
+          this.capas_republica.push({ id: 'http://contingencia.saludchiapas.gob.mx/capas_mapa/layer/'+ response[i].nombre });
+        }
+      }
+    );
+  }
+
+  cargarDatosRepublica()
+  {
+    this.mapaService.getCasosRepublica().subscribe(
+      response => {
+        //console.log(response.data);
+        let data = response.data;
+        for(let i=0; i< data.length; i++)
+        {
+          let registro = data[i]; 
+          this.opcionesRepublica.xAxis.categories.push('<b>'+registro.estado.descripcion+'</b>');
+          this.opcionesRepublica.series[0].data.push(registro.cantidad);
+          this.opcionesRepublica.colors.push(this.obtenerColor(registro.cantidad));
+
+          //this.capas_republica.push({ id: 'http://contingencia.saludchiapas.gob.mx/capas_mapa/layer/'+ response[i].nombre });
+        }
+        Highcharts.chart('datos-republica-general', this.opcionesRepublica);
+      }
+    );
+  }
+
+  obtenerColor(cantidad)
+  {
+    if(cantidad <= 50)
+    {
+      return "#78FF78";
+    }else if(cantidad <= 100)
+    {
+      return "#50B414";
+    }else if(cantidad <= 250)
+    {
+      return "#FFB414";
+    }else if(cantidad <= 500)
+    {
+      return "#D23C14";
+    }else if(cantidad <= 1000)
+    {
+      return "#FF0014";
+    }else if(cantidad <= 4000)
+    {
+      return "#8C0014";
+    }
   }
 
   CargarCasos(){
@@ -90,7 +185,7 @@ export class VisorComponent implements OnInit {
         let acumulado:number = 0;
         for(let i = 0; i < datos.length; i++)
         {
-          fechas.push(datos[i].fecha);
+          fechas.push('<b>'+datos[i].fecha+'</b>');
           datos_dia.push(datos[i].casos);
           acumulado = acumulado + parseInt(datos[i].casos);
           datos_acumulado.push(acumulado);

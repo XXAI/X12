@@ -41,9 +41,10 @@ Route::post('guardar-indice',                           'API\Servicios\Formulari
 Route::put('editar-indice/{id}',                           'API\Servicios\FormularioController@editarDatosIndice');
 Route::put('actualiza-ubicacion/{id}',                     'API\Servicios\FormularioController@actualizaUbicacion');
 
-Route::get('ubicacion-municipios',       'API\Modulos\ConsultaMapaController@mapaUbicacion');
-Route::get('informacion-covid',       'API\Modulos\ConsultaMapaController@informacionCovid');
-Route::get('casos-dias',       'API\Modulos\ConsultaMapaController@informacionCasosAcumulado');
+Route::get('ubicacion-municipios',          'API\Modulos\ConsultaMapaController@mapaUbicacion');
+Route::get('informacion-covid',             'API\Modulos\ConsultaMapaController@informacionCovid');
+Route::get('casos-dias',                    'API\Modulos\ConsultaMapaController@informacionCasosAcumulado');
+Route::get('casos-republica',               'API\Modulos\ConsultaMapaController@informacionCasosRepublica');
 
 Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('user',          'API\Admin\UserController');

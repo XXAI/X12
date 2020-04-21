@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTiposAtencionesTable extends Migration
+class CreateCatalogoTiposAtencionesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTiposAtencionesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_atenciones', function (Blueprint $table) {
+        Schema::create('catalogo_tipos_atenciones', function (Blueprint $table) {
             
             $table->bigIncrements('id');
             $table->string('descripcion')->nullable();
@@ -30,6 +30,6 @@ class CreateTiposAtencionesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_atenciones');
+        Schema::dropIfExists('catalogo_tipos_atenciones');
     }
 }

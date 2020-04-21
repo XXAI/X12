@@ -91,6 +91,13 @@ Route::group(['middleware'=>'auth'],function($router){
 
 
     Route::apiResource('tipos_atenciones',          'API\TipoAtencionController');
+    Route::apiResource('tipos_unidades',            'API\TipoUnidadController');
+    Route::apiResource('distritos',                 'API\DistritoController');
+    
+    Route::apiResource('derechohabiencias',         'API\DerechohabienciaController');
+    Route::apiResource('tipos_transmisiones',       'API\TipoTransmisionController');
+    Route::apiResource('estatus_covid',             'API\EstatusCovidController');
+
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

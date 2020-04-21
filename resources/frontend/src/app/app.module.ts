@@ -38,6 +38,7 @@ import { ContingenciasModule } from './contingencias/contingencias.module';
 import { MapaModule } from './mapa/mapa.module';
 import { CallCenterModule } from './call-center/call-center.module';
 import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
+import { PositivosModule } from './positivos/positivos.module';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
     AppRoutingModule,
     PersonaIndiceModule,
     MapaModule,
+    PositivosModule,
     WildcardRoutingModule,
   ],
   providers: [

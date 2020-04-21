@@ -87,6 +87,10 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('personas-contagios',       'API\Modulos\IndiceContactoController@mapaGeneral');
     Route::apiResource('persona-indice',   'API\Modulos\PersonaContactoController');
     Route::apiResource('indice-contacto',   'API\Modulos\IndiceContactoController');
+
+
+
+    Route::apiResource('tipos_atenciones',          'API\TipoAtencionController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

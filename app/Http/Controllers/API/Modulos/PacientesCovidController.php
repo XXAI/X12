@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Modulos;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Input;
-use Validator,Hash,Response,DB;
+use \Validator, \Hash, \Response, \DB;
 
 use App\Models\CasosCovid\PacientesCovid;
 
@@ -75,7 +75,6 @@ class PacientesCovidController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -181,7 +180,6 @@ class PacientesCovidController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CasosCovid\PacientesCovid  $pacientesCovid
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -265,7 +263,6 @@ class PacientesCovidController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CasosCovid\PacientesCovid  $pacientesCovid
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

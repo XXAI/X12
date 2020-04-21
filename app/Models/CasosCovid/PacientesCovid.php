@@ -33,5 +33,42 @@ class PacientesCovid extends Model
         'fecha_alta_probable'
     ];
 
+    public function municipio(){
+
+        return $this->belongsTo('App\Models\Municipio', 'municipio_id');
+    }
+
+    public function tipo_atencion(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TipoAtencion', 'tipo_atencion_id');
+    }
+
+    public function tipo_unidad(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TipoUnidad', 'tipo_unidad_id');
+    }
+
+    public function estatus_covid(){
+
+        return $this->belongsTo('App\Models\CasosCovid\EstatusCovid', 'estatus_covid_id');
+    }
+
+    public function derechohabiencia(){
+
+        return $this->belongsTo('App\Models\CasosCovid\Derechohabiencias', 'derechohabiente_id');
+    }
+
+    public function distrito(){
+
+        return $this->belongsTo('App\Models\CasosCovid\Distrito', 'distrito_id');
+    }
+
+    public function tipo_transmision(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TiposTransmisiones', 'tipo_transmision_id');
+    }
+
+    
+
 
 }

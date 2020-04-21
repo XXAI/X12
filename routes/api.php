@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Routing\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +98,9 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('derechohabiencias',         'API\DerechohabienciaController');
     Route::apiResource('tipos_transmisiones',       'API\TipoTransmisionController');
     Route::apiResource('estatus_covid',             'API\EstatusCovidController');
+
+    Route::apiResource('pacientes-covid',           'API\PacientesCovidController');
+    Route::get('catalogos',                         'API\PacientesCovidController@getCatalogos');
 
 });
 

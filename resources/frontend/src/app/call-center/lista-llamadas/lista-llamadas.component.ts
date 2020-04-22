@@ -74,6 +74,11 @@ export class ListaLlamadasComponent implements OnInit {
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
           if(response.data.total > 0){
+            response.data.data.forEach(registro => {
+              let dateString = registro.fecha_llamada+'T'+registro.hora_llamada;
+              let newDate = new Date(dateString);
+              registro.fecha_hora_llamada = newDate;
+            });
             this.dataSource = response.data.data;
             this.resultsLength = response.data.total;
           }

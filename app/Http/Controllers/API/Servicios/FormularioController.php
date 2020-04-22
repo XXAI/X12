@@ -91,7 +91,40 @@ class FormularioController extends Controller
                 }
             }
 
-            $persona = Persona::create($datos_persona);
+            if(isset($parametros['config']['persona_id']) && $parametros['config']['persona_id']){
+                $persona = Persona::find($parametros['config']['persona_id']);
+
+                if(!$persona){
+                    throw new Exception("La persona seleccionada no existe", 1);
+                }
+                
+                $persona->nombre            = (isset($datos_persona['nombre']))?           $datos_persona['nombre']            : null;
+                $persona->apellido_paterno  = (isset($datos_persona['apellido_paterno']))? $datos_persona['apellido_paterno']  : null;
+                $persona->apellido_materno  = (isset($datos_persona['apellido_materno']))? $datos_persona['apellido_materno']  : null;
+                $persona->fecha_nacimiento  = (isset($datos_persona['fecha_nacimiento']))? $datos_persona['fecha_nacimiento']  : null;
+                $persona->sexo              = (isset($datos_persona['sexo']))?             $datos_persona['sexo']              : null;
+                $persona->curp              = (isset($datos_persona['curp']))?             $datos_persona['curp']              : null;
+                $persona->email             = (isset($datos_persona['email']))?            $datos_persona['email']             : null;
+                $persona->telefono_casa     = (isset($datos_persona['telefono_casa']))?    $datos_persona['telefono_casa']     : null;
+                $persona->telefono_celular  = (isset($datos_persona['telefono_celular']))? $datos_persona['telefono_celular']  : null;
+                $persona->estado_id         = (isset($datos_persona['estado_id']))?        $datos_persona['estado_id']         : null;
+                $persona->municipio_id      = (isset($datos_persona['municipio_id']))?     $datos_persona['municipio_id']      : null;
+                $persona->municipio         = (isset($datos_persona['municipio']))?        $datos_persona['municipio']         : null;
+                $persona->localidad_id      = (isset($datos_persona['localidad_id']))?     $datos_persona['localidad_id']      : null;
+                $persona->localidad         = (isset($datos_persona['localidad']))?        $datos_persona['localidad']         : null;
+                $persona->colonia           = (isset($datos_persona['colonia']))?          $datos_persona['colonia']           : null;
+                $persona->calle             = (isset($datos_persona['calle']))?            $datos_persona['calle']             : null;
+                $persona->no_exterior       = (isset($datos_persona['no_exterior']))?      $datos_persona['no_exterior']       : null;
+                $persona->no_interior       = (isset($datos_persona['no_interior']))?      $datos_persona['no_interior']       : null;
+                $persona->codigo_postal     = (isset($datos_persona['codigo_postal']))?    $datos_persona['codigo_postal']     : null;
+                $persona->referencia        = (isset($datos_persona['referencia']))?       $datos_persona['referencia']        : null;
+                $persona->latitud           = (isset($datos_persona['latitud']))?          $datos_persona['latitud']           : null;
+                $persona->longitud          = (isset($datos_persona['longitud']))?         $datos_persona['longitud']          : null;
+
+                $persona->save();
+            }else{
+                $persona = Persona::create($datos_persona);
+            }
             //$parametros['persona'] = $persona;
 
             //for($i = 0; $i <= count($parametros['formularios']); $i++ ){
@@ -208,18 +241,43 @@ class FormularioController extends Controller
                 }
             }
 
-            //Crear caso pendiente
-            $caso = Caso::create(
-                [
-                    'persona_id' => $persona->id,
-                    'contingencia_id' => $formulario->contingencia_id,
-                    'fecha_deteccion' => date("Y-m-d"),
-                    'estatus_clave' => 'PTE',
-                    'latitud' => $persona->latitud,
-                    'longitud' => $persona->longitud,
-                    'capturado_por' => ($auth_user)?$auth_user->id:null
-                ]
-            );
+            $caso = Caso::where('persona_id',$persona->id)->where('contingencia_id',$formulario->contingencia_id)->first();
+            if($caso){
+                $caso->latitud = $persona->latitud;
+                $caso->longitud = $persona->longitud;
+                $caso->save();
+
+                $caso->expediente()->create([
+                    'descripcion'=> 'Se actualizó información llenada del formulario',
+                    'fecha_atencion'=> date("Y-m-d"),
+                    'estatus_clave'=> 'S/E',
+                    'valoracion_clave'=> 'S/V',
+                    'atendido_por'=> ($auth_user)?$auth_user->id:null
+                ]);
+                
+            }else{
+                //Crear caso pendiente
+                $caso = Caso::create(
+                    [
+                        'persona_id' => $persona->id,
+                        'contingencia_id' => $formulario->contingencia_id,
+                        'fecha_deteccion' => date("Y-m-d"),
+                        'estatus_clave' => 'PTE',
+                        'latitud' => $persona->latitud,
+                        'longitud' => $persona->longitud,
+                        'capturado_por' => ($auth_user)?$auth_user->id:null
+                    ]
+                );
+
+                $caso->expediente()->create([
+                    'descripcion'=> 'Lleno formulario web',
+                    'fecha_atencion'=> date("Y-m-d"),
+                    'estatus_clave'=> 'S/E',
+                    'valoracion_clave'=> 'S/V',
+                    'atendido_por'=> ($auth_user)?$auth_user->id:null
+                ]);
+            }
+            
 
             $registro_llenado = RegistroLlenadoFormulario::create(['formulario_id'=>$formulario->id,'persona_id'=>$persona->id,'caso_id'=>$caso->id,'finalizado'=>1,'fecha_finalizado'=>date("Y-m-d H:i:s")]);
             $registro_llenado->registroLlenadoRespuestas()->createMany($respuestas_persona);
@@ -236,6 +294,7 @@ class FormularioController extends Controller
                 $llamada->formulario_id = $formulario->id;
                 $llamada->persona_id = $persona->id;
                 $llamada->caso_id = $caso->id;
+                $llamada->registro_llenado_id = $registro_llenado->id;
 
                 $result['llamada'] = $llamada;
             }else if(isset($parametros['config']['crear_llamada'])){
@@ -255,6 +314,7 @@ class FormularioController extends Controller
                     'formulario_id'=>$formulario->id,
                     'persona_id'=>$persona->id,
                     'caso_id'=>$caso->id,
+                    'registro_llenado_id'=>$registro_llenado->id,
                     'folio'=> $folio+1,
                     'asunto'=>'Llenado de Formulario: '.$formulario->descripcion,
                     'fecha_llamada' => date("Y-m-d"),

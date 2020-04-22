@@ -66,7 +66,8 @@ Route::group(['middleware'=>'auth'],function($router){
     /**
      * Modulo de Call Center
      */
-    Route::apiResource('call-center-llamadas',   'API\Modulos\CallCenterLLamadasController');
+    Route::apiResource('call-center-llamadas',      'API\Modulos\CallCenterLLamadasController');
+    Route::get('busqueda-formularios-llenos',       'API\Modulos\LlenadoFormularioController@buscarFormularioLleno');
 
     /**
      * Modulo de Casos por Contingencias

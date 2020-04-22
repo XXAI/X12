@@ -7,9 +7,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { IfHasPermissionDirective } from './if-has-permission.directive';
 import { MascaraFechaDirective } from './mascara-fecha.directive';
 import { FormularioContingenciaComponent } from './components/formulario-contingencia/formulario-contingencia.component';
+import { EditarFormularioContingenciaComponent } from './components/editar-formulario-contingencia/editar-formulario-contingencia.component';
 
 @NgModule({
-  declarations: [IfHasPermissionDirective, MascaraFechaDirective, FormularioContingenciaComponent],
+  declarations: [IfHasPermissionDirective, MascaraFechaDirective, FormularioContingenciaComponent, EditarFormularioContingenciaComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -27,7 +28,8 @@ import { FormularioContingenciaComponent } from './components/formulario-conting
     HttpClientModule,
     IfHasPermissionDirective,
     MascaraFechaDirective,
-    FormularioContingenciaComponent
+    FormularioContingenciaComponent,
+    EditarFormularioContingenciaComponent
   ],
 })
 export class SharedModule { }

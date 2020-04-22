@@ -28,8 +28,9 @@
                     </mat-select>
                 </mat-form-field>
                 <div  *ngIf="formularioContingencia" fxFlex.gt-xs="none" fxFlex.lt-sm="100" style="border-top: .84375em solid transparent;">
-                    <button *ngIf="!mostrarFormularioContingencia && !formularioContingenciaLleno" mat-button color="accent" [disabled]="!infoLlamadaForm.get('formulario_id').value" (click)="mostrarFormulario()"><mat-icon>list_alt</mat-icon> <span fxHide.sm>Mostrar Formulario</span></button>
-                    <button *ngIf="mostrarFormularioContingencia && !formularioContingenciaLleno" mat-button (click)="ocultarFormulario()">Cancelar Formulario</button>
+                    <button *ngIf="(!mostrarFormularioContingencia && !mostrarEditarFormularioContingencia ) && !formularioContingenciaLleno" mat-raised-button color="info" [disabled]="!infoLlamadaForm.get('formulario_id').value" (click)="mostrarFormulario()"><mat-icon>list_alt</mat-icon> <span fxHide.sm>Llenar</span></button>
+                    <button *ngIf="(!mostrarFormularioContingencia && !mostrarEditarFormularioContingencia ) && !formularioContingenciaLleno" mat-button color="accent" (click)="buscarFormulario()"><mat-icon>search</mat-icon> <span fxHide.sm>Buscar</span></button>
+                    <button *ngIf="(mostrarFormularioContingencia || mostrarEditarFormularioContingencia) && !formularioContingenciaLleno" mat-button (click)="ocultarFormulario()">Cancelar Formulario</button>
                     <mat-chip-list *ngIf="formularioContingenciaLleno" [selectable]="false">
                         <mat-chip><mat-icon>playlist_add_check</mat-icon> Llenó Formulario</mat-chip>
                     </mat-chip-list>
@@ -38,6 +39,10 @@
 
             <section fxFlex *ngIf="mostrarFormularioContingencia">
                 <formulario-contingencia [crearLlamada]="true" [formularioId]="formularioId" (formularioLleno)="formularioTerminado($event)"></formulario-contingencia>
+            </section>
+
+            <section fxFlex *ngIf="mostrarEditarFormularioContingencia">
+                <editar-formulario-contingencia [crearLlamada]="true" [formularioId]="formularioId" [persona]="personaData" [registroLlenado]="respuestasFormulario" (formularioLleno)="formularioTerminado($event)"></editar-formulario-contingencia>
             </section>
 
             <section fxFlex fxLayout="column" *ngIf="mostrarFormularioLlamada">
@@ -108,13 +113,20 @@
 
         <mat-card-actions>
             <section fxLayout="row" *ngIf="mostrarFormularioLlamada">
-                <div fxFlex><mat-checkbox [(ngModel)]="isSolventado">Solventado</mat-checkbox></div>
+                <div fxFlex="none"><mat-checkbox [(ngModel)]="isSolventado">Solventado</mat-checkbox></div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-evenly">
+                    <div fxFlex="none" *ngIf="llamadaFolio">
+                        <mat-chip-list>
+                            <mat-chip color="info" selected [disableRipple]="true" [selectable]="false">Folio: {{llamadaFolio}}</mat-chip>
+                        </mat-chip-list>
+                    </div>
+                </div>
                 <div fxFlex="none">
                     <button mat-button routerLink="/call-center">{{ (llamadaId)?'Regresar':'Cancelar' }}</button>
                     <button mat-raised-button color="primary" (click)="guardarLlamada()" [disabled]="!infoLlamadaForm.valid"><mat-icon>save</mat-icon> Guardar</button>
                 </div>
             </section>
-            <section fxLayout="row" *ngIf="mostrarFormularioContingencia">
+            <section fxLayout="row" *ngIf="!mostrarFormularioLlamada">
                 <div fxFlex></div>
                 <div fxFlex="none">
                     <button mat-button routerLink="/call-center">Regresar</button>

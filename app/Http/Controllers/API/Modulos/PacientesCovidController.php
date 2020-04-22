@@ -16,6 +16,7 @@ use App\Models\CasosCovid\EstatusCovid;
 use App\Models\CasosCovid\TipoAtencion;
 use App\Models\CasosCovid\TiposTransmisiones;
 use App\Models\CasosCovid\TipoUnidad;
+use App\Models\CasosCovid\EgresosCovid;
 use App\Models\Municipio;
 
 
@@ -136,6 +137,8 @@ class PacientesCovidController extends Controller
             $object->fecha_alta_21        = $inputs['fecha_alta_21'];
             $object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
+            $object->egreso_id                  = $inputs['egreso_id'];
+
 
             $object->save();
     
@@ -247,6 +250,7 @@ class PacientesCovidController extends Controller
             $object->fecha_alta_21        = $inputs['fecha_alta_21'];
             $object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
+            $object->egreso_id                  = $inputs['egreso_id'];
 
             $object->save();
 
@@ -287,6 +291,7 @@ class PacientesCovidController extends Controller
             $tipo_atencion              = TipoAtencion::orderBy("descripcion");
             $tipos_transmisiones        = TiposTransmisiones::orderBy("descripcion");
             $tipo_unidad                = TipoUnidad::orderBy("descripcion");
+            $egresos                    = EgresosCovid::orderBy("descripcion");
 
 
             $catalogo_covid = [
@@ -297,6 +302,7 @@ class PacientesCovidController extends Controller
                 'tipo_atencion      '                    => $tipo_atencion      ->get(),
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
                 'tipo_unidad        '                    => $tipo_unidad        ->get(),
+                'egresos            '                    => $egresos            ->get(),
 
             ];
 

@@ -31,6 +31,10 @@ export class VerDetallesLlamadaDialogoComponent implements OnInit {
     this.callCenterService.getDatosLlamada(this.data.id).subscribe(
       response => {
         console.log(response);
+        let dateString = response.data.fecha_llamada+'T'+response.data.hora_llamada;
+        let newDate = new Date(dateString);
+        response.data.fecha_hora_llamada = newDate;
+
         this.dataLlamada = response.data;
 
         if(this.dataLlamada.estatus_denuncia == 'S'){

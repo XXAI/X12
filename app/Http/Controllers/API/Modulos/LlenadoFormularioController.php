@@ -134,6 +134,47 @@ class LlenadoFormularioController extends Controller
         }
     }
 
+    public function buscarFormularioLleno(){
+        try{
+            $parametros = Input::all();
+            
+            $llenado = RegistroLlenadoFormulario::select('registro_llenado_formularios.*','formularios.descripcion as formulario_descripcion','personas.apellido_paterno','personas.apellido_materno', 'personas.nombre',
+                                                        'llamadas_call_center.folio','llamadas_call_center.nombre_llamada','llamadas_call_center.nombre_paciente','llamadas_call_center.telefono_llamada')
+                                                ->leftjoin('formularios','formularios.id','=','registro_llenado_formularios.formulario_id')
+                                                ->leftjoin('personas','personas.id','=','registro_llenado_formularios.persona_id')
+                                                ->leftjoin('llamadas_call_center','llamadas_call_center.registro_llenado_id','registro_llenado_formularios.id')
+                                                ->with(['persona'=>function($persona){
+                                                    return $persona->with('municipioData','localidadData');
+                                                },'registroLlenadoRespuestas']);
+            
+            //Filtros, busquedas, ordenamiento
+            if(isset($parametros['query']) && $parametros['query']){
+                $llenado = $llenado->where(function($query)use($parametros){
+                    return $query->whereRaw('CONCAT_WS(" ",personas.apellido_paterno, personas.apellido_materno, personas.nombre) LIKE "%'.$parametros['query'].'%"' )
+                                ->orWhere('personas.apellido_paterno','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('personas.apellido_materno','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('personas.nombre','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('llamadas_call_center.folio','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('llamadas_call_center.telefono_llamada','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('llamadas_call_center.nombre_llamada','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('llamadas_call_center.nombre_paciente','LIKE','%'.$parametros['query'].'%')
+                                ;
+                });
+            }
+
+            if(isset($parametros['page'])){
+                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+                $llenado = $llenado->paginate($resultadosPorPagina);
+            } else {
+                $llenado = $llenado->get();
+            }
+
+            return response()->json(['data'=>$llenado],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *

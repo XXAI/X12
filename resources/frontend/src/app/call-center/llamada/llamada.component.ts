@@ -6,6 +6,9 @@ import { MediaObserver } from '@angular/flex-layout';
 import { formatDate } from '@angular/common';
 import { SharedService } from '../../shared/shared.service';
 import { ActivatedRoute } from '@angular/router';
+import { BuscarFormularioDialogoComponent } from '../buscar-formulario-dialogo/buscar-formulario-dialogo.component';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-llamada',
@@ -19,15 +22,22 @@ export class LlamadaComponent implements OnInit {
   isSolventado:boolean = false;
 
   llamadaId:number;
+  llamadaFolio:string;
+
+  state$: Observable<object>;
 
   mediaSize: string;
   infoLlamadaForm: FormGroup;
   catalogos:any = {};
   listaContingencias:[] = [];
 
+  mostrarEditarFormularioContingencia:boolean = false;
   mostrarFormularioContingencia:boolean = false;
   mostrarFormularioLlamada:boolean = false;
+
   formularioId:number;
+  personaData:any;
+  respuestasFormulario:any;
 
   fechaHoraActual:Date;
 
@@ -81,6 +91,8 @@ export class LlamadaComponent implements OnInit {
           response => {
             console.log(response);
             this.infoLlamadaForm.patchValue(response.data);
+            this.llamadaId = response.data.id;
+            this.llamadaFolio = response.data.folio;
 
             if(response.data.formulario_id){
               this.infoLlamadaForm.get('categoria_llamada_id').disable();
@@ -126,7 +138,8 @@ export class LlamadaComponent implements OnInit {
     this.callCenterService.guardarLlamada(formData).subscribe(
       response => {
         console.log('guardado===========================================');
-        console.log(response);
+        this.llamadaId = response.data.id;
+        this.llamadaFolio = response.data.folio;
         this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
     });
   }
@@ -135,10 +148,12 @@ export class LlamadaComponent implements OnInit {
     console.log(event);
     this.formularioContingenciaLleno = true;
     this.llamadaId = event.data.llamada.id;
+    this.llamadaFolio = event.data.llamada.folio;
 
     this.sharedService.showSnackBar('Formulario guardado con éxito', null, 3000);
 
     this.infoLlamadaForm.patchValue(event.data.llamada);
+    this.mostrarEditarFormularioContingencia = false;
     this.mostrarFormularioContingencia = false;
     this.mostrarFormularioLlamada = true;
     this.datosPaciente = true;
@@ -155,17 +170,59 @@ export class LlamadaComponent implements OnInit {
   ocultarFormulario(){
     this.infoLlamadaForm.get('categoria_llamada_id').enable();
     this.infoLlamadaForm.get('formulario_id').enable();
+    this.mostrarEditarFormularioContingencia = false;
     this.mostrarFormularioContingencia = false;
     this.mostrarFormularioLlamada = false;
+    
     this.formularioId = undefined;
+    this.personaData = undefined;
+    this.respuestasFormulario = undefined;
   }
 
   mostrarFormulario(){
     this.infoLlamadaForm.get('categoria_llamada_id').disable();
     this.infoLlamadaForm.get('formulario_id').disable();
     this.formularioId = this.infoLlamadaForm.get('formulario_id').value;
-    this.mostrarFormularioContingencia = true;
+    if(this.respuestasFormulario){
+      this.mostrarEditarFormularioContingencia = true;
+    }else{
+      this.mostrarFormularioContingencia = true;
+    }
     this.mostrarFormularioLlamada = false;
+  }
+
+  buscarFormulario(){
+    let configDialog = {};
+    if(this.mediaSize == 'xs'){
+      configDialog = {
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        data:{scSize:this.mediaSize}
+      };
+    }else{
+      configDialog = {
+        width: '99%',
+        maxHeight: '90vh',
+        //height: '643px',
+        data:{}
+      }
+    }
+
+    const dialogRef = this.dialog.open(BuscarFormularioDialogoComponent, configDialog);
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response){
+        console.log(response);
+        this.infoLlamadaForm.get('formulario_id').patchValue(response.formulario_id);
+        this.personaData = response.persona;
+        this.respuestasFormulario = response.registro_llenado_respuestas;
+        this.mostrarFormulario();
+      }else{
+        console.log('Cancelar');
+      }
+    });
   }
 
   cargarContingencias(event){

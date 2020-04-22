@@ -1,0 +1,84 @@
+<div mat-dialog-title class="mat-typography">
+    <div fxLayout="row">
+        <div fxFlex></div>
+        <div fxFlex="none">
+            <button mat-icon-button (click)='close()' aria-label="Close Dialog">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>
+<div mat-dialog-content> <!-- style="/*max-height: 44vh; height:360px;*/" -->
+    <div fxLayout="row">
+        <div fxFlex fxLayout="column" style="padding-left:10px;">
+            <mat-form-field fxFill appearance="outline">
+                <mat-label>Buscar</mat-label>
+                <input matInput [(ngModel)]="searchQuery" (keyup.escape)="cleanSearch()" (keyup.enter)="searchForm()" placeholder="Buscar" cdkFocusInitial>
+                <button matSuffix *ngIf="searchQuery" mat-icon-button (click)="cleanSearch()" [attr.aria-label]="'Clean Query'" [attr.aria-pressed]="'cleanQuery'">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <div fxFlex="none">
+            <section class="search-button">
+                <button mat-raised-button color="accent" (click)="searchForm()">
+                    <mat-icon>search</mat-icon> Buscar
+                </button>
+            </section>
+        </div>
+    </div>
+    <div class="credential-loading-shade" *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar><br>
+        <span>Cargando los datos de la llamada</span>    
+    </div>
+    <div fxLayout="column">
+        <div class="data-container ">
+            <div class="data-table-container">
+                <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
+                    <ng-container matColumnDef="datos_llamada" >
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Datos Llamada </th>
+                        <td mat-cell *matCellDef="let row" fxHide.xs="true"> 
+                            <div fxLayout="row raw">
+                                <div fxFlex="50">Folio: {{(row.folio)?row.folio:'--'}}</div>
+                                <div fxFlex="50">Telefono: {{(row.telefono_llamada)?row.telefono_llamada:'--'}}</div>
+                                <div fxFlex="100">Persona: {{(row.nombre_llamada)?row.nombre_llamada:'--'}}</div>
+                                <div fxFlex="100">Paciente: {{(row.nombre_paciente)?row.nombre_paciente:'--'}}</div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="datos_persona" >
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Datos Persona </th>
+                        <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                            <div fxLayout="row raw">
+                                <div fxFlex="50"><span>Folio: </span> {{(row.persona.id)?row.persona.id:'--'}}</div>
+                                <div fxFlex="50"><span>Telefono: </span> {{(row.persona.telefono_celular)?row.persona.telefono_celular:row.persona.telefono_casa}}</div>
+                                <div fxFlex="100"><span>Nombre: </span> {{row.persona.nombre + ' ' + row.persona.apellido_paterno + ' ' + row.persona.apellido_materno}}</div>
+                                <div fxFlex="100"><span>Fecha Llenado: </span> {{row.fecha_finalizado | date:'dd/MM/yyyy' }}</div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef>Cargar</th>
+                        <td mat-cell *matCellDef="let row; let i = index" width="1">
+                            <button mat-stroked-button color="primary" (click)="seleccionarFormulario(row)"><mat-icon>redo</mat-icon></button>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="noResultsFound">
+                        <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                            No se encontraron registros 
+                        </td>
+                    </ng-container>
+                    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row (click)="selectedItemIndex = i" [ngClass]="{'selected-item': i == selectedItemIndex}" *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+
+                    <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(dataSource!=null && dataSource.length==0)}"></tr>
+                </table>
+            </div>
+            <mat-paginator #paginator [pageSize]="pageSize" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons (page)="pageEvent = loadListadoFormularios($event)"></mat-paginator>
+        </div>
+    </div>
+</div>

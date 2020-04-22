@@ -13,11 +13,20 @@ export class CallCenterService {
 
   url_listado_contingencias = `${environment.base_url}/listado-contingencias-formularios`;
   url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_busqueda_formularios = `${environment.base_url}/busqueda-formularios-llenos`;
 
   constructor(private http: HttpClient) { }
 
   getListadoLlamadas(payload):Observable<any> {
     return this.http.get<any>(this.url_llamadas,{params:payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  getFormulariosLlenos(payload):Observable<any> {
+    return this.http.get<any>(this.url_busqueda_formularios,{params:payload}).pipe(
       map( response => {
         return response;
       })

@@ -28,6 +28,6 @@ class CreateCatalogoEgresosCovidTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('egresos_covids');
+        Schema::dropIfExists('catalogo_egresos_covid');
     }
 }

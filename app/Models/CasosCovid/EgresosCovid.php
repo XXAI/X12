@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class EgresosCovid extends Model
 {
     use SoftDeletes;
-    protected $table = 'catalogo_egresos';
+    protected $table = 'catalogo_egresos_covid';
     protected $fillable = ['id','descripcion'];
 }

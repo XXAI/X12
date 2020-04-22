@@ -9,17 +9,33 @@ import { map } from 'rxjs/operators';
 })
 export class PositivosService {
 
-  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
-  url = `${environment.base_url}/`;
+  url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
+  url = `${environment.base_url}/pacientes-covid`;
+  url_salida = `${environment.base_url}/pacientes-covid-salida`;
 
   constructor(private http: HttpClient) { }
 
-  obtenerCatalogos(payload) {
-    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
+  obtenerLista(payload) {
+    return this.http.get<any>(this.url, {params:payload}).pipe(
       map( (response) => {
         return response;
       }
     ));
+  }
+
+  
+
+  obtenerCatalogos(payload) {
+    /*return this.http.get<any>(this.url_obtener_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));*/
+    return this.http.get<any>(this.url_obtener_catalogos,{params:payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
   }
 
   obtenerCaso(id_caso):Observable<any> {
@@ -40,6 +56,14 @@ export class PositivosService {
 
   editarCaso(id, payload) {
     return this.http.put<any>(this.url+"/"+id,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+  
+  registroSalida(id:any, tipo_movimiento:number) {
+    return this.http.put<any>(this.url_salida+"/"+id,{egreso_id: tipo_movimiento}).pipe(
       map( (response) => {
         return response;
       }

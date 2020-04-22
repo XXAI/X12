@@ -8,7 +8,7 @@
                 <input matInput formControlName="no_caso">
                 <mat-error *ngIf="positivosForm.get('no_caso').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
-            <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
+           <!-- <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Apellido Paterno</mat-label>
                 <input matInput formControlName="apellido_paterno">
                 <mat-error *ngIf="positivosForm.get('apellido_paterno').hasError('required')">Este campo es obligatorio</mat-error>
@@ -17,15 +17,15 @@
                 <mat-label>Apellido Materno</mat-label>
                 <input matInput formControlName="apellido_materno">
                 <mat-error *ngIf="positivosForm.get('apellido_materno').hasError('required')">Este campo es obligatorio</mat-error>
-            </mat-form-field>
-            <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
-                <mat-label>Nombre</mat-label>
-                <input matInput formControlName="nombre" required>
+            </mat-form-field>-->
+            <mat-form-field fxFlex.gt-sm="75" fxFlex.lt-sm="100" >
+                <mat-label>Nombre Completo</mat-label>
+                <input matInput formControlName="nombre" #nombre_completo (blur)="obtenerIniciales(nombre_completo.value)" required>
                 <mat-error *ngIf="positivosForm.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Alias</mat-label>
-                <input matInput formControlName="alias" required>
+                <input matInput formControlName="alias" required [readonly]="true">
                 <mat-error *ngIf="positivosForm.get('alias').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
              <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
@@ -35,11 +35,11 @@
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Sexo</mat-label>
-                <mat-select formControlName="sexo" >
+                <mat-select formControlName="sexo"  [(ngModel)]="valor_sexo">
                     <mat-option [value]="1">Masculino</mat-option>
                     <mat-option [value]="2">Femenino</mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('sexo').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('sexo').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="!catalogos['municipios']">
                 <mat-label>Municipio</mat-label>
@@ -68,28 +68,31 @@
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
                 <mat-label>Unidad</mat-label>
-                <mat-select formControlName="unidad" >
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="tipo_unidad_id" [(ngModel)]="valor_unidad" >
+                    <mat-option *ngFor="let item of catalogo_unidades" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('unidad').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('tipo_unidad_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Tipo de Atención</mat-label>
-                <mat-select formControlName="tipo_atencion" >
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="tipo_atencion_id" >
+                    <mat-option *ngFor="let item of catalogo_atencion" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('tipo_atencion').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('tipo_atencion_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Derechohabiencia</mat-label>
-                <mat-select formControlName="derechohabiencia" >
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="derechohabiente_id" >
+                    <mat-option *ngFor="let item of catalogo_derechohabiencias" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('derechohabiencia').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('derechohabiente_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Contactos</mat-label>
@@ -98,17 +101,18 @@
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Tipo Transmisión</mat-label>
-                <mat-select formControlName="tipo_transmision" >
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="tipo_transmision_id" >
+                    <mat-option *ngFor="let item of catalogo_transmision" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('tipo_transmision').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('tipo_transmision_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Fecha inicio Sintomas (aaaa-mm-dd)</mat-label>
-                <input matInput mascaraFecha formControlName="fecha_inicio_sintomas">
+                <input matInput mascaraFecha formControlName="fecha_inicio_sintoma">
                 <mat-hint>Ejemplo: 1985-08-15</mat-hint>
-                <mat-error *ngIf="positivosForm.get('fecha_inicio_sintomas').hasError('required')">Este campo es obligatorio</mat-error>
+                <mat-error *ngIf="positivosForm.get('fecha_inicio_sintoma').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Fecha confirmación (aaaa-mm-dd)</mat-label>
@@ -124,16 +128,17 @@
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Estatus</mat-label>
-                <mat-select formControlName="estatus" >
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="estatus_covid_id" >
+                    <mat-option *ngFor="let item of catalogo_estatus" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
                 </mat-select>
-                <mat-error *ngIf="positivosForm.get('estatus').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+                <mat-error *ngIf="positivosForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
         </div>   
         <div fxLayout="row">
             <div fxFlex></div>
-            <button mat-raised-button color="info" routerLink="/casos-positivos" style="margin: 0px 5px;"><mat-icon>add_user</mat-icon> Regresar</button>
+            <button mat-raised-button color="info" routerLink="/casos-positivos" style="margin: 0px 5px;"> Regresar</button>
             <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!positivosForm.valid"><mat-icon>send</mat-icon> Enviar</button>
             
       </div>

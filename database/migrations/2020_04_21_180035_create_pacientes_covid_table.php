@@ -36,8 +36,7 @@ class CreatePacientesCovidTable extends Migration
             $table->date('fecha_alta_21');
             $table->integer('dias_evolucion')->unsigned()->nullable();
             $table->date('fecha_alta_probable');
-            $table->integer('egreso_id')->unsigned()->nullable();
-
+            
             $table->softDeletes();
             $table->timestamps();
 

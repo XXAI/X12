@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SharedService } from 'src/app/shared/shared.service';
 import { map, startWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatDialog , MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -29,6 +30,7 @@ export class FormularioComponent implements OnInit {
               private positivosService: PositivosService, 
               private formBuilder: FormBuilder, 
               private router: Router,
+              private sharedService: SharedService, 
               private route: ActivatedRoute ) { }
 
   ngOnInit() {
@@ -122,7 +124,7 @@ export class FormularioComponent implements OnInit {
         //this.positivosForm.controls['apellido_paterno'].setValue(datos.apellido_paterno);
         //this.positivosForm.controls['apellido_materno'].setValue(datos.apellido_materno);
         this.positivosForm.controls['nombre'].setValue(datos.nombre);
-        //this.positivosForm.controls['alias'].setValue(datos.alias);
+        this.positivosForm.controls['alias'].setValue(datos.alias);
         this.positivosForm.controls['edad'].setValue(datos.edad);
         this.valor_sexo = parseInt(datos.sexo);
         this.positivosForm.controls['responsable'].setValue(datos.responsable);
@@ -137,7 +139,7 @@ export class FormularioComponent implements OnInit {
         //this.positivosForm.controls['municipio_id'].setValue(datos.municipio_id);
         this.positivosForm.controls['estatus_covid_id'].setValue(datos.estatus_covid_id);
         //this.positivosForm.controls['municipio_id'].setValue(datos.municipio);
-        console.log(datos);
+        //console.log(datos);
         this.IniciarCatalogos(datos.municipio);
       }); 
   }
@@ -181,13 +183,13 @@ export class FormularioComponent implements OnInit {
     {
       this.positivosService.editarCaso(this.id_caso, datoGuardado).subscribe(
         response => {
-          
+          this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
       });
       
     }else{
       this.positivosService.guardarCaso(datoGuardado).subscribe(
         response => {
-          
+          this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
       });
     }
     

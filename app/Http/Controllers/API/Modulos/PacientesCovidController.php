@@ -144,7 +144,7 @@ class PacientesCovidController extends Controller
             $object->fecha_alta_21        = $fecha->format('Y-m-d');
             //$object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
-            $object->egreso_id                  = $inputs['egreso_id'];
+            //$object->egreso_id                  = $inputs['egreso_id'];
 
 
             $object->save();
@@ -262,7 +262,7 @@ class PacientesCovidController extends Controller
             $object->fecha_alta_21        = $fecha->format('Y-m-d');
             //$object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
-            $object->egreso_id                  = $inputs['egreso_id'];
+            //$object->egreso_id                  = $inputs['egreso_id'];
 
             $object->save();
 

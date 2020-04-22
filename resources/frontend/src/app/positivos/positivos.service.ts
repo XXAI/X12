@@ -9,13 +9,21 @@ import { map } from 'rxjs/operators';
 })
 export class PositivosService {
 
-  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
-  url = `${environment.base_url}/`;
+  url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
+  url = `${environment.base_url}/pacientes-covid`;
 
   constructor(private http: HttpClient) { }
 
+  obtenerLista(payload) {
+    return this.http.get<any>(this.url, {params:payload}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
   obtenerCatalogos(payload) {
-    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
+    return this.http.get<any>(this.url_obtener_catalogos,payload).pipe(
       map( (response) => {
         return response;
       }

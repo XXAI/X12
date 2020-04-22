@@ -7,6 +7,7 @@ import { FormularioComponent } from './formulario/formulario.component';
 const routes: Routes = [
   { path: 'casos-positivos', component: ListaComponent },
   { path: 'casos-positivos/nuevo', component: FormularioComponent },
+  { path: 'casos-positivos/editar/:id', component: FormularioComponent },
 ];
 
 @NgModule({

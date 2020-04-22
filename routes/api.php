@@ -90,7 +90,7 @@ Route::group(['middleware'=>'auth'],function($router){
 
 
     Route::apiResource('pacientes-covid',             'API\Modulos\PacientesCovidController');
-    Route::get('catalogos',                           'API\Modulos\PacientesCovidController@getCatalogos');
+    Route::get('catalogos-covid',                           'API\Modulos\PacientesCovidController@getCatalogos');
 
 });
 

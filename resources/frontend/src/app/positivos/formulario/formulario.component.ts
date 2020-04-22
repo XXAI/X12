@@ -15,8 +15,15 @@ export class FormularioComponent implements OnInit {
 
   positivosForm: FormGroup;
   filteredCatalogs:any = {};
-  catalogos: any = {};
+  catalogos: any = {municipios:[]};
   id_caso:number = 0;
+  catalogo_unidades:any = [];
+  catalogo_atencion :any = [];
+  catalogo_derechohabiencias :any = [];
+  catalogo_transmision :any = [];
+  catalogo_estatus :any = [];
+  valor_sexo:number;
+  valor_unidad:number;
 
   constructor(public dialog: MatDialog, 
               private positivosService: PositivosService, 
@@ -26,79 +33,99 @@ export class FormularioComponent implements OnInit {
 
   ngOnInit() {
     this.positivosForm = this.formBuilder.group({
-      apellido_paterno:['',Validators.required],
-      apellido_materno:['',Validators.required],
+      /*apellido_paterno:['',Validators.required],
+      apellido_materno:['',Validators.required],*/
       nombre:['',Validators.required],
       alias:['',Validators.required],
       edad:['',Validators.required],
       sexo:['',Validators.required],
       responsable:['',Validators.required],
-      tipo_atencion:['',Validators.required],
-      unidad:['',Validators.required],
-      derechohabiencia:['',Validators.required],
+      tipo_atencion_id:['',Validators.required],
+      tipo_unidad_id:['',Validators.required],
+      derechohabiente_id:['',Validators.required],
       contactos:['',Validators.required],
-      tipo_transmision:['',Validators.required],
-      fecha_inicio_sintomas:['',Validators.required],
+      tipo_transmision_id:['',Validators.required],
+      fecha_inicio_sintoma:['',Validators.required],
       fecha_confirmacion:['',Validators.required],
       fecha_alta_probable:['',Validators.required],
       municipio:[''],
       municipio_id:['',Validators.required],
-      estatus:['',Validators.required],
+      estatus_covid_id:['',Validators.required],
       no_caso: ['',Validators.required],
      
     });
 
+    this.route.params.subscribe(params => {
+      this.id_caso = params['id'];
+      
+      if(this.id_caso > 0)
+      {
+        this.cargarDatos();
+      }else{
+        this.IniciarCatalogos(null);
+      }
+      
+    });
+
+     
+  }
+
+  public IniciarCatalogos(obj:any)
+  {
     let carga_catalogos = [
       {nombre:'estados',orden:'descripcion'},
       {nombre:'municipios',orden:'descripcion',filtro_id:{campo:'estado_id',valor:7}},
     ];
 
-    this.route.params.subscribe(params => {
-      this.id_caso = params['id'];
-      if(this.id_caso > 0)
-      {
-        this.cargarDatos();
-      }
-      
-    });
-
     this.positivosService.obtenerCatalogos(carga_catalogos).subscribe(
       response => {
-        console.log(response);
-        this.catalogos = response.data;
-        
-        this.filteredCatalogs['municipios'] = this.positivosForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
-          
-        /*if(this.data != null)
-        {
-          this.positivosForm.controls['municipio_id'].setValue(this.data.municipio);
-        }*/
-      }); 
-  }
+        let respuesta = response.data;
+        this.catalogos = respuesta;
 
+        this.catalogo_unidades = respuesta.tipo_unidad;
+        this.catalogo_atencion = respuesta.tipo_atencion;
+        this.catalogo_derechohabiencias = respuesta.derechohabiencias;
+        this.catalogo_transmision = respuesta.tipos_transmisiones;
+        this.catalogo_estatus = respuesta.estatusCovid;
+        
+        //console.log(respuesta);
+
+        this.filteredCatalogs['municipios'] = this.positivosForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
+      if(obj)
+      {
+        console.log(obj);
+        this.positivosForm.controls['municipio_id'].setValue(obj);
+        //this.valor_unidad = parseInt(obj.tipo_unidad_id);
+      }   
+    });
+  }
   public cargarDatos()
   {
     this.positivosService.obtenerCaso(this.id_caso).subscribe(
       response => {
+        //console.log(response);
         let datos = response.data;
         this.positivosForm.controls['no_caso'].setValue(datos.no_caso);
-        this.positivosForm.controls['apellido_paterno'].setValue(datos.apellido_paterno);
-        this.positivosForm.controls['apellido_materno'].setValue(datos.apellido_materno);
+        //this.positivosForm.controls['apellido_paterno'].setValue(datos.apellido_paterno);
+        //this.positivosForm.controls['apellido_materno'].setValue(datos.apellido_materno);
         this.positivosForm.controls['nombre'].setValue(datos.nombre);
-        this.positivosForm.controls['alias'].setValue(datos.alias);
+        //this.positivosForm.controls['alias'].setValue(datos.alias);
         this.positivosForm.controls['edad'].setValue(datos.edad);
-        this.positivosForm.controls['sexo'].setValue(datos.sexo);
+        this.valor_sexo = parseInt(datos.sexo);
         this.positivosForm.controls['responsable'].setValue(datos.responsable);
-        this.positivosForm.controls['tipo_atencion'].setValue(datos.tipo_atencion);
-        this.positivosForm.controls['unidad'].setValue(datos.unidad);
-        this.positivosForm.controls['derechohabiencia'].setValue(datos.derechohabiencia);
+        this.positivosForm.controls['tipo_atencion_id'].setValue(datos.tipo_atencion_id);
+        this.positivosForm.controls['tipo_unidad_id'].setValue(datos.tipo_unidad_id);
+        this.positivosForm.controls['derechohabiente_id'].setValue(datos.derechohabiente_id);
         this.positivosForm.controls['contactos'].setValue(datos.contactos);
-        this.positivosForm.controls['tipo_transmision'].setValue(datos.tipo_transmision);
-        this.positivosForm.controls['fecha_inicio_sintomas'].setValue(datos.fecha_inicio_sintomas);
+        this.positivosForm.controls['tipo_transmision_id'].setValue(datos.tipo_transmision_id);
+        this.positivosForm.controls['fecha_inicio_sintoma'].setValue(datos.fecha_inicio_sintoma);
         this.positivosForm.controls['fecha_confirmacion'].setValue(datos.fecha_confirmacion);
         this.positivosForm.controls['fecha_alta_probable'].setValue(datos.fecha_alta_probable);
-        this.positivosForm.controls['municipio_id'].setValue(datos.municipio_id);
-        this.positivosForm.controls['estatus'].setValue(datos.estatus);
+        //this.positivosForm.controls['municipio_id'].setValue(datos.municipio_id);
+        this.positivosForm.controls['estatus_covid_id'].setValue(datos.estatus_covid_id);
+        //this.positivosForm.controls['municipio_id'].setValue(datos.municipio);
+        console.log(datos);
+        this.IniciarCatalogos(datos.municipio);
       }); 
   }
 

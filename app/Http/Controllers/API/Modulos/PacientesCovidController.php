@@ -17,6 +17,7 @@ use App\Models\CasosCovid\TipoAtencion;
 use App\Models\CasosCovid\TiposTransmisiones;
 use App\Models\CasosCovid\TipoUnidad;
 use App\Models\Municipio;
+use Carbon\Carbon;
 
 
 
@@ -90,22 +91,24 @@ class PacientesCovidController extends Controller
             'edad'               => 'required',
             'municipio_id'       => 'required',
             'responsable'        => 'required',
-            'fecha_captura'      => 'required',
+            //'fecha_captura'      => 'required',
             'tipo_atencion_id'   => 'required',
             'tipo_unidad_id'     => 'required',
             'estatus_covid_id'   => 'required',
             'derechohabiente_id' => 'required',
-            'distrito_id'        => 'required',
+            //'distrito_id'        => 'required',
             'contactos'          => 'required',
             'tipo_transmision_id'=> 'required',
             'fecha_inicio_sintoma'=> 'required',
             'fecha_confirmacion'  => 'required',
-            'dias_evolucion'       => 'required',
+            //'dias_evolucion'       => 'required',
         ];
-
+        
         $object = new PacientesCovid();
 
         $inputs = Input::all();
+        $inputs = $inputs['persona'];
+        
         $v = Validator::make($inputs, $reglas, $mensajes);
 
         if ($v->fails()) {
@@ -118,23 +121,27 @@ class PacientesCovidController extends Controller
 
             $object->no_caso        = $inputs['no_caso'];
             $object->nombre         = $inputs['nombre'];
+            $object->alias         = $inputs['alias'];
             $object->sexo           = $inputs['sexo'];
             $object->edad           = $inputs['edad'];
             $object->municipio_id   = $inputs['municipio_id'];
             $object->responsable        = $inputs['responsable'];
-            $object->fecha_captura        = $inputs['fecha_captura'];
+            //$object->fecha_captura        = $inputs['fecha_captura'];
             $object->tipo_atencion_id        = $inputs['tipo_atencion_id'];
             $object->tipo_unidad_id        = $inputs['tipo_unidad_id'];
             $object->estatus_covid_id        = $inputs['estatus_covid_id'];
             $object->derechohabiente_id        = $inputs['derechohabiente_id'];
-            $object->distrito_id        = $inputs['distrito_id'];
+            //$object->distrito_id        = $inputs['distrito_id'];
             $object->contactos        = $inputs['contactos'];
             $object->tipo_transmision_id        = $inputs['tipo_transmision_id'];
             $object->fecha_inicio_sintoma        = $inputs['fecha_inicio_sintoma'];
             $object->fecha_confirmacion        = $inputs['fecha_confirmacion'];
-            $object->fecha_alta_14        = $inputs['fecha_alta_14'];
-            $object->fecha_alta_21        = $inputs['fecha_alta_21'];
-            $object->dias_evolucion        = $inputs['dias_evolucion'];
+            $fecha = new Carbon($inputs['fecha_confirmacion']);
+            $fecha->addDays(14);    
+            $object->fecha_alta_14        = $fecha->format('Y-m-d');
+            $fecha->addDays(7);
+            $object->fecha_alta_21        = $fecha->format('Y-m-d');
+            //$object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
 
             $object->save();
@@ -158,7 +165,7 @@ class PacientesCovidController extends Controller
     public function show($id)
     {
         try{
-            $pacientes_covid = PacientesCovid::find($id);
+            $pacientes_covid = PacientesCovid::with("municipio")->find($id);
             return response()->json(['data'=>$pacientes_covid],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
@@ -197,17 +204,17 @@ class PacientesCovidController extends Controller
         'edad'               => 'required',
         'municipio_id'       => 'required',
         'responsable'        => 'required',
-        'fecha_captura'      => 'required',
+        //'fecha_captura'      => 'required',
         'tipo_atencion_id'   => 'required',
         'tipo_unidad_id'     => 'required',
         'estatus_covid_id'   => 'required',
         'derechohabiente_id' => 'required',
-        'distrito_id'        => 'required',
+        //'distrito_id'        => 'required',
         'contactos'          => 'required',
         'tipo_transmision_id'=> 'required',
         'fecha_inicio_sintoma'=> 'required',
         'fecha_confirmacion'  => 'required',
-        'dias_evolucion'       => 'required',
+        //'dias_evolucion'       => 'required',
     ];
 
         $object = PacientesCovid::find($id);
@@ -217,6 +224,7 @@ class PacientesCovidController extends Controller
         }
 
         $inputs = Input::all();
+        $inputs = $inputs['persona'];
         $v = Validator::make($inputs, $reglas, $mensajes);
 
         if ($v->fails()) {
@@ -229,23 +237,27 @@ class PacientesCovidController extends Controller
 
             $object->no_caso        = $inputs['no_caso'];
             $object->nombre         = $inputs['nombre'];
+            $object->alias         = $inputs['alias'];
             $object->sexo           = $inputs['sexo'];
             $object->edad           = $inputs['edad'];
             $object->municipio_id   = $inputs['municipio_id'];
             $object->responsable        = $inputs['responsable'];
-            $object->fecha_captura        = $inputs['fecha_captura'];
+            //$object->fecha_captura        = $inputs['fecha_captura'];
             $object->tipo_atencion_id        = $inputs['tipo_atencion_id'];
             $object->tipo_unidad_id        = $inputs['tipo_unidad_id'];
             $object->estatus_covid_id        = $inputs['estatus_covid_id'];
             $object->derechohabiente_id        = $inputs['derechohabiente_id'];
-            $object->distrito_id        = $inputs['distrito_id'];
+            //$object->distrito_id        = $inputs['distrito_id'];
             $object->contactos        = $inputs['contactos'];
             $object->tipo_transmision_id        = $inputs['tipo_transmision_id'];
             $object->fecha_inicio_sintoma        = $inputs['fecha_inicio_sintoma'];
             $object->fecha_confirmacion        = $inputs['fecha_confirmacion'];
-            $object->fecha_alta_14        = $inputs['fecha_alta_14'];
-            $object->fecha_alta_21        = $inputs['fecha_alta_21'];
-            $object->dias_evolucion        = $inputs['dias_evolucion'];
+            $fecha = new Carbon($inputs['fecha_confirmacion']);
+            $fecha->addDays(14);    
+            $object->fecha_alta_14        = $fecha->format('Y-m-d');
+            $fecha->addDays(7);
+            $object->fecha_alta_21        = $fecha->format('Y-m-d');
+            //$object->dias_evolucion        = $inputs['dias_evolucion'];
             $object->fecha_alta_probable        = $inputs['fecha_alta_probable'];
 
             $object->save();
@@ -290,17 +302,17 @@ class PacientesCovidController extends Controller
 
 
             $catalogo_covid = [
-                'municipios'                    => $municipios->get(),
-                'derechohabiencias'             => $derechohabiencias->get(),
-                'distrito           '                    => $distrito           ->get(),
-                'estatusCovid       '                    => $estatusCovid       ->get(),
-                'tipo_atencion      '                    => $tipo_atencion      ->get(),
+                'municipios'                             => $municipios->get(),
+                'derechohabiencias'                      => $derechohabiencias->get(),
+                //'distrito'                               => $distrito           ->get(),
+                'estatusCovid'                           => $estatusCovid       ->get(),
+                'tipo_atencion'                          => $tipo_atencion      ->get(),
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
-                'tipo_unidad        '                    => $tipo_unidad        ->get(),
+                'tipo_unidad'                            => $tipo_unidad        ->get(),
 
             ];
 
-            return response()->json($catalogo_covid, HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$catalogo_covid], HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

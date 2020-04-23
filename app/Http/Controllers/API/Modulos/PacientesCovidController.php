@@ -313,8 +313,8 @@ class PacientesCovidController extends Controller
                 'estatusCovid'                           => $estatusCovid       ->get(),
                 'tipo_atencion'                          => $tipo_atencion      ->get(),
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
-                'tipo_unidad        '                    => $tipo_unidad        ->get(),
-                'egresos            '                    => $egresos            ->get(),
+                'tipo_unidad'                            => $tipo_unidad        ->get(),
+                'egresos'                                => $egresos            ->get(),
 
             ];
 

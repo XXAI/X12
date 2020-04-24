@@ -7,6 +7,21 @@ import { MatDialog , MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dia
 export interface PersonaIndiceData {
   id?: string;
   sexo?: string;
+  no_caso?: string;
+  edad?: string;
+  municipio?: any;
+  responsable?: string;
+  tipo_atencion?: any;
+  tipo_unidad?: any;
+  estatus_covid?: any;
+  derechohabiencia?: any;
+  contactos?: string;
+  tipo_transmision?: any;
+  fecha_inicio_sintoma?: string;
+  fecha_confirmacion?: string;
+  egreso_id?: number;
+  egreso_covid?: any;
+  
 }
 
 @Component({

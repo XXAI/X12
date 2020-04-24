@@ -70,13 +70,16 @@ export class ListaComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
+          console.log("entra");
           console.log(response.data);
           if(response.data.data.length > 0){
             this.dataSource = response.data.data;
 
-            this.resultsLength = response.data.data.length;
+            this.resultsLength = response.data.total;
           }
         }
+        console.log("pagina actual");
+        console.log(this.pageEvent);
         this.isLoading = false;
       },
       errorResponse =>{
@@ -120,7 +123,9 @@ export class ListaComponent implements OnInit {
               let errorMessage = response.error.message;
               this.sharedService.showSnackBar(errorMessage, null, 3000);
             } else {
-              this.cargarLista();
+              //this.selectedItemIndex = -1;
+              
+              this.applyFilter();
             }
             this.isLoading = false;
           },
@@ -152,7 +157,7 @@ export class ListaComponent implements OnInit {
               let errorMessage = response.error.message;
               this.sharedService.showSnackBar(errorMessage, null, 3000);
             } else {
-              this.cargarLista();
+             this.applyFilter();
             }
             this.isLoading = false;
           },

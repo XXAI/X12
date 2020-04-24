@@ -26,11 +26,6 @@ export class PositivosService {
   
 
   obtenerCatalogos(payload) {
-    /*return this.http.get<any>(this.url_obtener_catalogos,payload).pipe(
-      map( (response) => {
-        return response;
-      }
-    ));*/
     return this.http.get<any>(this.url_obtener_catalogos,{params:payload}).pipe(
       map( response => {
         return response;

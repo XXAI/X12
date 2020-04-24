@@ -39,6 +39,7 @@ import { MapaModule } from './mapa/mapa.module';
 import { CallCenterModule } from './call-center/call-center.module';
 import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
 import { PositivosModule } from './positivos/positivos.module';
+import { GraficasModule } from './graficas/graficas.module';
 
 @NgModule({
   declarations: [
@@ -69,10 +70,11 @@ import { PositivosModule } from './positivos/positivos.module';
     PersonaIndiceModule,
     MapaModule,
     PositivosModule,
+    GraficasModule,
     WildcardRoutingModule,
   ],
   providers: [
-    AuthService, 
+    AuthService,
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy

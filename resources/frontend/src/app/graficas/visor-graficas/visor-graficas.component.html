@@ -1,0 +1,43 @@
+<div class="form-loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
+
+
+<div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+  <div fxFlex>
+
+<section class="form-container" >
+
+  <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+    <mat-card-header fxLayoutAlign="center" >
+      <mat-card-title >Casos por distrito</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+        <dashboard [columns]="dashboardColumns" [data]="myData">
+          <control-wrapper [for]="dashboardChart" [type]="controlType" [options]="optionsfilter" style="text-align: center;"></control-wrapper>
+          <google-chart #dashboardChart type="PieChart" [width]="600" [height]="400"> </google-chart>
+        </dashboard>
+
+
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+  </section>
+
+  </div>
+
+  <div fxFlex>
+
+  </div>
+
+  <div fxFlex>
+
+  </div>
+
+</div>
+
+
+
+

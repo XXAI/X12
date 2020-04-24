@@ -17,7 +17,7 @@ export const APPS:App [] = [
     { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg",  permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
     { name:'Contagios',             route: "listado-indices",             icon: "assets/icons/indice_contacto.svg",       permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i" },
     { name:'Mapa',                  route: "mapa-visor",                  icon: "assets/icons/mapa.png"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
-    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
+    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/covid19.svg",        permission:"8PRCP4nL58TYwiEoVSY8CewwmEVNboFU" },
     { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true, 
       children:[
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file',                       permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}

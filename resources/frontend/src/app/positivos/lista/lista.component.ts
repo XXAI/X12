@@ -10,6 +10,7 @@ import { map, startWith } from 'rxjs/operators';
 import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
 import { PositivosService } from '../positivos.service';
+import { PersonaDialogComponent} from '../persona-dialog/persona-dialog.component';
 
 @Component({
   selector: 'app-lista',
@@ -23,6 +24,7 @@ export class ListaComponent implements OnInit {
 
   isLoading:boolean =false;
   searchQuery: string = '';
+  datos_paciente:any;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -87,6 +89,21 @@ export class ListaComponent implements OnInit {
       }
     );
     return event;
+  }
+
+  ver_paciente(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = {};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(PersonaDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        
+      }
+    });
   }
 
   confirmAlta(id:string = ''){

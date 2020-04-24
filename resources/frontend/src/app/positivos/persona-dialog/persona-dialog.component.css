@@ -1,0 +1,33 @@
+.table
+{
+    width: 300px;
+}
+
+.table td
+{
+    border-bottom: 1px solid #CFCFCF;
+    font-size: 10pt;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    padding: 10px 0px;
+    background-color: white;
+}
+
+.titulo
+{
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+.green
+{
+    background-color: green !important;
+    color: white;
+    font-weight: bold;
+}
+
+.black
+{
+    background-color: black !important;
+    color: white;
+    font-weight: bold;
+}

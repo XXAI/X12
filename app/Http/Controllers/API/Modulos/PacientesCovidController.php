@@ -36,7 +36,7 @@ class PacientesCovidController extends Controller
                 $parametros = Input::all();
 
                 $pacientes = PacientesCovid::select('pacientes_covid.*')
-                ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision');
+                ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid');
 
                 if(isset($parametros['query']) && $parametros['query']){
                     $pacientes = $pacientes->where(function($query)use($parametros){
@@ -298,7 +298,7 @@ class PacientesCovidController extends Controller
 
             $municipios                 = Municipio::orderBy('descripcion');
             $derechohabiencias          = Derechohabiencias::orderBy("descripcion");
-            $distrito                   = Distrito::orderBy("descripcion");
+            //$distrito                   = Distrito::orderBy("descripcion");
             $estatusCovid               = EstatusCovid::orderBy("descripcion");
             $tipo_atencion              = TipoAtencion::orderBy("descripcion");
             $tipos_transmisiones        = TiposTransmisiones::orderBy("descripcion");
@@ -313,8 +313,8 @@ class PacientesCovidController extends Controller
                 'estatusCovid'                           => $estatusCovid       ->get(),
                 'tipo_atencion'                          => $tipo_atencion      ->get(),
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
-                'tipo_unidad        '                    => $tipo_unidad        ->get(),
-                'egresos            '                    => $egresos            ->get(),
+                'tipo_unidad'                            => $tipo_unidad        ->get(),
+                'egresos'                                => $egresos            ->get(),
 
             ];
 

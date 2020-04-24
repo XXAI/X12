@@ -346,4 +346,61 @@ class PacientesCovidController extends Controller
             return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
         }
     }
+
+    public function getGraficas(){
+
+        $filtros = Input::all();
+
+        try{
+
+            $distritos = PacientesCovid::select('pacientes_covid.municipio_id', DB::raw('count(pacientes_covid.municipio_id) as total'))->with('municipio')
+            // ->join('pacientes_covid as P', 'P.municipio_id', '=', 'catalogo_municipios.id')
+            // ->where('municipio_id', '!=', null)
+            ->groupBy('pacientes_covid.municipio_id')->get();
+
+            $sexo = PacientesCovid::select('pacientes_covid.sexo', DB::raw('count(pacientes_covid.sexo) as total'))
+            ->groupBy('pacientes_covid.sexo')->get();
+
+
+            $derechohabiencia = PacientesCovid::select('pacientes_covid.derechohabiente_id', DB::raw('count(pacientes_covid.derechohabiente_id) as total'))->with('derechohabiencia')
+            ->groupBy('pacientes_covid.derechohabiente_id')->get();
+
+            $tipo_atencion = PacientesCovid::select('pacientes_covid.tipo_atencion_id', DB::raw('count(pacientes_covid.tipo_atencion_id) as total'))->with('tipo_atencion')
+            ->groupBy('pacientes_covid.tipo_atencion_id')->get();
+
+            $estatus = PacientesCovid::select('pacientes_covid.estatus_covid_id', DB::raw('count(pacientes_covid.estatus_covid_id) as total'))->with('estatus_covid')
+            ->groupBy('pacientes_covid.estatus_covid_id')->get();
+
+            $casos = PacientesCovid::count();
+
+            $hospitalizados = PacientesCovid::select('no_caso', 'tipo_unidad_id', 'estatus_covid_id')->with('tipo_unidad', 'estatus_covid')
+            ->orderBy('pacientes_covid.no_caso')->get();
+
+            $ambulatorios = PacientesCovid::select('no_caso', 'fecha_alta_probable', 'tipo_atencion_id')->with('tipo_atencion')
+            // ->join('pacientes_covid as P', 'P.tipo_atencion_id', '=', 'catalogo_tipos_atenciones.id')
+            ->where('egreso_id', '!=', null)
+            ->where('tipo_atencion_id', '=', 3)
+            ->orderBy('pacientes_covid.no_caso')->get();
+
+            $graficas_covid = [
+
+                'pacientes_distritos'                 => $distritos,
+                'pacientes_sexo'                      => $sexo,
+                'pacientes_derechohabiencia'          => $derechohabiencia,
+                'pacientes_tipo_atencion'             => $tipo_atencion,
+                'pacientes_estatus'                   => $estatus,
+                'total_casos'                         => $casos,
+                'hospitalizados'                      => $hospitalizados,
+
+                'ambulatorios'  => $ambulatorios
+
+            ];
+
+
+
+            return response()->json(['data'=>$graficas_covid], HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 }

@@ -17,6 +17,7 @@ export class MapaService {
   url_informacion = 'http://contingencia.saludchiapas.gob.mx/manualapi/municipios.php';
   informacion_covid = 'http://contingencia.saludchiapas.gob.mx/manualapi/estadisticas.php';
   capas =   'http://contingencia.saludchiapas.gob.mx/capas_mapa/obtenerCapa.php';
+  capasChiapas =   'http://contingencia.saludchiapas.gob.mx/capas_mapa/obtenerCapaChiapas.php';
   
   constructor(private http: HttpClient) { }
 
@@ -30,6 +31,14 @@ export class MapaService {
   
   getlayers():Observable<any> {
     return this.http.get<any>(this.capas).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+  
+  getlayersChiapas():Observable<any> {
+    return this.http.get<any>(this.capasChiapas).pipe(
       map( response => {
         return response;
       })

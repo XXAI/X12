@@ -32,36 +32,37 @@ export class VisorGraficasComponent implements OnInit {
         dataestatus=response.data.pacientes_estatus;
         datahospitalizados=response.data.hospitalizados;
         dataambulatorios=response.data.ambulatorios;
-        for(let i = 0; i < data.length; i++)
+         
+         for(let i = 0; i < data.length; i++)
         {
           dato.push([data[i].municipio.descripcion,data[i].total]);
         }
 
-        for(let i = 0; i < dataderechohabiencias.length; i++)
+         for(let i = 0; i < dataderechohabiencias.length; i++)
         {
           derechohabiencias.push([dataderechohabiencias[i].derechohabiencia.descripcion,dataderechohabiencias[i].total]);
-        }
+        } 
 
-        for(let i = 0; i < datatipoatencion.length; i++)
+           for(let i = 0; i < datatipoatencion.length; i++)
         {
           tipoatencion.push([datatipoatencion[i].tipo_atencion.descripcion,datatipoatencion[i].total]);
-        }
+        }   
 
-        for(let i = 0; i < dataestatus.length; i++)
+          for(let i = 0; i < dataestatus.length; i++)
         {
           estatus.push([dataestatus[i].estatus_covid.descripcion,dataestatus[i].total]);
-        }
+        }  
 
-        for(let i = 0; i < datahospitalizados.length; i++)
+            for(let i = 0; i < datahospitalizados.length; i++)
         {
           hospitalizados.push([datahospitalizados[i].no_caso,datahospitalizados[i].estatus_covid.descripcion,datahospitalizados[i].tipo_unidad.descripcion]);
-        }
-
+        }  
+ 
         for(let i = 0; i < dataambulatorios.length; i++)
         {
-          ambulatorios.push([dataambulatorios[i].no_caso,dataambulatorios[i].tipo_atencion.fecha_alta_probable]);
-        }
-
+          ambulatorios.push([dataambulatorios[i].no_caso,dataambulatorios[i].fecha_alta_probable]);
+        }   
+ 
         
 
         this.isLoading=false;

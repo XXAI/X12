@@ -1,0 +1,175 @@
+<div class="form-loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
+
+
+<div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+  <div fxFlex>
+
+<section class="form-container" >
+
+  <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+    <mat-card-header fxLayoutAlign="center" >
+      <mat-card-title >Casos por distrito</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+        <dashboard [columns]="dashboardColumns" [data]="myData">
+          <control-wrapper [for]="dashboardChart" [type]="controlType" [options]="optionsfilter" style="text-align: center;"></control-wrapper>
+          <google-chart #dashboardChart type="PieChart" [width]="600" [height]="400"> </google-chart>
+        </dashboard>
+        <google-chart #dashboardtabletipoatencion [type]="tablechart" [data]="myData" [width]="600" [height]="400" > </google-chart>
+          
+
+
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+  </section>
+
+  </div>
+
+  <div fxFlex>
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >DerechoHabiencias</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+             <google-chart #dashboardderechohabiencia [type]="columnchart" [data]="dataderecho" [options]="optionsderechohabiencia" [width]="600" [height]="400" > </google-chart>
+             <google-chart #dashboardtablederechohabiencia [type]="tablechart" [data]="dataderecho" [width]="600" [height]="400" > </google-chart>
+          
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+    
+  </div>
+
+  
+
+</div>
+
+<div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+  
+
+  <div fxFlex>
+
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >Tipo de atención</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+             <google-chart #dashboardatencion [type]="BarChart" [data]="datatipoatencion" [options]="optionsatencion" [columns]="dashboardEstatusColumns" [width]="600" [height]="400" > </google-chart>
+             <google-chart #dashboardtableatencion [type]="tablechart" [data]="datatipoatencion" [width]="600" [height]="400" > </google-chart>
+          
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+  
+
+  </div>
+
+  <div fxFlex>
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >Estatus</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+             <google-chart #dashboardestatus [type]="columnchart" [data]="dataesatus" [options]="optionsestatus" [width]="600" [height]="400" > </google-chart>
+             <google-chart #dashboardtableestatus [type]="tablechart" [data]="dataesatus" [width]="600" [height]="400" > </google-chart>
+          
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+    
+  </div>
+
+  
+</div>
+
+<div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+  <div fxFlex>
+
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >Hospitalizados</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+            <dashboard [columns]="dashboardColumnsHospitalizados" [data]="datahospitalizados">
+              <control-wrapper [for]="dashboardhospitalizadosChart" [type]="controlType" [options]="optionshospitaizadosfilter" style="text-align: center;"></control-wrapper>
+              <google-chart #dashboardhospitalizadosChart type="Table" [width]="600"> </google-chart>
+            </dashboard>
+            
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+  </div>
+
+  <div fxFlex>
+
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >Hospitalizados</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+            <dashboard [columns]="dashboardColumnsAmbulatorios" [data]="dataambulatorios">
+              <control-wrapper [for]="dashboardambulatoriosChart" [type]="controlType" [options]="optionsambulatoriosfilter" style="text-align: center;"></control-wrapper>
+              <google-chart #dashboardambulatoriosChart type="Table" [width]="600"> </google-chart>
+            </dashboard>
+            
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+  </div>
+  
+
+  
+</div>
+
+
+
+
+
+

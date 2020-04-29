@@ -103,14 +103,15 @@ export class FormularioComponent implements OnInit {
         this.catalogo_transmision = respuesta.tipos_transmisiones;
         this.catalogo_estatus = respuesta.estatusCovid;
         
-        //console.log(respuesta);
-
+        
         this.filteredCatalogs['municipios'] = this.positivosForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
       if(obj)
       {
-        console.log(obj);
+        //console.log(obj);
         this.positivosForm.controls['municipio_id'].setValue(obj);
         //this.valor_unidad = parseInt(obj.tipo_unidad_id);
+      }else{
+        this.positivosForm.controls['no_caso'].setValue(respuesta.caso.no_caso);
       }   
     });
   }

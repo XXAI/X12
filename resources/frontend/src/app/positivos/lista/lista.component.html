@@ -65,20 +65,14 @@
                                
                             <ng-container matColumnDef="actions" >
                                 <th mat-header-cell *matHeaderCellDef style="width: 200px;">Acciones</th>
-                                <td mat-cell *matCellDef="let row; let i = index" width="1">
-                                    <button mat-stroked-button color="primary" (click)="confirmAlta(row.id)"><mat-icon>how_to_reg</mat-icon></button>
-                                    <button mat-stroked-button color="danger" (click)="confirmDefuncion(row.id)"><mat-icon>mood_bad</mat-icon></button>
-                                    <button mat-stroked-button color="primary"  routerLink="/casos-positivos/editar/{{row.id}}"><mat-icon>edit</mat-icon></button>
-                                    <!--<mat-form-field>
-                                        <mat-label>Acciones</mat-label>
-                                        <mat-select  #accion (valueChange)="accionPaciente(accion.value, row.id)">
-                                          <mat-option [value]="0">Opciones</mat-option>
-                                          <mat-option [value]="1">Dar de Alta</mat-option>
-                                          <mat-option [value]="2">Defunción</mat-option>
-                                          <mat-option [value]="3">Editar</mat-option>
-                                        </mat-select>
-                                      </mat-form-field>-->
-                                </td>
+                                    <td  mat-cell *matCellDef="let row; let i = index" width="1">
+                                        <button  *ngIf="row.egreso_id == 1" mat-stroked-button color="primary" (click)="confirmAlta(row.id)"><mat-icon>how_to_reg</mat-icon></button>
+                                        <button  *ngIf="row.egreso_id == 1" mat-stroked-button color="danger" (click)="confirmDefuncion(row.id)"><mat-icon>mood_bad</mat-icon></button>
+                                        <button *ngIf="row.egreso_id == 1" mat-stroked-button color="primary"  routerLink="/casos-positivos/editar/{{row.id}}"><mat-icon>edit</mat-icon></button>
+                                        <button *ngIf="row.egreso_id != 1" mat-stroked-button color="primary"  (click)="ver_paciente(row)"><mat-icon>visibility</mat-icon></button>
+                                       
+                                    </td>
+                                    
                             </ng-container>
 
                             <ng-container matColumnDef="noResultsFound">

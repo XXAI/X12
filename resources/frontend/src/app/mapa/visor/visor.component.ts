@@ -116,6 +116,7 @@ export class VisorComponent implements OnInit {
     this.CargarInformacionCovid();
     this.CargarCasos();
     this.cargarCapaRepublica();
+    this.cargarCapaChiapas();
     this.cargarDatosRepublica();
   }
 
@@ -127,6 +128,19 @@ export class VisorComponent implements OnInit {
         for(let i=0; i< response.length; i++)
         {
           this.capas_republica.push({ id: 'http://contingencia.saludchiapas.gob.mx/capas_mapa/layer/'+ response[i].nombre });
+        }
+      }
+    );
+  }
+  
+  cargarCapaChiapas()
+  {
+    this.mapaService.getlayersChiapas().subscribe(
+      response => {
+        //console.log(response);
+        for(let i=0; i< response.length; i++)
+        {
+          this.capas_chiapas.push({ id: 'http://contingencia.saludchiapas.gob.mx/capas_mapa/layerChiapas/'+ response[i].nombre });
         }
       }
     );
@@ -234,7 +248,7 @@ export class VisorComponent implements OnInit {
             let municipio = this.datosMunicipio.data[response[i].municipio_id];
             console.log(response[i].municipio_id);
             obj = { latitud: municipio.latitud, longitud: municipio.longitud, marcable:1, nombre: municipio.descripcion, casos: response[i].casos, tasa: response[i].tasa };
-            this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/'+response[i].municipio_id+'.kml'});
+            //this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/'+response[i].municipio_id+'.kml'});
              
           }else
           {
@@ -242,18 +256,9 @@ export class VisorComponent implements OnInit {
           }
           this.dataSource.push(obj);
         }
-        //this.capas_chiapas.push({id: 'http://saludchiapas.gob.mx/doc/capa_mapa_chiapas/121a.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/96a.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/41_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/15_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/74_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/9_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/94a.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/59a.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/77_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/99_.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/capa2.kml'});
-        this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/capa1.kml'});
+        
+        //this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/capa2.kml'});
+        //this.capas_chiapas.push({id: 'http://contingencia.saludchiapas.gob.mx/mapa/capa1.kml'});
         
           
         

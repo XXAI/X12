@@ -30,6 +30,7 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { SecurityModule } from './security/security.module';
 import { ProfileModule } from './profile/profile.module';
 import { DevToolsModule } from './dev-tools/dev-tools.module';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 //Modulos del Sistema
 import { PublicModule } from './public/public.module';
@@ -71,6 +72,7 @@ import { GraficasModule } from './graficas/graficas.module';
     MapaModule,
     PositivosModule,
     GraficasModule,
+    GoogleChartsModule.forRoot(),
     WildcardRoutingModule,
   ],
   providers: [

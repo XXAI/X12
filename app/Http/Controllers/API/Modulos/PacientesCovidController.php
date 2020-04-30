@@ -385,6 +385,10 @@ class PacientesCovidController extends Controller
             ->where('tipo_atencion_id', '=', 3)
             ->orderBy('pacientes_covid.no_caso')->get();
 
+            $concentrado_casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
+            ->with('tipo_atencion', 'tipo_unidad', 'municipio', 'estatus_covid')
+            ->orderBy('pacientes_covid.no_caso')->get();
+
             $graficas_covid = [
 
                 'pacientes_distritos'                 => $distritos,
@@ -394,8 +398,8 @@ class PacientesCovidController extends Controller
                 'pacientes_estatus'                   => $estatus,
                 'total_casos'                         => $casos,
                 'hospitalizados'                      => $hospitalizados,
-
-                'ambulatorios'  => $ambulatorios
+                'ambulatorios'                        => $ambulatorios,
+                'concentrado_casos'                   => $concentrado_casos
 
             ];
 

@@ -145,7 +145,7 @@
 
       <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
         <mat-card-header fxLayoutAlign="center" >
-          <mat-card-title >Hospitalizados</mat-card-title>
+          <mat-card-title >Ambulatorios</mat-card-title>
         </mat-card-header>
     
         <mat-card-content>
@@ -163,6 +163,38 @@
       </mat-card>
       </section>
   </div>
+  
+
+  
+</div>
+
+<div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+  <div fxFlex>
+
+    <section class="form-container" >
+
+      <mat-card class="example-card" fxFlex.xs="100%" fxFlex="400" style="text-align: center;">
+        <mat-card-header fxLayoutAlign="center" >
+          <mat-card-title >Concentrado de Casos COVID- 19</mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+          <div fxLayout="row wrap" fxLayoutAlign="flex-start" fxLayoutGap="32px">
+            <dashboard [columns]="dashboardColumnsConcentrados" [data]="datachartconcentrados">
+              <control-wrapper [for]="dashboardconcentradosChart" [type]="controlType" [options]="optionsconcentradosfilter" style="text-align: center;"></control-wrapper>
+              <google-chart #dashboardconcentradosChart type="Table" style="width: 100%; align-content: center;"> </google-chart>
+            </dashboard>
+            
+    
+    
+          </div>
+        </mat-card-content>
+    
+      </mat-card>
+      </section>
+  </div>
+
   
 
   

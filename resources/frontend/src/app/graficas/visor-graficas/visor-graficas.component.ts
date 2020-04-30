@@ -23,6 +23,8 @@ export class VisorGraficasComponent implements OnInit {
     let datahospitalizados;
     let ambulatorios:any =[];
     let dataambulatorios;
+    let concentrados:any =[];
+    let dataconcentrados;
     this.isLoading=true;
     this.graficas.getGraficas().subscribe(
       response => {
@@ -32,6 +34,7 @@ export class VisorGraficasComponent implements OnInit {
         dataestatus=response.data.pacientes_estatus;
         datahospitalizados=response.data.hospitalizados;
         dataambulatorios=response.data.ambulatorios;
+        dataconcentrados=response.data.concentrado_casos;
          
          for(let i = 0; i < data.length; i++)
         {
@@ -61,13 +64,19 @@ export class VisorGraficasComponent implements OnInit {
         for(let i = 0; i < dataambulatorios.length; i++)
         {
           ambulatorios.push([dataambulatorios[i].no_caso,dataambulatorios[i].fecha_alta_probable]);
-        }   
+        }
+        
+        for(let i = 0; i < dataconcentrados.length; i++)
+        {
+          //concentrados.push([dataconcentrados[i].no_caso,dataconcentrados[i].sexo,dataconcentrados[i].edad,dataconcentrados[i].municipio[i].descripcion,dataconcentrados[i].responsable,dataconcentrados[i].fecha_alta_probable,dataconcentrados[i].tipo_atencion[i].descripcion,dataconcentrados[i].estatus_covid[i].descripcion,dataconcentrados[i].tipo_unidad[i].descripcion]);
+          concentrados.push([dataconcentrados[i].no_caso,dataconcentrados[i].sexo,dataconcentrados[i].edad,dataconcentrados[i].municipio.descripcion,dataconcentrados[i].responsable,dataconcentrados[i].fecha_alta_probable,dataconcentrados[i].tipo_atencion.descripcion,dataconcentrados[i].estatus_covid.descripcion,dataconcentrados[i].tipo_unidad.descripcion]);
+        }
  
         
 
         this.isLoading=false;
         console.log(response);
-        console.log(dato);
+        
 
         this.myData=dato;
         this.dataderecho=derechohabiencias;
@@ -75,6 +84,9 @@ export class VisorGraficasComponent implements OnInit {
         this.datahospitalizados=hospitalizados;
         this.dataambulatorios=ambulatorios;
         this.dataesatus=estatus;
+        this.datachartconcentrados=concentrados;
+
+        console.log(this.datachartconcentrados);
 
 
 
@@ -92,6 +104,7 @@ BarChart='BarChart';
 dashboardColumns = ['distrito', 'personas'];
 dashboardEstatusColumns = ['atencion', 'personas'];
 dashboardColumnsHospitalizados = ['caso', 'estatus', 'unidad'];
+dashboardColumnsConcentrados = ['No. caso', 'sexo', 'edad','municipio','responsable','alta probable','tipo de atención','estado','unidad de atención'];
 dashboardColumnsAmbulatorios = ['caso', 'fecha'];
 controlType='CategoryFilter';
   myData = [
@@ -114,7 +127,7 @@ controlType='CategoryFilter';
   dataestatus = [];
   datahospitalizados = [];
   dataambulatorios = [];
-
+  datachartconcentrados= [];
   optionsderechohabiencia = {
     'is3D':true,
     vAxis: {title: 'Casos'},
@@ -142,5 +155,7 @@ controlType='CategoryFilter';
   optionsestatusfilter={"filterColumnLabel": "atencion","minValue": 1, "maxValue": 100,'is3D':true}
   optionshospitaizadosfilter={"filterColumnLabel": "unidad",'is3D':true}
   optionsambulatoriosfilter={"filterColumnLabel": "caso",'is3D':true}
+  optionsconcentradosfilter={"filterColumnLabel": "unidad de atención",'is3D':true}
+  
 
 }

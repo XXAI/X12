@@ -35,19 +35,21 @@
             </mat-form-field>
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
                 <mat-label>Sexo</mat-label>
-                <mat-select formControlName="sexo"  [(ngModel)]="valor_sexo">
-                    <mat-option [value]="1">Masculino</mat-option>
-                    <mat-option [value]="2">Femenino</mat-option>
+                <mat-select formControlName="sexo" >
+                    <mat-option value="F">Femenino</mat-option>
+                    <mat-option value="M">Masculino</mat-option>
                 </mat-select>
                 <mat-error *ngIf="positivosForm.get('sexo').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
+
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="!catalogos['municipios']">
                 <mat-label>Municipio</mat-label>
                 <input matInput formControlName="municipio">
-                <mat-hint>Escribe el nombre del municipio</mat-hint> 
+                <mat-hint>Escribe el nombre del Municipio</mat-hint> 
             </mat-form-field>
         
             <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="catalogos['municipios']">
+
                 <mat-label>Municipio</mat-label>
                 <input type="text" aria-label="municipio" matInput formControlName="municipio_id" [matAutocomplete]="municipioAutocomplete" >
                 <mat-autocomplete #municipioAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
@@ -55,20 +57,41 @@
                         {{item.descripcion}}
                     </mat-option>
                 </mat-autocomplete>
-                <mat-hint *ngIf="!positivosForm.get('municipio_id').value">Selecciona un municipio de la lista</mat-hint>
+                <mat-hint *ngIf="!positivosForm.get('municipio_id').value">Selecciona un Municipio de la lista</mat-hint>
                 <mat-hint align="end" *ngIf="positivosForm.get('municipio_id').value">[{{positivosForm.get('municipio_id').value.clave}}]</mat-hint>
                
             </mat-form-field>
         
             <!--Nuevo-->
-            <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
+            <!-- <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
                 <mat-label>Responsable</mat-label>
                 <input matInput formControlName="responsable" required>
-                <mat-error *ngIf="positivosForm.get('responsable').hasError('required')">Este campo es obligatorio</mat-error>
+                <mat-error *ngIf="positivosForm.get('responsable_id').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field> -->
+
+            <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="!catalogos['responsables']">
+                <mat-label>Responsable</mat-label>
+                <input matInput formControlName="municipio">
+                <mat-hint>Escribe el nombre del Responsable</mat-hint> 
             </mat-form-field>
+        
+            <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" *ngIf="catalogos['responsables']">
+
+                <mat-label>Responsable</mat-label>
+                <input type="text" aria-label="responsable" matInput formControlName="responsable_id" [matAutocomplete]="responsableAutocomplete" >
+                <mat-autocomplete #responsableAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+                    <mat-option *ngFor="let item of filteredCatalogs['responsables'] | async" [value]="item">
+                        {{item.descripcion}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-hint *ngIf="!positivosForm.get('responsable_id').value">Selecciona un Responsable de la lista</mat-hint>
+                <mat-hint align="end" *ngIf="positivosForm.get('responsable_id').value">[{{positivosForm.get('responsable_id').value.id}}]</mat-hint>
+               
+            </mat-form-field>
+
             <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
                 <mat-label>Unidad</mat-label>
-                <mat-select formControlName="tipo_unidad_id" [(ngModel)]="valor_unidad" >
+                <mat-select formControlName="tipo_unidad_id" >
                     <mat-option *ngFor="let item of catalogo_unidades" [value]="item.id">
                         {{item.descripcion}}
                     </mat-option>

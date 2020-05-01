@@ -16,7 +16,7 @@ class PacientesCovid extends Model
         'sexo',
         'edad',
         'municipio_id',
-        'responsable',
+        'responsable_id',
         'fecha_captura',
         'tipo_atencion_id',
         'tipo_unidad_id',
@@ -59,9 +59,9 @@ class PacientesCovid extends Model
         return $this->belongsTo('App\Models\CasosCovid\Derechohabiencias', 'derechohabiente_id');
     }
 
-    public function distrito(){
+    public function responsable(){
 
-        return $this->belongsTo('App\Models\CasosCovid\Distrito', 'distrito_id');
+        return $this->belongsTo('App\Models\CasosCovid\Responsable', 'responsable_id');
     }
 
     public function tipo_transmision(){

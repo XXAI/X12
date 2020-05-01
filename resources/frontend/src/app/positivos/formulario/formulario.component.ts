@@ -16,15 +16,13 @@ export class FormularioComponent implements OnInit {
 
   positivosForm: FormGroup;
   filteredCatalogs:any = {};
-  catalogos: any = {municipios:[]};
+  catalogos: any = {municipios:[], responsables:[]};
   id_caso:number = 0;
   catalogo_unidades:any = [];
   catalogo_atencion :any = [];
   catalogo_derechohabiencias :any = [];
   catalogo_transmision :any = [];
   catalogo_estatus :any = [];
-  valor_sexo:number;
-  valor_unidad:number;
 
   constructor(public dialog: MatDialog, 
               private positivosService: PositivosService, 
@@ -41,7 +39,7 @@ export class FormularioComponent implements OnInit {
       alias:['',Validators.required],
       edad:['',Validators.required],
       sexo:['',Validators.required],
-      responsable:['',Validators.required],
+      responsable_id:['',Validators.required],
       tipo_atencion_id:['',Validators.required],
       tipo_unidad_id:['',Validators.required],
       derechohabiente_id:['',Validators.required],
@@ -105,10 +103,12 @@ export class FormularioComponent implements OnInit {
         
         
         this.filteredCatalogs['municipios'] = this.positivosForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
+        this.filteredCatalogs['responsables'] = this.positivosForm.controls['responsable_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'responsables','descripcion')));
       if(obj)
       {
-        //console.log(obj);
-        this.positivosForm.controls['municipio_id'].setValue(obj);
+        // console.log(obj);
+        this.positivosForm.controls['municipio_id'].setValue(obj.municipio);
+        this.positivosForm.controls['responsable_id'].setValue(obj.responsable);
         //this.valor_unidad = parseInt(obj.tipo_unidad_id);
       }else{
         this.positivosForm.controls['no_caso'].setValue(respuesta.caso.no_caso);
@@ -119,16 +119,28 @@ export class FormularioComponent implements OnInit {
   {
     this.positivosService.obtenerCaso(this.id_caso).subscribe(
       response => {
-        //console.log(response);
+        
+        console.log(response);
         let datos = response.data;
+
+        var municipio = datos.municipio;
+        var responsable = datos.responsable;
+
+        let datos_autocomplet = {
+          municipio,
+          responsable
+
+        }
+
         this.positivosForm.controls['no_caso'].setValue(datos.no_caso);
         //this.positivosForm.controls['apellido_paterno'].setValue(datos.apellido_paterno);
         //this.positivosForm.controls['apellido_materno'].setValue(datos.apellido_materno);
         this.positivosForm.controls['nombre'].setValue(datos.nombre);
         this.positivosForm.controls['alias'].setValue(datos.alias);
         this.positivosForm.controls['edad'].setValue(datos.edad);
-        this.valor_sexo = parseInt(datos.sexo);
-        this.positivosForm.controls['responsable'].setValue(datos.responsable);
+        this.positivosForm.controls['sexo'].setValue(datos.sexo);
+        //this.valor_sexo = parseInt(datos.sexo);
+        //this.positivosForm.controls['responsable_id'].setValue(datos.responsable_id);
         this.positivosForm.controls['tipo_atencion_id'].setValue(datos.tipo_atencion_id);
         this.positivosForm.controls['tipo_unidad_id'].setValue(datos.tipo_unidad_id);
         this.positivosForm.controls['derechohabiente_id'].setValue(datos.derechohabiente_id);
@@ -141,7 +153,7 @@ export class FormularioComponent implements OnInit {
         this.positivosForm.controls['estatus_covid_id'].setValue(datos.estatus_covid_id);
         //this.positivosForm.controls['municipio_id'].setValue(datos.municipio);
         //console.log(datos);
-        this.IniciarCatalogos(datos.municipio);
+        this.IniciarCatalogos(datos_autocomplet);
       }); 
   }
 
@@ -171,9 +183,10 @@ export class FormularioComponent implements OnInit {
   enviarDatos(){
     let formData = JSON.parse(JSON.stringify(this.positivosForm.value));
     
-    console.log(formData);
-    if(formData.municipio_id){
+    // console.log(formData);
+    if(formData.municipio_id && formData.responsable_id){
       formData.municipio_id = formData.municipio_id.id;
+      formData.responsable_id = formData.responsable_id.id;
     }
 
     let datoGuardado = {

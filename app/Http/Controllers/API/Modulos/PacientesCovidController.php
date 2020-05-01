@@ -11,7 +11,7 @@ use \Validator, \Hash, \Response, \DB;
 use App\Models\CasosCovid\PacientesCovid;
 
 use App\Models\CasosCovid\Derechohabiencias;
-use App\Models\CasosCovid\Distrito;
+use App\Models\CasosCovid\Responsable;
 use App\Models\CasosCovid\EstatusCovid;
 use App\Models\CasosCovid\TipoAtencion;
 use App\Models\CasosCovid\TiposTransmisiones;
@@ -36,7 +36,7 @@ class PacientesCovidController extends Controller
                 $parametros = Input::all();
 
                 $pacientes = PacientesCovid::select('pacientes_covid.*')
-                ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid')
+                ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid', 'responsable')
                 ->orderBy("egreso_id", "asc", "no_caso", "asc");
 
                 if(isset($parametros['query']) && $parametros['query']){
@@ -45,6 +45,7 @@ class PacientesCovidController extends Controller
                                     ->orWhere('sexo','LIKE','%'.$parametros['query'].'%')
                                     ->orWhere('edad','LIKE','%'.$parametros['query'].'%')
                                     ->orWhere('no_caso','LIKE','%'.$parametros['query'].'%')
+                                    // ->orWhere('responsable_id','LIKE','%'.$parametros['query'].'%')
                                     ->orWhere('municipio_id','LIKE','%'.$parametros['query'].'%');
                     });
                 }
@@ -92,7 +93,7 @@ class PacientesCovidController extends Controller
             'sexo'               => 'required',
             'edad'               => 'required',
             'municipio_id'       => 'required',
-            'responsable'        => 'required',
+            'responsable_id'     => 'required',
             //'fecha_captura'      => 'required',
             'tipo_atencion_id'   => 'required',
             'tipo_unidad_id'     => 'required',
@@ -127,7 +128,7 @@ class PacientesCovidController extends Controller
             $object->sexo           = $inputs['sexo'];
             $object->edad           = $inputs['edad'];
             $object->municipio_id   = $inputs['municipio_id'];
-            $object->responsable        = $inputs['responsable'];
+            $object->responsable_id        = $inputs['responsable_id'];
             //$object->fecha_captura        = $inputs['fecha_captura'];
             $object->tipo_atencion_id        = $inputs['tipo_atencion_id'];
             $object->tipo_unidad_id        = $inputs['tipo_unidad_id'];
@@ -169,7 +170,7 @@ class PacientesCovidController extends Controller
     public function show($id)
     {
         try{
-            $pacientes_covid = PacientesCovid::with("municipio")->find($id);
+            $pacientes_covid = PacientesCovid::with("municipio", "responsable")->find($id);
             return response()->json(['data'=>$pacientes_covid],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
@@ -207,7 +208,7 @@ class PacientesCovidController extends Controller
         'sexo'               => 'required',
         'edad'               => 'required',
         'municipio_id'       => 'required',
-        'responsable'        => 'required',
+        'responsable_id'     => 'required',
         //'fecha_captura'      => 'required',
         'tipo_atencion_id'   => 'required',
         'tipo_unidad_id'     => 'required',
@@ -245,7 +246,7 @@ class PacientesCovidController extends Controller
             $object->sexo           = $inputs['sexo'];
             $object->edad           = $inputs['edad'];
             $object->municipio_id   = $inputs['municipio_id'];
-            $object->responsable        = $inputs['responsable'];
+            $object->responsable_id        = $inputs['responsable_id'];
             //$object->fecha_captura        = $inputs['fecha_captura'];
             $object->tipo_atencion_id        = $inputs['tipo_atencion_id'];
             $object->tipo_unidad_id        = $inputs['tipo_unidad_id'];
@@ -299,7 +300,7 @@ class PacientesCovidController extends Controller
 
             $municipios                 = Municipio::orderBy('descripcion');
             $derechohabiencias          = Derechohabiencias::orderBy("descripcion");
-            //$distrito                   = Distrito::orderBy("descripcion");
+            $responsables               = Responsable::orderBy("descripcion");
             $estatusCovid               = EstatusCovid::orderBy("descripcion");
             $tipo_atencion              = TipoAtencion::orderBy("descripcion");
             $tipos_transmisiones        = TiposTransmisiones::orderBy("descripcion");
@@ -309,9 +310,10 @@ class PacientesCovidController extends Controller
 
 
             $catalogo_covid = [
-                'municipios'                             => $municipios->get(),
-                'derechohabiencias'                      => $derechohabiencias->get(),
-                //'distrito'                               => $distrito           ->get(),
+
+                'municipios'                             => $municipios         ->get(),
+                'derechohabiencias'                      => $derechohabiencias  ->get(),
+                'responsables'                           => $responsables       ->get(),
                 'estatusCovid'                           => $estatusCovid       ->get(),
                 'tipo_atencion'                          => $tipo_atencion      ->get(),
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
@@ -385,10 +387,6 @@ class PacientesCovidController extends Controller
             ->where('tipo_atencion_id', '=', 3)
             ->orderBy('pacientes_covid.no_caso')->get();
 
-            $concentrado_casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
-            ->with('tipo_atencion', 'tipo_unidad', 'municipio', 'estatus_covid')
-            ->orderBy('pacientes_covid.no_caso')->get();
-
             $graficas_covid = [
 
                 'pacientes_distritos'                 => $distritos,
@@ -398,14 +396,36 @@ class PacientesCovidController extends Controller
                 'pacientes_estatus'                   => $estatus,
                 'total_casos'                         => $casos,
                 'hospitalizados'                      => $hospitalizados,
-                'ambulatorios'                        => $ambulatorios,
-                'concentrado_casos'                   => $concentrado_casos
+                'ambulatorios'                        => $ambulatorios
 
             ];
 
 
 
             return response()->json(['data'=>$graficas_covid], HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+
+    public function getConcentradoCasos(){
+
+        $filtros = Input::all();
+
+        try{
+
+            $casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable_id', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
+            ->with('tipo_atencion', 'tipo_unidad', 'responsable', 'municipio', 'estatus_covid')
+            ->orderBy('pacientes_covid.no_caso')->get();
+
+            $concentrado = [
+                'casos'                => $casos
+            ];
+
+
+
+            return response()->json(['data'=>$concentrado], HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

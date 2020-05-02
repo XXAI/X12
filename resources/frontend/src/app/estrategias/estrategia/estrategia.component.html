@@ -1,0 +1,38 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <mat-card fxFlex="none" fxLayout="column">
+        <div fxFlex="none">
+            <div fxFlex fxLayout="row raw" [formGroup]="formEstrategia">
+                <mat-form-field fxFlex="100">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="nombre" required>
+                    <mat-error *ngIf="formEstrategia.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div fxFlex="none" fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button [routerLink]="'/almacen/salidas'" mat-button>Cancelar</button>
+                &nbsp;
+                <button mat-raised-button color="accent"><mat-icon>save</mat-icon> Guardar</button>
+            </div>
+        </div>
+    </mat-card>
+    <section fxFlex fxLayout="row" fxLayoutGap="10px">
+        <mat-card fxFlex="30" fxLayout="column">
+            
+            <div fxFlex></div>
+            <div fxFlex="none">
+                
+            </div>
+        </mat-card>
+        <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
+            <div fxFlex>lista</div>
+        </mat-card>
+    </section>
+    
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex></div>
+        
+    </section>
+</section>

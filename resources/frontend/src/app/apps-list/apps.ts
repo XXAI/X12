@@ -25,4 +25,5 @@ export const APPS:App [] = [
       ],
     },
     { name:'Llenar Formulario',     route:'llenar-formulario-sistema',            icon: 'assets/icons/clipboard.svg',     permission:"aTRn5wKRr1iwaknd4ZtNmVRwG5dSYrRJ"},
+    { name:'Concentrado de casos',       route: "casos-concentrados",             icon: "assets/icons/estadisticas.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
 ]

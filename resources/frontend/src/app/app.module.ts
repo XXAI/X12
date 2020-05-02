@@ -41,6 +41,7 @@ import { CallCenterModule } from './call-center/call-center.module';
 import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
 import { PositivosModule } from './positivos/positivos.module';
 import { GraficasModule } from './graficas/graficas.module';
+import { ConcentradosModule } from './concentrados/concentrados.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,7 @@ import { GraficasModule } from './graficas/graficas.module';
     WelcomeComponent,
     NotFoundComponent,
     DrawerListComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,6 +74,7 @@ import { GraficasModule } from './graficas/graficas.module';
     PositivosModule,
     GraficasModule,
     GoogleChartsModule.forRoot(),
+    ConcentradosModule,
     WildcardRoutingModule,
   ],
   providers: [

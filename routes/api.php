@@ -76,6 +76,11 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('busqueda-formularios-llenos',       'API\Modulos\LlenadoFormularioController@buscarFormularioLleno');
 
     /**
+     * Modulo de Estrategias
+     */
+    Route::apiResource('estrategias',               'API\Modulos\EstrategiasController');
+
+    /**
      * Modulo de Casos por Contingencias
      */
     Route::get('listado-contingencias',             'API\Modulos\CasosContingenciasController@listadoContingencias');

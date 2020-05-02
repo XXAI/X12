@@ -41,7 +41,9 @@ import { CallCenterModule } from './call-center/call-center.module';
 import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
 import { PositivosModule } from './positivos/positivos.module';
 import { GraficasModule } from './graficas/graficas.module';
+import { EstrategiasModule } from './estrategias/estrategias.module';
 import { ConcentradosModule } from './concentrados/concentrados.module';
+
 
 @NgModule({
   declarations: [
@@ -73,6 +75,7 @@ import { ConcentradosModule } from './concentrados/concentrados.module';
     MapaModule,
     PositivosModule,
     GraficasModule,
+    EstrategiasModule,
     GoogleChartsModule.forRoot(),
     ConcentradosModule,
     WildcardRoutingModule,

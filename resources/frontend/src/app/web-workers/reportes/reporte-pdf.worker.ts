@@ -2,14 +2,19 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { ReportePersonalActivo } from './reporte-personal-activo';
+import { ReporteCasoConcentrados } from './reporte-casos-concentrados';
+
+
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const reportes = {
-  'empleados/personal-activo': new ReportePersonalActivo()
+  'empleados/personal-activo': new ReportePersonalActivo(),
+  '/concentrado-datos': new ReporteCasoConcentrados(),
 };
 
 addEventListener('message', ({ data }) => {
+  console.log("plop", data.data);
   const documentDefinition = reportes[data.reporte].getDocumentDefinition(data.data);
 
   let pdfReporte = pdfMake.createPdf(documentDefinition);

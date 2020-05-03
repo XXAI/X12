@@ -1,38 +1,50 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <mat-card fxFlex="none" fxLayout="column">
-        <div fxFlex="none">
-            <div fxFlex fxLayout="row raw" [formGroup]="formEstrategia">
+    <div fxFlex fxLayout="row" *ngIf="isLoading"fxLayoutAlign="center center">
+        <mat-spinner ></mat-spinner>
+    </div>
+    <mat-progress-bar *ngIf="isSaving" mode="indeterminate"></mat-progress-bar>
+    <mat-card fxFlex="none" fxLayout="column" *ngIf="!isLoading"> 
+              
+        <div fxFlex="none" fxLayout="column">
+            <section class="mat-typography"  *ngIf="!editar && id != null">
+                <h2 style="font-weight: 200;">{{ object?.nombre}}</h2>                
+            </section>
+            <section class="mat-typography"  *ngIf="editar && id == null">
+                <h1>Nueva</h1>                
+            </section>
+            <section class="mat-typography"  *ngIf="editar && id != null">
+                <h1>Editar</h1>                
+            </section>
+            <form class="form" fxFlex fxLayout="row"[formGroup]="form" (ngSubmit)="guardar()" (keyup.enter)="guardar()" *ngIf="!isLoading &&  editar">
                 <mat-form-field fxFlex="100">
                     <mat-label>Nombre</mat-label>
-                    <input matInput formControlName="nombre" required>
-                    <mat-error *ngIf="formEstrategia.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
+                    <input matInput name="nombre" formControlName="nombre" >
+                    <mat-error *ngIf="form?.controls['nombre']?.hasError('required')">Campo requerido</mat-error>
                 </mat-form-field>
-            </div>
+            </form>
         </div>
         <div fxFlex="none" fxLayout="row">
             <div fxFlex></div>
-            <div fxFlex="none">
-                <button [routerLink]="'/almacen/salidas'" mat-button>Cancelar</button>
+            <div fxFlex="none" *ngIf="!editar">
+                <button [routerLink]="'/estrategias'" mat-button>Regresar</button>&nbsp;
+                <button mat-raised-button color="primary" type="button" (click)="editar=true"><mat-icon>edit</mat-icon> Editar</button>               
+            </div>
+            <div fxFlex="none" *ngIf="editar && id !=null">
+                <button (click)="cancelar()" mat-button [disabled]="isSaving">Cancelar</button>
                 &nbsp;
-                <button mat-raised-button color="accent"><mat-icon>save</mat-icon> Guardar</button>
+                <button mat-raised-button color="accent" type="button" (click)="guardar()" [disabled]="isSaving"><mat-icon>save</mat-icon> Guardar cambios</button>
             </div>
-        </div>
+            <div fxFlex="none" *ngIf="editar && id ==null">
+                <button [routerLink]="'/estrategias'" mat-button [disabled]="isSaving">Cancelar</button>
+                &nbsp;
+                <button mat-raised-button color="accent" type="button" (click)="crear()" [disabled]="isSaving"><mat-icon>save</mat-icon> Guardar</button>
+            </div>
+        </div>        
     </mat-card>
-    <section fxFlex fxLayout="row" fxLayoutGap="10px">
-        <mat-card fxFlex="30" fxLayout="column">
-            
-            <div fxFlex></div>
-            <div fxFlex="none">
-                
-            </div>
-        </mat-card>
+
+    <section fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="id != null && !isLoading">
         <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
-            <div fxFlex>lista</div>
+            <div fxFlex>Aqui va ir la tabla</div>
         </mat-card>
-    </section>
-    
-    <section fxFlex="none" fxLayout="row">
-        <div fxFlex></div>
-        
     </section>
 </section>

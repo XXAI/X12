@@ -8,7 +8,7 @@ import { EstrategiaComponent } from './estrategia/estrategia.component';
 const routes: Routes = [
   { path: 'estrategias', component: ListaComponent, canActivate: [AuthGuard] },
   { path: 'estrategias/nueva', component: EstrategiaComponent, canActivate: [AuthGuard] },
-  { path: 'estrategias/editar/id:', component: EstrategiaComponent, canActivate: [AuthGuard] },
+  { path: 'estrategias/editar/:id', component: EstrategiaComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

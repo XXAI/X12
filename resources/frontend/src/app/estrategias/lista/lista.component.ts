@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
 import { SharedService } from '../../shared/shared.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material';
 import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
@@ -18,7 +18,14 @@ export class ListaComponent implements OnInit {
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatTable, {static:false}) usersTable: MatTable<any>;
 
-  constructor(private sharedService: SharedService, private estrategiasService: EstrategiasService, public dialog: MatDialog, public mediaObserver: MediaObserver, private route: ActivatedRoute) { }
+  constructor(
+    private sharedService: SharedService, 
+    private estrategiasService: EstrategiasService, 
+    public dialog: MatDialog, 
+    public mediaObserver: MediaObserver, 
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   isLoading: boolean = false;
   mediaSize: string;
@@ -31,7 +38,7 @@ export class ListaComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['id','nombre','activo','actions'];
+  displayedColumns: string[] = ['id','nombre','activo'];
   dataSource: any = [];
 
   ngOnInit() {
@@ -103,7 +110,9 @@ export class ListaComponent implements OnInit {
   cleanSearch(){
     this.searchQuery = '';
   }
-
+  ver(row:any){
+    this.router.navigate(['editar/' + row.id], { relativeTo: this.route });
+  }
   verRegistro(id: number, index: number){
     this.selectedItemIndex = index;
     /*

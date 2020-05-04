@@ -43,7 +43,7 @@ import { PositivosModule } from './positivos/positivos.module';
 import { GraficasModule } from './graficas/graficas.module';
 import { EstrategiasModule } from './estrategias/estrategias.module';
 import { ConcentradosModule } from './concentrados/concentrados.module';
-
+import { AvancesActividadesModule } from './avances-actividades/avances-actividades.module';
 
 @NgModule({
   declarations: [
@@ -76,6 +76,7 @@ import { ConcentradosModule } from './concentrados/concentrados.module';
     PositivosModule,
     GraficasModule,
     EstrategiasModule,
+    AvancesActividadesModule,
     GoogleChartsModule.forRoot(),
     ConcentradosModule,
     WildcardRoutingModule,

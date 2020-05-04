@@ -83,6 +83,12 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('actividades-metas',         'API\Modulos\ActividadesMetasController');
 
     /**
+     * Avances Actividades
+     */
+    Route::apiResource('avances-actividades',       'API\Modulos\AvancesActividadesController');
+    Route::get('listado-avances',                   'API\Modulos\AvancesActividadesController@listadoAvances');
+
+    /**
      * Modulo de Casos por Contingencias
      */
     Route::get('listado-contingencias',             'API\Modulos\CasosContingenciasController@listadoContingencias');

@@ -55,7 +55,7 @@ class AvancesActividadesController extends Controller
                         
                         $actividad['meta_abierta'] = ($actividad['total_meta_programada'])?false:true;
                         
-                        if($actividad['avanceAcumulado']){
+                        if($actividad['avanceAcumulado'] && !$actividad['meta_abierta']){
                             $actividad['porcentaje'] = ($actividad['avanceAcumulado']['total_avance']/$actividad['total_meta_programada'])*100;
                         }else{
                             $actividad['porcentaje'] = '0';
@@ -148,7 +148,12 @@ class AvancesActividadesController extends Controller
             $actividad = Actividad::with('avanceAcumulado')->where('id',$parametros['actividad_id'])->first();
 
             $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
-            $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+            if($actividad->meta_abierta){
+                $actividad->porcentaje = 0;
+            }else{
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+            }
+            
 
             return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
         }catch(\Exception $e){

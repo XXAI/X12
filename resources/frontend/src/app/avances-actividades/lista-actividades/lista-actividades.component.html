@@ -22,7 +22,7 @@
                         </div>
                         <div fxFlex>
                             <div class="meta-abierta" *ngIf="actividad.meta_abierta">
-                                {{actividad.avance_acumulado.total_avance | number}}
+                                {{((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number}}
                             </div>
                             <div class="porcentaje-barra" *ngIf="!actividad.meta_abierta">
                                 <span class="porcentaje-lleno" [style.width]="actividad.porcentaje+'%'">{{actividad.porcentaje | number:'1.0-0'}}%</span>

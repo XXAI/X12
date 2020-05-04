@@ -13,7 +13,7 @@ import * as FileSaver from 'file-saver';
   templateUrl: './visor-concentrados.component.html',
   styleUrls: ['./visor-concentrados.component.css'],
 
-  
+
 
 
 })
@@ -41,7 +41,7 @@ export class VisorConcentradosComponent implements OnInit {
   stepperConfig:any = {};
   reportTitle:string;
   reportIncludeSigns:boolean = false;
- 
+
 
 
   pageEvent: PageEvent;
@@ -51,20 +51,20 @@ export class VisorConcentradosComponent implements OnInit {
   selectedItemIndex: number = -1;
 
 
-  displayedColumns: string[] = ['no_caso', 'sexo', 'edad', 'municipio','responsable','alta_probable','tipo_atencion','estado','unidad_atencion'];
+  displayedColumns: string[] = ['grupo','no_caso', 'sexo', 'edad', 'municipio','responsable','alta_probable','tipo_atencion','estado','unidad_atencion','distrito_sanitario'];
   dataSource: any = [];
 
-  
+
 
   constructor(private sharedService: SharedService, public dialog: MatDialog, public concentradosService: ConcentradosService, public mediaObserver: MediaObserver, private route: Router) { }
 
-    
+
     ngOnInit() {
 
       this.cargarConcentrados();
 
-          } 
-          
+          }
+
           cargarConcentrados(event?)
           {
             this.isLoading = true;
@@ -77,15 +77,15 @@ export class VisorConcentradosComponent implements OnInit {
                 per_page: event.pageSize
               };
             }
-        
+
             if(event && !event.hasOwnProperty('selectedIndex')){
               this.selectedItemIndex = -1;
             }
-            
+
             params.query = this.searchQuery;
             this.dataSource = [];
             this.resultsLength = 0;
-        
+
             this.concentradosService.getConcentrados(params).subscribe(
               response => {
                 console.log(response);
@@ -97,7 +97,7 @@ export class VisorConcentradosComponent implements OnInit {
                   //console.log(response.data);
                   if(response.data.casos.length > 0){
                     this.dataSource = response.data.casos;
-        
+
                     this.resultsLength = response.data.casos.length;
                   }
                 }
@@ -123,7 +123,7 @@ export class VisorConcentradosComponent implements OnInit {
             this.paginator.pageSize = this.pageSize;
             this.cargarConcentrados(null);
           }
-        
+
           cleanSearch(){
             this.searchQuery = '';
           }
@@ -133,21 +133,21 @@ export class VisorConcentradosComponent implements OnInit {
             this.isLoadingPDF = true;
             this.showMyStepper = true;
             this.showReportForm = false;
-        
+
             let params:any = {};
             let countFilter = 0;
-        
+
             let appStoredData = this.sharedService.getArrayDataFromCurrentApp(['searchQuery','filter']);
             console.log(appStoredData);
-        
+
             params.reporte = 'pacientes';
-        
+
             if(appStoredData['searchQuery']){
               params.query = appStoredData['searchQuery'];
             }
-        
+
             /* for(let i in appStoredData['filter']){
-        
+
               if(appStoredData['filter'][i]){
                 if(i == 'clues'){
                   params[i] = appStoredData['filter'][i].id;
@@ -162,15 +162,15 @@ export class VisorConcentradosComponent implements OnInit {
                 }
                 countFilter++;
               }
-        
+
             } */
-        
+
             if(countFilter > 0){
               params.active_filter = true;
             }
-            
+
             this.stepperConfig.steps[0].status = 2;
-        
+
             this.concentradosService.getConcentrados(params).subscribe(
               response =>{
                 console.log("zxczxc",response);
@@ -184,23 +184,23 @@ export class VisorConcentradosComponent implements OnInit {
                     this.stepperConfig.steps[0].status = 3;
                     this.stepperConfig.steps[1].status = 2;
                     this.stepperConfig.currentIndex = 1;
-        
+
                     const reportWorker = new ReportWorker();
                     reportWorker.onmessage().subscribe(
                       data => {
                         this.stepperConfig.steps[1].status = 3;
                         this.stepperConfig.steps[2].status = 2;
                         this.stepperConfig.currentIndex = 2;
-        
+
                         console.log("deitaa",data);
                         FileSaver.saveAs(data.data,'concentrado-datos');
                         reportWorker.terminate();
-        
+
                         this.stepperConfig.steps[2].status = 3;
                         this.isLoadingPDF = false;
                         this.showMyStepper = false;
                     });
-        
+
                     reportWorker.onerror().subscribe(
                       (data) => {
                         //this.sharedService.showSnackBar('Error: ' + data.message,null, 3000);
@@ -211,10 +211,10 @@ export class VisorConcentradosComponent implements OnInit {
                         reportWorker.terminate();
                       }
                     );
-                    
+
                     let config = {
                       title: this.reportTitle,
-                      showSigns: this.reportIncludeSigns, 
+                      showSigns: this.reportIncludeSigns,
                     };
                     console.log("titulo", config);
                     reportWorker.postMessage({data:{items: response.data, config:config},reporte:'/concentrado-datos'});
@@ -230,17 +230,17 @@ export class VisorConcentradosComponent implements OnInit {
                 this.stepperConfig.steps[this.stepperConfig.currentIndex].errorMessage = errorMessage;
                 //this.sharedService.showSnackBar(errorMessage, null, 3000);
                 this.isLoading = false;
-                
+
               }
             );
-        
-        
+
+
             }
 
             toggleReportPanel(){
               this.reportIncludeSigns = false;
               this.reportTitle = 'Listado de Pacientes';
-          
+
               this.stepperConfig = {
                 steps:[
                   {
@@ -264,7 +264,7 @@ export class VisorConcentradosComponent implements OnInit {
                 ],
                 currentIndex: 0
               }
-          
+
               this.showReportForm = !this.showReportForm;
               if(this.showReportForm){
                 this.showMyStepper = false;
@@ -272,6 +272,6 @@ export class VisorConcentradosComponent implements OnInit {
               //this.showMyStepper = !this.showMyStepper;
             }
 
-          
-  
+
+
 }

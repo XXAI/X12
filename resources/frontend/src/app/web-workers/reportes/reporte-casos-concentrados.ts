@@ -5,11 +5,9 @@ export class ReporteCasoConcentrados {
     afiliacion;
 
     getDocumentDefinition(reportData:any) {
-        console.log("shiiit",reportData.items);
+
         let contadorLineasHorizontalesV = 0;
-        //let fecha_hoy =  Date.now().toLocaleString().split(',')[0];
-        let fecha_hoy = new Date();
-    console.log("fecha",fecha_hoy);
+
         let datos = {
           pageOrientation: 'landscape',
           pageSize: 'LEGAL',
@@ -38,8 +36,8 @@ export class ReporteCasoConcentrados {
               }
             ]
           },
-          footer: function(currentPage, pageCount) { 
-            //return 'Página ' + currentPage.toString() + ' de ' + pageCount; 
+          footer: function(currentPage, pageCount) {
+            //return 'Página ' + currentPage.toString() + ' de ' + pageCount;
             return {
               margin: [30, 20, 30, 0],
               columns: [
@@ -55,7 +53,7 @@ export class ReporteCasoConcentrados {
                       alignment: 'center'
                   },
                   {
-                    text:fecha_hoy,
+                    text:new Intl.DateTimeFormat('es-ES', {year: 'numeric', month: 'long', day: '2-digit'}).format(new Date()),
                     alignment:'right',
                     fontSize: 8,
                   }
@@ -88,24 +86,23 @@ export class ReporteCasoConcentrados {
               }
             }
         };
-      
-       
+
+
         let indice_actual;//(datos.content.length -1);
 
-        //console.log('for(let i = 0; i < ; i++){');
-        console.log("iiiii", reportData.items.casos.length);
 
         datos.content.push({
-          //layout: 'lightHorizontalLines',
+
           table: {
             headerRows:2,
             dontBreakRows: true,
             keepWithHeaderRows: 1,
-            widths: [  30, 70, 70, 110, 120, 100,100, 100, 100 ],
+            widths: [ 30,30, 40, 70, 130, 120, 70,100, 100, 100,30 ],
             margin: [0,0,0,0],
             body: [
-              //[{text: "["+empleado.clues+"] "+empleado.clues_descripcion, colSpan: 12, style: 'cabecera'},{},{},{},{},{},{},{},{},{},{},{}],
+
               [
+                {text: "Grupo", style: 'cabecera'},
                 {text: "N° Caso", style: 'cabecera'},
                 {text: "Sexo", style: 'cabecera'},
                 {text: "Edad", style: 'cabecera'},
@@ -114,7 +111,8 @@ export class ReporteCasoConcentrados {
                 {text: "Alta Pble.", style: 'cabecera'},
                 {text: "Tipo atención", style: 'cabecera'},
                 {text: "Estado", style: 'cabecera'},
-                {text: "Unidad de atención", style: 'cabecera'}
+                {text: "Unidad de atención", style: 'cabecera'},
+                {text: "No. D.S.", style: 'cabecera'}
               ]
             ]
           }
@@ -124,52 +122,32 @@ export class ReporteCasoConcentrados {
           //console.log("iiiii", reportData.items.length);
           let paciente = reportData.items.casos[i];
 
-          
-          if(paciente.sexo == 'F'){
 
-            paciente.sexo = 'Femenino';
-
-          }
-
-          if(paciente.sexo == 'M'){
-
-            paciente.sexo = 'Masculino'
-
-          }
-
-
- 
-           
-
-           
-
-
-             
-              
+               var fecha=paciente.fecha_alta_probable.split("-", 3);
+              var fecha_modificada=fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 
               indice_actual = datos.content.length -1;
-            
-            // datos.content[indice_actual].table.body.push(
-            //   [{text: "["+empleado.cr_id+"] "+empleado.cr_descripcion, colSpan: 12, style: 'subcabecera'},{},{},{},{},{},{},{},{},{},{},{}],
-            // );
-          
+
+
 
           datos.content[indice_actual].table.body.push([
-            //{ text: i+1, style: 'tabla_datos' }, 
-            
+
+            { text: paciente.responsable.folio, style: 'tabla_datos'},
             { text: paciente.no_caso, style: 'tabla_datos'},
             { text: paciente.sexo, style: 'tabla_datos'},
             { text: paciente.edad+' '+'Años' , style: 'tabla_datos'},
             { text: paciente.municipio.descripcion , style: 'tabla_datos'},
             { text: paciente.responsable.descripcion , style: 'tabla_datos'},
-            { text: paciente.fecha_alta_probable , style: 'tabla_datos'},
+            //{ text:fecha, style: 'tabla_datos'},
+            { text:fecha_modificada, style: 'tabla_datos'},
             { text: paciente.tipo_atencion.descripcion , style: 'tabla_datos'},
             { text: paciente.estatus_covid.descripcion , style: 'tabla_datos'},
-            { text: paciente.tipo_atencion.descripcion , style: 'tabla_datos'}
+            { text: paciente.tipo_atencion.descripcion , style: 'tabla_datos'},
+            { text: paciente.municipio.distrito.clave, style: 'tabla_datos'}
           ]);
         }
 
-       
+
 
         return datos;
       }

@@ -27,5 +27,10 @@ export const APPS:App [] = [
       ],
     },
     { name:'Llenar Formulario',     route:'llenar-formulario-sistema',            icon: 'assets/icons/clipboard.svg',     permission:"aTRn5wKRr1iwaknd4ZtNmVRwG5dSYrRJ"},
-    { name:'Concentrado de casos',       route: "casos-concentrados",             icon: "assets/icons/estadisticas.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
+
+    { name:'Reportes',      route: "casos-concentrados",  icon: "assets/icons/estadisticas.svg", isHub:true, hideHome:true,
+      children:[
+        {name:'Concentrado de datos',     route:'casos-concentrados',     icon:'picture_as_pdf',                       /* permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj" */}
+      ],
+    },
 ]

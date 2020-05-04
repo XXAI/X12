@@ -51,12 +51,12 @@ class PacientesCovidController extends Controller
                 }
                 if(isset($parametros['page'])){
                     $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
-        
+
                     $pacientes = $pacientes->paginate($resultadosPorPagina);
                 } else {
                     $pacientes = $pacientes->get();
                 }
-    
+
             return response()->json(['data'=>$pacientes],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
@@ -106,12 +106,12 @@ class PacientesCovidController extends Controller
             'fecha_confirmacion'  => 'required',
             //'dias_evolucion'       => 'required',
         ];
-        
+
         $object = new PacientesCovid();
 
         $inputs = Input::all();
         $inputs = $inputs['persona'];
-        
+
         $v = Validator::make($inputs, $reglas, $mensajes);
 
         if ($v->fails()) {
@@ -140,7 +140,7 @@ class PacientesCovidController extends Controller
             $object->fecha_inicio_sintoma        = $inputs['fecha_inicio_sintoma'];
             $object->fecha_confirmacion        = $inputs['fecha_confirmacion'];
             $fecha = new Carbon($inputs['fecha_confirmacion']);
-            $fecha->addDays(14);    
+            $fecha->addDays(14);
             $object->fecha_alta_14        = $fecha->format('Y-m-d');
             $fecha->addDays(7);
             $object->fecha_alta_21        = $fecha->format('Y-m-d');
@@ -150,9 +150,9 @@ class PacientesCovidController extends Controller
 
 
             $object->save();
-    
+
             DB::commit();
-            
+
             return response()->json($object,HttpResponse::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -258,7 +258,7 @@ class PacientesCovidController extends Controller
             $object->fecha_inicio_sintoma        = $inputs['fecha_inicio_sintoma'];
             $object->fecha_confirmacion        = $inputs['fecha_confirmacion'];
             $fecha = new Carbon($inputs['fecha_confirmacion']);
-            $fecha->addDays(14);    
+            $fecha->addDays(14);
             $object->fecha_alta_14        = $fecha->format('Y-m-d');
             $fecha->addDays(7);
             $object->fecha_alta_21        = $fecha->format('Y-m-d');
@@ -269,7 +269,7 @@ class PacientesCovidController extends Controller
             $object->save();
 
             DB::commit();
-        
+
             return response()->json($object,HttpResponse::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -331,11 +331,11 @@ class PacientesCovidController extends Controller
 
     public function actualizarEstatus(Request $request, $id)
     {
-    
+
         $object = PacientesCovid::find($id);
 
         $inputs = Input::all();
-        
+
         DB::beginTransaction();
         try {
 
@@ -343,7 +343,7 @@ class PacientesCovidController extends Controller
             $object->save();
 
             DB::commit();
-        
+
             return response()->json($object,HttpResponse::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -416,7 +416,7 @@ class PacientesCovidController extends Controller
         try{
 
             $casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable_id', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
-            ->with('tipo_atencion', 'tipo_unidad', 'responsable', 'municipio.distrito', 'estatus_covid')
+            ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
             ->orderBy('pacientes_covid.no_caso')->get();
 
             $concentrado = [

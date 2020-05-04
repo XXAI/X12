@@ -45,6 +45,8 @@ import { EstrategiasModule } from './estrategias/estrategias.module';
 import { ConcentradosModule } from './concentrados/concentrados.module';
 import { AvancesActividadesModule } from './avances-actividades/avances-actividades.module';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +56,7 @@ import { AvancesActividadesModule } from './avances-actividades/avances-activida
     NotFoundComponent,
     DrawerListComponent,
     ForbiddenComponent,
+
   ],
   imports: [
     BrowserModule,

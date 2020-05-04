@@ -1,12 +1,12 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
     <section fxFlex="none" fxLayout="row">
         <div fxFlex>
-            <h3>Descripción Actividad</h3>
-            Descripcion completa de la actividad numero 1
+            <h3>Actividad</h3>
+            {{actividad.descripcion}}
         </div>
         <div fxFlex="none" style="text-align: center;">
-            <h3>Meta Programada</h3>
-            45456
+            <h3>Progreso Meta</h3>
+            {{ ((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number:'1.0-2' }} / {{actividad.total_meta_programada | number:'1.0-2'}}
         </div>
     </section>
     <section fxFlex>
@@ -51,7 +51,12 @@
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                                 <td mat-cell *matCellDef="let row; let i = index" width="1">
-                                    <button mat-stroked-button color="primary"><mat-icon>contact_phone</mat-icon></button>
+                                    <button mat-icon-button color="primary" aria-label="Editar">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="accent" aria-label="Borrar">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
                                 </td>
                             </ng-container>
 
@@ -97,20 +102,20 @@
                         </div>
                         <div fxFlex style="overflow:auto;">
                             <mat-divider></mat-divider>
-                            <mat-list role="list">
+                            <!--mat-list role="list">
                                 <mat-list-item role="listitem">
                                     <div fxLayout="row">
                                         safsdf
                                     </div>
                                     <mat-divider></mat-divider>
                                 </mat-list-item>
-                            </mat-list>
+                            </mat-list-->
                         </div>
                         <div fxFlex="none" fxLayout="row">
                             <div fxFlex></div>
                             <div fxFlex="none">
                                 <button mat-button (click)="ocultarFormulario()">Cancelar</button>&nbsp;
-                                <button mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+                                <button mat-raised-button color="primary" (click)="guardaraAvance()" [disabled]="!formAvance.valid"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
                             </div>
                         </div>
                     </div>

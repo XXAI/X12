@@ -35,8 +35,8 @@ table {
 }
 
 .mat-column-actions{
-    max-width: 75px;
-    min-width: 60px;
+    max-width: 80px;
+    min-width: 80px;
 }
 
 .selected-item{

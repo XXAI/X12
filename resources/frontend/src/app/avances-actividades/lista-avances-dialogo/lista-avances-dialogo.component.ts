@@ -4,9 +4,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SharedService } from '../../shared/shared.service';
 import { AvancesActividadesService } from '../avances-actividades.service';
+import { formatDate } from '@angular/common';
 
 export interface AvanceData {
-  actividadID: number;
+  actividadData: any;
 }
 
 @Component({
@@ -25,7 +26,7 @@ export class ListaAvancesDialogoComponent implements OnInit {
     private formBuilder: FormBuilder
   ) { }
 
-  actividadID:number;
+  actividad:any;
   isLoading:boolean;
 
   formAvance:FormGroup;
@@ -50,12 +51,12 @@ export class ListaAvancesDialogoComponent implements OnInit {
     });
 
     this.mostrarFormulario = false;
-    this.actividadID = this.data.actividadID;
+    this.actividad = this.data.actividadData;
     this.loadListadoAvances();
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.actividad);
   }
 
   loadListadoAvances(event?){
@@ -69,6 +70,8 @@ export class ListaAvancesDialogoComponent implements OnInit {
         per_page: event.pageSize
       };
     }
+
+    params.actividad_id = this.actividad.id;
 
     if(event && !event.hasOwnProperty('selectedIndex')){
       this.selectedItemIndex = -1;
@@ -108,7 +111,28 @@ export class ListaAvancesDialogoComponent implements OnInit {
     return event;
   }
 
+  guardaraAvance(){
+    let formData = JSON.parse(JSON.stringify(this.formAvance.value));
+
+    formData.actividad_id = this.actividad.id;
+    formData.estrategia_id = this.actividad.estrategia_id;
+
+    this.avancesActividadesService.guardarAvance(formData).subscribe(
+      response => {
+        console.log('guardado===========================================');
+        this.actividad = response.data;
+        this.loadListadoAvances();
+        this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
+        this.ocultarFormulario();
+    });
+  }
+
   verFormulario(){
+    this.formAvance.reset();
+
+    let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.formAvance.get('fecha_avance').patchValue(fecha_hoy);
+
     this.mostrarFormulario = true;
     this.selectedTab = 1;
   }

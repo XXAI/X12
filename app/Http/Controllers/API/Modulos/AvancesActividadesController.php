@@ -15,6 +15,7 @@ use DB;
 
 use App\Models\Estrategia;
 use App\Models\AvanceActividad;
+use App\Models\Actividad;
 
 class AvancesActividadesController extends Controller
 {
@@ -78,6 +79,10 @@ class AvancesActividadesController extends Controller
             $parametros = Input::all();
             
             $avances = AvanceActividad::getModel();
+
+            if(isset($parametros['actividad_id']) && $parametros['actividad_id']){
+                $avances = $avances->where('actividad_id',$parametros['actividad_id']);
+            }
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
@@ -116,7 +121,11 @@ class AvancesActividadesController extends Controller
             $auth_user = auth()->user();
             $parametros = Input::all();
 
-            if(isset($parametros['id']) && $parametros['id']){
+            $parametros['user_id'] = $auth_user->id;
+
+            $avance = AvanceActividad::create($parametros);
+
+            /*if(isset($parametros['id']) && $parametros['id']){
                 $llamada = LlamadaCallCenter::find($parametros['id']);
                 $parametros['recibio_llamada'] = $auth_user->id;
                 $parametros['turno_id'] = $auth_user->turno_id;
@@ -134,9 +143,14 @@ class AvancesActividadesController extends Controller
                 $parametros['turno_id'] = $auth_user->turno_id;
 
                 $llamada = LlamadaCallCenter::create($parametros);
-            }
+            }*/
 
-            return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
+            $actividad = Actividad::with('avanceAcumulado')->where('id',$parametros['actividad_id'])->first();
+
+            $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
+            $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+
+            return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

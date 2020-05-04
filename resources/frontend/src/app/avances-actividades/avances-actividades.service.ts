@@ -28,4 +28,12 @@ export class AvancesActividadesService {
       })
     );
   }
+
+  guardarAvance(payload) {
+    return this.http.post<any>(this.url_avances,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
 }

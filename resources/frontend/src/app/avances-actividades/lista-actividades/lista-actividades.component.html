@@ -1,6 +1,6 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
     <mat-card fxFlex fxLayout="column">
-        <section fxFlex="none" fxLayout="column" *ngFor="let estrategia of listaEstrategias">
+        <section fxFlex="none" fxLayout="column" *ngFor="let estrategia of listaEstrategias; index as i;">
             <div fxFlex>
                 <h2>
                     {{estrategia.nombre}}
@@ -8,24 +8,24 @@
                 </h2>
             </div>
             <div fxFlex fxLayout="row raw" >
-                <section fxFlex="50" *ngFor="let actividad of estrategia.actividades" style="padding:5px;">
+                <section fxFlex="50" *ngFor="let actividad of estrategia.actividades; index as j;" style="padding:5px;">
                     <mat-card fxLayout="column" >
                         <div fxFlex fxLayout="row"  style="padding-bottom:5px;">
                             <div fxFlex>
                                 {{actividad.descripcion}}
                             </div>
                             <div fxFlex="none">
-                                <button mat-flat-button color="accent" aria-label="Agregar Avance" (click)="verAvances(1)">
+                                <button mat-flat-button color="accent" aria-label="Agregar Avance" (click)="verAvances(actividad,i,j)">
                                     <mat-icon>launch</mat-icon>
                                 </button>
                             </div>
                         </div>
                         <div fxFlex>
                             <div class="meta-abierta" *ngIf="actividad.meta_abierta">
-                                {{actividad.avance | number}}
+                                {{actividad.avance_acumulado.total_avance | number}}
                             </div>
                             <div class="porcentaje-barra" *ngIf="!actividad.meta_abierta">
-                                <span class="porcentaje-lleno" [style.width]="actividad.porcentaje+'%'">{{actividad.porcentaje}}%</span>
+                                <span class="porcentaje-lleno" [style.width]="actividad.porcentaje+'%'">{{actividad.porcentaje | number:'1.0-0'}}%</span>
                             </div>
                         </div>
                         <div fxFlex style="padding-top:15px;" fxLayout="row">
@@ -36,7 +36,10 @@
                             </mat-chip-list>
                             <div fxFlex></div>
                             <div fxFlex="none" style="text-align: center;">
-                                <mat-hint>Ulima Actualización:<br>{{actividad.fecha_ultimo_reporte | date:'dd/MM/yyyy'}}</mat-hint>
+                                <mat-hint>Ulima Actualización:<br> 
+                                    <span *ngIf="!actividad.avance_acumulado">Sin Avances</span> 
+                                    <span *ngIf="actividad.avance_acumulado">{{actividad.avance_acumulado.ultima_fecha_avance | date:'dd/MM/yyyy'}}</span>
+                                </mat-hint>
                             </div>
                         </div>
                     </mat-card>

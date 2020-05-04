@@ -20,6 +20,7 @@ export const APPS:App [] = [
     { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
     { name:'Graficas',              route: "casos-graficas",              icon: "assets/icons/graficas.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
     { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",              permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
+    { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",              permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },
     { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true,
       children:[
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file',                       permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}

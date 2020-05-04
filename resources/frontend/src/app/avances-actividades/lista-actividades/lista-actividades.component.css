@@ -1,0 +1,31 @@
+.meta-abierta{
+    background-color: lightskyblue;
+    display: block;
+    border-radius: 5px;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+    border: steelblue 1px solid;
+}
+
+.porcentaje-lleno{
+    background-color: lightseagreen;
+    display: block;
+    border-radius: 25px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.porcentaje-barra{
+    width: 100%;
+    background-color: lightgray;
+    border: grey 1px solid;
+    border-radius: 25px;
+}
+
+.barra-porcentaje{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+}

@@ -2,7 +2,10 @@
     <!--button mat-icon-button aria-label="Ir al inicio" routerLink="/" fxShow.xs fxHide.gt-sm>
       <mat-icon>home</mat-icon>
     </button-->
-    <img src="{{(selectedApp)?selectedApp.icon:'assets/logo-white.svg'}}" alt="" style="height: 60%; width:auto;" fxHide.xs="true">
+    <!--img src="{{(selectedApp)?selectedApp.icon:'assets/logo-white.svg'}}" alt="" style="height: 60%; width:auto;" fxHide.xs="true"-->
+    <button mat-icon-button [routerLink]="'/apps'" fxHide.xs="true">
+      <img src="{{(selectedApp)?selectedApp.icon:'assets/logo-white.svg'}}" alt="" style="height: 40px; width:auto;">
+    </button>
     <span style="margin-left:10px" *ngIf="!selectedApp">Secretaria de Salud</span> <span *ngIf="selectedApp">&nbsp; <a routerLink="{{selectedApp.route}}">{{selectedApp.name}}</a></span>
 
     <span class="spacer"></span>

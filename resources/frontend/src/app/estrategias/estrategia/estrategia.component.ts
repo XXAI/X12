@@ -1,10 +1,14 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { EstrategiasService } from '../estrategias.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, merge, NEVER } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { ActividadesDataSource } from '../data-source/actividades.data-source';
+import { ActividadesService } from '../data-source/actividades.service';
+import { MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { ActividadDialogComponent } from '../actividad-dialog/actividad-dialog.component';
 
 @Component({
   selector: 'app-estrategia',
@@ -17,8 +21,10 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
     private sharedService: SharedService, 
     private fb: FormBuilder,  
     private estrategiasService: EstrategiasService,
+    private actividadesService: ActividadesService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    public dialog: MatDialog) { }
 
   form:FormGroup;
   objectSubscription: Subscription;
@@ -29,6 +35,15 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
   id:any;
   object:any;
 
+  displayedColumns: string[] = ['id','descripcion','total_meta_programada'];
+  dataSource: any = [];
+  inputSearchTxt:string = "";
+  filter: string = "";
+  orderBy:string;
+  hideTable:boolean;
+
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
 
   catalogos: any;
   totales: any;
@@ -39,10 +54,13 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
       nombre:['',Validators.required],
     });
 
+    this.dataSource = new ActividadesDataSource(this.actividadesService);    
+    
+
     this.isLoading = true;
     this.editar = false;
     this.isSaving = false;
-
+    this.hideTable = false;
 
    /*
     this.route.paramMap.subscribe(params => {
@@ -76,6 +94,7 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
         }  else {
           this.editar = true;
           this.isLoading = false;
+          this.hideTable = true;
           return NEVER;
         }        
       })
@@ -86,9 +105,12 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
         this.object = result.data;
         this.isLoading = false;
         this.form.get("nombre").setValue(result.data.nombre); 
+        this.dataSource.loadData(this.id,'','asc','',0,5);   
       }
        
     });
+
+    
   }
 
   ngOnDestroy(){
@@ -96,7 +118,24 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(){
+    if(!this.hideTable){
+      this.sort.sortChange.subscribe(() => { this.orderBy = this.sort.active; this.paginator.pageIndex = 0});
+      merge(this.sort.sortChange,this.paginator.page)
+        .pipe(
+          tap(()=> this.loadData())
+        ).subscribe();
+    }
     
+  }
+
+  loadData(){   
+    this.dataSource.loadData(this.id,this.filter.trim().toLowerCase(),this.sort.direction,this.orderBy,this.paginator.pageIndex, this.paginator.pageSize);
+  }
+
+  applyFilter(): void {
+    this.filter = this.inputSearchTxt;
+    this.paginator.pageIndex = 0;
+    this.loadData();
   }
 
   cancelar(){
@@ -150,6 +189,30 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
     
+  }
+
+  openDialogCreate(): void{
+
+    var item: any = {
+      edit: false, 
+      actividad: null,
+      estrategia_id: this.id
+    }
+    const dialogRef = this.dialog.open(ActividadDialogComponent, { width: "600px",data:item});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null){
+        if(result.last_action == "crear"){
+          console.log("aah");
+          this.router.navigate(['actividad/'+ result.data],{ relativeTo: this.route });
+        }
+      }
+     
+    });
+  }
+
+  editarActividad(row: any){
+    this.router.navigate(['actividad/'+ row.id],{ relativeTo: this.route });
   }
 
  

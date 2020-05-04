@@ -14,4 +14,7 @@ class Actividad extends Model
     public function metas(){
         return $this->hasMany('App\Models\ActividadMeta','actividad_id','id');
     }
+    public function estrategia(){
+        return $this->belongsTo('App\Models\Estrategia','estrategia_id');
+    }
 }

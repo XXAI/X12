@@ -1,0 +1,129 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            <h3>Descripción Actividad</h3>
+            Descripcion completa de la actividad numero 1
+        </div>
+        <div fxFlex="none" style="text-align: center;">
+            <h3>Meta Programada</h3>
+            45456
+        </div>
+    </section>
+    <section fxFlex>
+        <mat-tab-group [color]="'primary'" [backgroundColor]="'accent'" style="height: 100%;" animationDuration="0ms" [selectedIndex]="selectedTab" (selectedIndexChange)="selectedTab = $event">
+            <mat-tab label="Grafica" *ngIf="false">
+              <ng-template matTabContent>
+                Content 1 - 
+              </ng-template>
+            </mat-tab>
+            <mat-tab label="Avances" [disabled]="mostrarFormulario">
+              <ng-template matTabContent>
+                  <div fxLayout="column" style="height: 100%;">
+                    <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
+                        <div fxFlex></div>
+                        <div fxFlex="none">
+                            <button mat-flat-button (click)="verFormulario()" color="primary"><mat-icon>add_circle</mat-icon> Agregar Avance</button>
+                        </div>
+                    </div>
+                    <div fxFlex>
+                        <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
+
+                            <ng-container matColumnDef="user">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+                                <td mat-cell *matCellDef="let row"> {{row.usuario.username}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="fecha_avance" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Fecha </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.fecha_avance}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="avance" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Avance </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.avance}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="observaciones" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Observaciones </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.observaciones}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                                <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                    <button mat-stroked-button color="primary"><mat-icon>contact_phone</mat-icon></button>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="noResultsFound">
+                                <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                    No se encontraron registros 
+                                </td>
+                            </ng-container>
+                            
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                            <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+
+                            <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(dataSource!=null && dataSource.length==0)}"></tr>
+                        </table>
+                    </div>
+                    <div fxFlex="none">
+                        <mat-paginator #paginator [pageSize]="pageSize" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons (page)="pageEvent = loadListadoAvances($event)"></mat-paginator>
+                    </div>
+                  </div>
+              </ng-template>
+            </mat-tab>
+            <mat-tab label="Formulario Avance" *ngIf="mostrarFormulario">
+              <ng-template matTabContent>
+                    <div fxLayout="column" style="height: 100%;">
+                        <div fxFlex="none">
+                            <div fxFlex fxLayout="row" fxLayoutAlign="space-between" [formGroup]="formAvance">
+                                <mat-form-field fxFlex="20">
+                                    <mat-label>Fecha (aaaa-mm-dd)</mat-label>
+                                    <input matInput mascaraFecha formControlName="fecha_avance" required>
+                                    <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+                                    <mat-error *ngIf="formAvance.get('fecha_avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                </mat-form-field>
+                                <mat-form-field fxFlex="20">
+                                    <mat-label>Avance</mat-label>
+                                    <input matInput formControlName="avance" required>
+                                    <mat-error *ngIf="formAvance.get('avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                </mat-form-field>
+                                <mat-form-field  fxFlex="58">
+                                    <mat-label>Observaciones</mat-label>
+                                    <textarea matInput formControlName="observaciones" rows="1"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxFlex style="overflow:auto;">
+                            <mat-divider></mat-divider>
+                            <mat-list role="list">
+                                <mat-list-item role="listitem">
+                                    <div fxLayout="row">
+                                        safsdf
+                                    </div>
+                                    <mat-divider></mat-divider>
+                                </mat-list-item>
+                            </mat-list>
+                        </div>
+                        <div fxFlex="none" fxLayout="row">
+                            <div fxFlex></div>
+                            <div fxFlex="none">
+                                <button mat-button (click)="ocultarFormulario()">Cancelar</button>&nbsp;
+                                <button mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+                            </div>
+                        </div>
+                    </div>
+              </ng-template>
+            </mat-tab>
+          </mat-tab-group>
+    </section>
+    <section fxFlex="none" *ngIf="!mostrarFormulario">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-raised-button (click)="close()">Cerrar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

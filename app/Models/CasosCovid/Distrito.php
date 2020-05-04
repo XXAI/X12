@@ -9,5 +9,12 @@ class Distrito extends Model
 {
     use SoftDeletes;
     protected $table = 'catalogo_distritos';
-    protected $fillable = ['id','descripcion'];
+    protected $fillable = ['id','clave','descripcion','entidades_id'];
+
+
+    // public function municipios(){
+    //     return $this->hasMany('App\Models\Municipio','distrito_id','id');
+    // }
+
+
 }

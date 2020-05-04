@@ -358,7 +358,7 @@ class PacientesCovidController extends Controller
 
         try{
 
-            $distritos = PacientesCovid::select('pacientes_covid.municipio_id', DB::raw('count(pacientes_covid.municipio_id) as total'))->with('municipio')
+            $distritos = PacientesCovid::select('pacientes_covid.municipio_id', DB::raw('count(pacientes_covid.municipio_id) as total'))->with('municipio.distrito')
             // ->join('pacientes_covid as P', 'P.municipio_id', '=', 'catalogo_municipios.id')
             // ->where('municipio_id', '!=', null)
             ->groupBy('pacientes_covid.municipio_id')->get();
@@ -416,7 +416,7 @@ class PacientesCovidController extends Controller
         try{
 
             $casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable_id', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
-            ->with('tipo_atencion', 'tipo_unidad', 'responsable', 'municipio', 'estatus_covid')
+            ->with('tipo_atencion', 'tipo_unidad', 'responsable', 'municipio.distrito', 'estatus_covid')
             ->orderBy('pacientes_covid.no_caso')->get();
 
             $concentrado = [

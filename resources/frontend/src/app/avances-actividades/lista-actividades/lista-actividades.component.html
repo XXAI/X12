@@ -29,9 +29,9 @@
                             </div>
                         </div>
                         <div fxFlex style="padding-top:15px;" fxLayout="row">
-                            <mat-chip-list aria-label="Fish selection" fxFlex="none">
-                                <mat-chip color="primary" [disableRipple]="true" [selectable]="false" [selected]="actividad.semana_actual" >
-                                    <mat-icon>{{ (actividad.semana_actual)?'check_circle':'schedule' }}</mat-icon>&nbsp;Avance {{ (actividad.semana_actual)?'Realizado':'Pendiente' }}
+                            <mat-chip-list aria-label="Fish selection" fxFlex="none" *ngIf="actividad.avance_acumulado">
+                                <mat-chip [color]="(actividad.avance_acumulado.dias_ultimo_avance >= 7)?'warn':'primary'" [disableRipple]="true" [selectable]="false" [selected]="(actividad.avance_acumulado.dias_ultimo_avance == 0 || actividad.avance_acumulado.dias_ultimo_avance >= 7)" >
+                                    <mat-icon>{{ (actividad.avance_acumulado.dias_ultimo_avance == 0)?'check_circle':'schedule' }}</mat-icon>&nbsp;Actualizado: {{ (actividad.avance_acumulado.dias_ultimo_avance == 0)?'Hoy':'Hace '+actividad.avance_acumulado.dias_ultimo_avance+' Dia(s)' }}
                                 </mat-chip>
                             </mat-chip-list>
                             <div fxFlex></div>

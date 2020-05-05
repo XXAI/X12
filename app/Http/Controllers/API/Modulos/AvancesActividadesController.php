@@ -170,16 +170,10 @@ class AvancesActividadesController extends Controller
     public function show($id)
     {
         try{
-            $parametros = Input::all();
             
-            $llamada = LlamadaCallCenter::select('llamadas_call_center.*','catalogo_categoria_llamada.categoria as categoria_llamada','catalogo_categoria_llamada.descripcion as categoria_llamada_desc','users.name as recibio_llamada_nombre')
-                                        ->leftjoin('catalogo_categoria_llamada','catalogo_categoria_llamada.id','=','llamadas_call_center.categoria_llamada_id')
-                                        ->leftjoin('users','users.id','=','llamadas_call_center.recibio_llamada')
-                                        ->where('llamadas_call_center.id',$id)
-                                        ->first();
+            $avance = AvanceActividad::find($id);
             
-            
-            return response()->json(['data'=>$llamada],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$avance],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -194,7 +188,30 @@ class AvancesActividadesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+
+            $parametros['user_id'] = $auth_user->id;
+
+            $avance = AvanceActividad::find($id);
+
+            $avance->update($parametros);
+
+            $actividad = Actividad::with('avanceAcumulado')->where('id',$parametros['actividad_id'])->first();
+
+            $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
+            if($actividad->meta_abierta){
+                $actividad->porcentaje = 0;
+            }else{
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+            }
+            
+
+            return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 
     /**
@@ -205,6 +222,28 @@ class AvancesActividadesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $auth_user = auth()->user();
+            
+            $avance = AvanceActividad::find($id);
+
+            $actividad_id = $avance->actividad_id;
+
+            $avance->delete();
+
+            $actividad = Actividad::with('avanceAcumulado')->where('id',$actividad_id)->first();
+
+            $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
+            if($actividad->meta_abierta){
+                $actividad->porcentaje = 0;
+            }else{
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+            }
+            
+
+            return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 }

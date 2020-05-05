@@ -51,10 +51,10 @@
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                                 <td mat-cell *matCellDef="let row; let i = index" width="1">
-                                    <button mat-icon-button color="primary" aria-label="Editar">
+                                    <button mat-icon-button color="primary" (click)="cargarAvance(row.id)" aria-label="Editar" [class.button-spinner]="isLoadingAction" [disabled]="isLoadingAction">
                                         <mat-icon>edit</mat-icon>
                                     </button>
-                                    <button mat-icon-button color="accent" aria-label="Borrar">
+                                    <button mat-icon-button color="accent" (click)="borrarAvance(row.id)" aria-label="Borrar" [class.button-spinner]="isLoadingAction" [disabled]="isLoadingAction">
                                         <mat-icon>delete</mat-icon>
                                     </button>
                                 </td>
@@ -115,7 +115,7 @@
                             <div fxFlex></div>
                             <div fxFlex="none">
                                 <button mat-button (click)="ocultarFormulario()">Cancelar</button>&nbsp;
-                                <button mat-raised-button color="primary" (click)="guardaraAvance()" [disabled]="!formAvance.valid"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+                                <button mat-raised-button color="primary" (click)="guardaraAvance()" [disabled]="!formAvance.valid || isLoadingAction" [class.button-spinner]="isLoadingAction"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
                             </div>
                         </div>
                     </div>

@@ -411,23 +411,111 @@ class PacientesCovidController extends Controller
 
     public function getConcentradoCasos(){
 
-        $filtros = Input::all();
+        $parametros = Input::all();        
+
 
         try{
 
-            $casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable_id', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
+            $casos = PacientesCovid::select('pacientes_covid.*')
             ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
-            ->orderBy('pacientes_covid.no_caso')->get();
+            ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+            ->join('grupos_estrategicos as GE', 'GE.id', '=', 'R.folio')
+            ->orderBy('R.folio', 'desc');
 
-            $concentrado = [
-                'casos'                => $casos
-            ];
+            
+
+            if(isset($parametros['query']) && $parametros['query']){
+                $casos = $casos->where(function($query)use($parametros){
+                    return $query->where('nombre','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('sexo','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('edad','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('no_caso','LIKE','%'.$parametros['query'].'%');
+                });
+            }
+
+            if(isset($parametros['active_filter']) && $parametros['active_filter']){
 
 
+                if(isset($parametros['no_caso']) && $parametros['no_caso']){
 
-            return response()->json(['data'=>$concentrado], HttpResponse::HTTP_OK);
+                    $casos = $casos->where('no_caso', '=', $parametros['no_caso']);
+
+                }
+
+                if(isset($parametros['municipios']) && $parametros['municipios']){
+
+                    $casos = $casos->where('municipio_id',$parametros['municipios']);
+                }
+
+                if(isset($parametros['responsables']) && $parametros['responsables']){
+
+                    $casos = $casos->where('responsable_id',$parametros['responsables']);
+                }
+
+                if(isset($parametros['tipo_atencion']) && $parametros['tipo_atencion']){
+
+                    $casos = $casos->where('tipo_atencion_id',$parametros['tipo_atencion']);
+                }
+
+                if(isset($parametros['tipo_unidades']) && $parametros['tipo_unidades']){
+
+                    $casos = $casos->where('tipo_unidad_id',$parametros['tipo_unidades']);
+                }
+
+                if(isset($parametros['estatus_covid']) && $parametros['estatus_covid']){
+
+                    $casos = $casos->where('estatus_covid_id',$parametros['estatus_covid']);
+                }
+
+
+            }
+
+
+            if(isset($parametros['page'])){
+                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+
+                $casos = $casos->paginate($resultadosPorPagina);
+            } else {
+                $casos = $casos->get();
+            }
+
+            return response()->json(['data'=>$casos],HttpResponse::HTTP_OK);
+
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // $filtros = Input::all();
+
+        // try{
+
+        //     $casos = PacientesCovid::select('no_caso', 'sexo', 'edad', 'municipio_id', 'responsable_id', 'fecha_alta_probable', 'estatus_covid_id', 'tipo_atencion_id', 'tipo_unidad_id')
+        //     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
+        //     ->orderBy('pacientes_covid.no_caso')->get();
+
+        //     $concentrado = [
+        //         'casos'                => $casos
+        //     ];
+
+
+
+        //     return response()->json(['data'=>$concentrado], HttpResponse::HTTP_OK);
+        // }catch(\Exception $e){
+        //     return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        // }
     }
 }

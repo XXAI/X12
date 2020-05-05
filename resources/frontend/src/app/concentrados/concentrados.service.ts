@@ -8,16 +8,29 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ConcentradosService {
-  url_concentrados = `${environment.base_url}/concentrado-casos-covid`;
+  url_concentrados                        = `${environment.base_url}/concentrado-casos-covid`;
+  url_filter_catalogs                     = `${environment.base_url}/catalogos-covid`;
 
   constructor(private http: HttpClient) { }
 
-  getConcentrados(payload) {
-    return this.http.get<any>(this.url_concentrados, {params:payload}).pipe(
-      map( (response) => {
+
+  getConcentrados(payload):Observable<any> {
+    return this.http.get<any>(this.url_concentrados,{params: payload}).pipe(
+      map( response => {
         return response;
-      }
-    ));
+      })
+    );
   }
+
+  getFilterCatalogs():Observable<any>{
+    return this.http.get<any>(this.url_filter_catalogs).pipe(
+      map(response => {
+        return response;
+      })
+    );
+  }
+
+
+
 }
 

@@ -5,7 +5,7 @@ export class ReporteCasoConcentrados {
     afiliacion;
 
     getDocumentDefinition(reportData:any) {
-
+console.log("acaaaaaaa",reportData.items);
         let contadorLineasHorizontalesV = 0;
 
         let datos = {
@@ -118,9 +118,9 @@ export class ReporteCasoConcentrados {
           }
         });
 
-        for(let i = 0; i < reportData.items.casos.length; i++){
+        for(let i = 0; i < reportData.items.length; i++){
           //console.log("iiiii", reportData.items.length);
-          let paciente = reportData.items.casos[i];
+          let paciente = reportData.items[i];
 
 
                var fecha=paciente.fecha_alta_probable.split("-", 3);

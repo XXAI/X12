@@ -411,18 +411,18 @@ class PacientesCovidController extends Controller
 
     public function getConcentradoCasos(){
 
-        $parametros = Input::all();        
+        $parametros = Input::all();
 
 
         try{
 
             $casos = PacientesCovid::select('pacientes_covid.*')
             ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
-            ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
-            ->join('grupos_estrategicos as GE', 'GE.id', '=', 'R.folio')
-            ->orderBy('R.folio', 'desc');
+             ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+            ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+            ->orderBy('R.folio', 'asc') ;
 
-            
+
 
             if(isset($parametros['query']) && $parametros['query']){
                 $casos = $casos->where(function($query)use($parametros){

@@ -94,7 +94,7 @@ console.log("acaaaaaaa",reportData.items);
         datos.content.push({
 
           table: {
-            headerRows:2,
+            headerRows:1,
             dontBreakRows: true,
             keepWithHeaderRows: 1,
             widths: [ 30,30, 40, 70, 130, 120, 70,100, 100, 100,30 ],
@@ -118,15 +118,17 @@ console.log("acaaaaaaa",reportData.items);
           }
         });
 
+        indice_actual = datos.content.length -1;
+
         for(let i = 0; i < reportData.items.length; i++){
           //console.log("iiiii", reportData.items.length);
           let paciente = reportData.items[i];
 
 
-               var fecha=paciente.fecha_alta_probable.split("-", 3);
+              var fecha=paciente.fecha_alta_probable.split("-", 3);
               var fecha_modificada=fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 
-              indice_actual = datos.content.length -1;
+
 
 
 
@@ -146,6 +148,8 @@ console.log("acaaaaaaa",reportData.items);
             { text: paciente.municipio.distrito.clave, style: 'tabla_datos'}
           ]);
         }
+
+        //console.log("aquiqqqqqq",datos.content[1]);
 
 
 

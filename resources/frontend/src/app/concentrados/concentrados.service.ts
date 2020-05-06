@@ -17,7 +17,9 @@ export class ConcentradosService {
   getConcentrados(payload):Observable<any> {
     return this.http.get<any>(this.url_concentrados,{params: payload}).pipe(
       map( response => {
+        console.log("valor",response);
         return response;
+
       })
     );
   }
@@ -25,6 +27,7 @@ export class ConcentradosService {
   getFilterCatalogs():Observable<any>{
     return this.http.get<any>(this.url_filter_catalogs).pipe(
       map(response => {
+        console.log("valor",response);
         return response;
       })
     );

@@ -44,7 +44,8 @@ export class FormComponent implements OnInit {
     'is_superuser': [false],
     'avatar': [''],
     'roles': [[]],
-    'permissions': [[]]
+    'permissions': [[]],
+    'groups':[[]],
   });
 
   avatarList: any[] = [];
@@ -73,6 +74,15 @@ export class FormComponent implements OnInit {
   filteredPermissions$: Observable<any[]>;
   selectedPermissions: any[] = [];
 
+  //Para el filtro de Grupos
+  catalogGroups: any[] = [];
+  listOfGroups$: Observable<any[]>;
+  selectedGroupsControl:any = {};
+  filterInputGroups: FormControl = new FormControl('');
+  filterInputGroups$: Observable<string> = this.filterInputGroups.valueChanges.pipe(startWith(''));
+  filteredGroups$: Observable<any[]>;
+  selectedGroups: any[] = [];
+
 
   ngOnInit() {
     this.authUser = this.authService.getUserData();
@@ -82,8 +92,9 @@ export class FormComponent implements OnInit {
     let callRolesCatalog = this.usersService.getAllRoles();
     let callPermissionsCatalog = this.usersService.getAllPermissions();
     let callTurnoCatalog = this.usersService.getTurnos();
+    let callGruposCatalog = this.usersService.getGrupos();
     
-    let httpCalls = [callRolesCatalog, callPermissionsCatalog,callTurnoCatalog];
+    let httpCalls = [callRolesCatalog, callPermissionsCatalog, callTurnoCatalog, callGruposCatalog];
 
     this.route.paramMap.subscribe(params => {
       if(params.get('id')){
@@ -132,10 +143,22 @@ export class FormComponent implements OnInit {
           //Starts: Turnos
           this.catalogTurnos = results[2].data.turnos;
           //Ends: Turnos
+          
+          //Starts: Groups
+          this.catalogGroups = results[3].data.grupos_estrategicos;
+          this.listOfGroups$ = of(this.catalogGroups);
+          this.filteredGroups$ = combineLatest(this.listOfGroups$,this.filterInputGroups$).pipe(
+            map(
+              ([groups,filterString]) => groups.filter(
+                group => (group.descripcion.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) || (group.folio.toLowerCase().indexOf(filterString.toLowerCase()) !== -1)
+              )
+            )
+          );
+          //Ends: Groups
 
           //Starts: User
-          if(results[3]){
-            this.usuario = results[3];
+          if(results[httpCalls.length-1]){
+            this.usuario = results[httpCalls.length-1];
             this.usuarioForm.patchValue(this.usuario);
 
             this.selectedAvatar = this.usuario.avatar;
@@ -146,6 +169,11 @@ export class FormComponent implements OnInit {
             }
 
             this.selectedRoleChipId = 0;
+
+            for(let i in this.usuario.grupos){
+              let groupIndex = this.catalogGroups.findIndex(item => item.id == this.usuario.grupos[i].id);
+              this.selectGroup(this.catalogGroups[groupIndex]);
+            }
 
             //Load Permissions
             for(let i in this.usuario.permissions){
@@ -285,6 +313,30 @@ export class FormComponent implements OnInit {
     //console.log(this.assignedPermissions);
   }
 
+  selectGroup(group){
+    if(this.selectedGroupsControl[group.id]){
+      let groupIndex = this.selectedGroups.findIndex(item => item.id == group.id);
+      this.removeGroup(groupIndex);
+    }else{
+      let sameFolioIndex = this.selectedGroups.findIndex(item => item.folio == group.folio);
+      if(sameFolioIndex >= 0){
+        this.sharedService.showSnackBar('No se pueden seleccionar dos grupos con el mismo folio', null, 3000);
+        return false;
+      }
+
+      this.selectedGroups.push(group);
+      this.selectedGroupsControl[group.id] = true; 
+    }
+    //console.log(this.assignedPermissions);
+  }
+
+  removeGroup(index){
+    let group = this.selectedGroups[index];
+    this.selectedGroups.splice(index,1);
+    this.selectedGroupsControl[group.id] = false;
+    //this.usuarioForm.get('roles').patchValue(this.selectedRoles);
+  }
+
   accionGuardar(){
     if(this.usuarioForm.valid){
       if(this.usuarioForm.get('password').value){
@@ -313,6 +365,7 @@ export class FormComponent implements OnInit {
 
     let roles = [];
     let permissions = {};
+    let groups = [];
 
     for(let id in this.assignedPermissions){
       let permission = this.assignedPermissions[id];
@@ -330,8 +383,13 @@ export class FormComponent implements OnInit {
       }
     }
 
+    for(let i in this.selectedGroups){
+      groups.push(this.selectedGroups[i].id);
+    }
+
     this.usuarioForm.get('permissions').patchValue(permissions);
     this.usuarioForm.get('roles').patchValue(roles);
+    this.usuarioForm.get('groups').patchValue(groups);
 
     this.usuarioForm.get('avatar').patchValue(this.selectedAvatar);
 
@@ -365,5 +423,8 @@ export class FormComponent implements OnInit {
   }
   clearPermissionsFilter(){
     this.filterInputPermissions.setValue('');
+  }
+  clearGroupsFilter(){
+    this.filterInputGroups.setValue('');
   }
 }

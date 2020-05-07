@@ -1,5 +1,8 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
     <mat-card fxFlex fxLayout="column">
+        <section fxFlex *ngIf="listaEstrategias.length == 0">
+            <div class="not-results-found">No se encontraron actividades asignadas</div>
+        </section>
         <section fxFlex="none" fxLayout="column" *ngFor="let estrategia of listaEstrategias; index as i;">
             <div fxFlex>
                 <h2>

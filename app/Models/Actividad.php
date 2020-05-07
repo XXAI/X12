@@ -23,7 +23,7 @@ class Actividad extends Model
 
     public function avanceAcumulado(){
         return $this->hasOne('App\Models\AvanceActividad','actividad_id','id')
-                    ->select('actividad_id',DB::raw('SUM(avance) as total_avance'),DB::raw('MAX(fecha_avance) as ultima_fecha_avance'),DB::raw('DATEDIFF(current_date(),MAX(fecha_avance)) as dias_ultimo_avance'))
+                    ->select('actividad_id','grupo_estrategico_id',DB::raw('SUM(avance) as total_avance'),DB::raw('MAX(fecha_avance) as ultima_fecha_avance'),DB::raw('DATEDIFF(current_date(),MAX(fecha_avance)) as dias_ultimo_avance'))
                     ->groupBy('actividad_id')
                     ->whereNull('deleted_at');
     }

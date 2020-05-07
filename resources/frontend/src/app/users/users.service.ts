@@ -17,6 +17,15 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
+  getGrupos():Observable<any>{
+    let payload = [{nombre:'grupos_estrategicos',orden:'descripcion'}];
+    return this.http.post<any>(this.url_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
   getTurnos():Observable<any>{
     let payload = [{nombre:'turnos'}];
     return this.http.post<any>(this.url_catalogos,payload).pipe(

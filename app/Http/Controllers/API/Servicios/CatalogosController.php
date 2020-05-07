@@ -16,6 +16,7 @@ use App\Models\Estatus;
 use App\Models\Valoracion;
 use App\Models\CategoriaLlamada;
 use App\Models\Turno;
+use App\Models\GrupoEstrategico;
 
 class CatalogosController extends Controller
 {
@@ -29,7 +30,8 @@ class CatalogosController extends Controller
                 'estatus' => Estatus::getModel(),
                 'valoracion' => Valoracion::getModel(),
                 'categoria_llamada' => CategoriaLlamada::getModel(),
-                'turnos' => Turno::getModel()
+                'turnos' => Turno::getModel(),
+                'grupos_estrategicos'=>GrupoEstrategico::getModel(),
             ];
 
             $parametros = Input::all();

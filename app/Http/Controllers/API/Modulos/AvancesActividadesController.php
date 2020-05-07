@@ -28,25 +28,26 @@ class AvancesActividadesController extends Controller
     {
         try{
             $parametros = Input::all();
+            $auth_user = auth()->user();
             
-            $estrategias = Estrategia::with('actividades.avanceAcumulado')->where('activo',1);
+            $grupos_usuario = $auth_user->grupos;
+            $grupos_ids = $auth_user->grupos->pluck('id');
 
-            //Filtros, busquedas, ordenamiento
-            if(isset($parametros['query']) && $parametros['query']){
-                $estrategias = $estrategias->where(function($query)use($parametros){
-                    return $query->where('nombre','LIKE','%'.$parametros['query'].'%')
-                                ;
-                                //->whereRaw('CONCAT_WS(" ",personas.apellido_paterno, personas.apellido_materno, personas.nombre) like "%'.$parametros['query'].'%"' );
-                });
-            }
+            //$estrategias = Estrategia::with('actividades.avanceAcumulado')->where('activo',1);
+            $estrategias = Estrategia::with(['actividades'=>function($actividades)use($grupos_ids){
+                $actividades->select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
+                    ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
+                        $join->on('actividades_metas_grupos.actividad_id','=','actividades.id')
+                            ->whereIn('grupo_estrategico_id',$grupos_ids)
+                            ->whereNull('actividades_metas_grupos.actividad_meta_id')
+                            ->whereNull('actividades_metas_grupos.deleted_at');
+                    })->groupBy('actividades.id')->whereNotNull('actividades_metas_grupos.id')
+                    ->with(['avanceAcumulado'=>function($avanceAcumulado)use($grupos_ids){
+                        $avanceAcumulado->whereIn('avances_actividades.grupo_estrategico_id',$grupos_ids);
+                    }]);
+            }])->where('activo',1);
 
-            if(isset($parametros['page'])){
-                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
-                $estrategias = $estrategias->paginate($resultadosPorPagina);
-
-            } else {
-                $estrategias = $estrategias->get();
-            }
+            $estrategias = $estrategias->get();
 
             $estrategias = collect($estrategias)->map(function($element){
                 if(count($element['actividades'])){
@@ -56,18 +57,23 @@ class AvancesActividadesController extends Controller
                         $actividad['meta_abierta'] = ($actividad['total_meta_programada'])?false:true;
                         
                         if($actividad['avanceAcumulado'] && !$actividad['meta_abierta']){
-                            $actividad['porcentaje'] = ($actividad['avanceAcumulado']['total_avance']/$actividad['total_meta_programada'])*100;
+                            $actividad['porcentaje'] = ($actividad['avanceAcumulado']['total_avance']/$actividad['grupo_meta_programada'])*100;
                         }else{
                             $actividad['porcentaje'] = '0';
                         }
                     }
-                }
-                return $element;
-            });
+                    return $element;
+                } 
+                return false;
+            })->toArray();
 
-            
+            foreach (array_keys($estrategias, false) as $key) {
+                unset($estrategias[$key]);
+            }
 
-            return response()->json(['data'=>$estrategias],HttpResponse::HTTP_OK);
+            $estrategias = array_values($estrategias);
+
+            return response()->json(['data'=>$estrategias,'grupos'=>$grupos_usuario],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -77,8 +83,11 @@ class AvancesActividadesController extends Controller
     {
         try{
             $parametros = Input::all();
+            $auth_user = auth()->user();
             
-            $avances = AvanceActividad::getModel();
+            $grupos_ids = $auth_user->grupos->pluck('id');
+            
+            $avances = AvanceActividad::whereIn('grupo_estrategico_id',$grupos_ids)->whereNull('actividad_meta_id');
 
             if(isset($parametros['actividad_id']) && $parametros['actividad_id']){
                 $avances = $avances->where('actividad_id',$parametros['actividad_id']);
@@ -120,8 +129,10 @@ class AvancesActividadesController extends Controller
         try{
             $auth_user = auth()->user();
             $parametros = Input::all();
+            $grupos_ids = $auth_user->grupos->pluck('id');
 
             $parametros['user_id'] = $auth_user->id;
+            $parametros['grupo_estrategico_id'] = $grupos_ids[0];
 
             $avance = AvanceActividad::create($parametros);
 

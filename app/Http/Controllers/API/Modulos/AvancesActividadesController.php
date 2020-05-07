@@ -156,13 +156,24 @@ class AvancesActividadesController extends Controller
                 $llamada = LlamadaCallCenter::create($parametros);
             }*/
 
-            $actividad = Actividad::with('avanceAcumulado')->where('id',$parametros['actividad_id'])->first();
+            $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
+                                    ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
+                                        $join->on('actividades_metas_grupos.actividad_id','=','actividades.id')
+                                            ->whereIn('grupo_estrategico_id',$grupos_ids)
+                                            ->whereNull('actividades_metas_grupos.actividad_meta_id')
+                                            ->whereNull('actividades_metas_grupos.deleted_at');
+                                    })->groupBy('actividades.id')->whereNotNull('actividades_metas_grupos.id')
+                                    ->with(['avanceAcumulado'=>function($avanceAcumulado)use($grupos_ids){
+                                        $avanceAcumulado->whereIn('avances_actividades.grupo_estrategico_id',$grupos_ids);
+                                    }])
+                                    ->where('actividades.id',$parametros['actividad_id'])
+                                    ->first();
 
             $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
             if($actividad->meta_abierta){
                 $actividad->porcentaje = 0;
             }else{
-                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->grupo_meta_programada)*100;
             }
             
 
@@ -202,20 +213,33 @@ class AvancesActividadesController extends Controller
         try{
             $auth_user = auth()->user();
             $parametros = Input::all();
+            $grupos_ids = $auth_user->grupos->pluck('id');
 
             $parametros['user_id'] = $auth_user->id;
+            $parametros['grupo_estrategico_id'] = $grupos_ids[0];
 
             $avance = AvanceActividad::find($id);
 
             $avance->update($parametros);
 
-            $actividad = Actividad::with('avanceAcumulado')->where('id',$parametros['actividad_id'])->first();
+            $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
+                                    ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
+                                        $join->on('actividades_metas_grupos.actividad_id','=','actividades.id')
+                                            ->whereIn('grupo_estrategico_id',$grupos_ids)
+                                            ->whereNull('actividades_metas_grupos.actividad_meta_id')
+                                            ->whereNull('actividades_metas_grupos.deleted_at');
+                                    })->groupBy('actividades.id')->whereNotNull('actividades_metas_grupos.id')
+                                    ->with(['avanceAcumulado'=>function($avanceAcumulado)use($grupos_ids){
+                                        $avanceAcumulado->whereIn('avances_actividades.grupo_estrategico_id',$grupos_ids);
+                                    }])
+                                    ->where('actividades.id',$parametros['actividad_id'])
+                                    ->first();
 
             $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
             if($actividad->meta_abierta){
                 $actividad->porcentaje = 0;
             }else{
-                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->grupo_meta_programada)*100;
             }
             
 

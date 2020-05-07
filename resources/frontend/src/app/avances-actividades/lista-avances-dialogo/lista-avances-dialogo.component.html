@@ -6,7 +6,7 @@
         </div>
         <div fxFlex="none" style="text-align: center;">
             <h3>Progreso</h3>
-            {{ ((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number:'1.0-2' }} <span *ngIf="!actividad.meta_abierta">/</span> {{ actividad.total_meta_programada | number:'1.0-2'}}
+            {{ ((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number:'1.0-2' }} <span *ngIf="!actividad.meta_abierta">/</span> {{ actividad.grupo_meta_programada | number:'1.0-2'}}
         </div>
     </section>
     <section fxFlex>

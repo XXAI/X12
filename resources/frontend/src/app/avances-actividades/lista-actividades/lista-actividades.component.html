@@ -1,5 +1,18 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <mat-card fxFlex fxLayout="column">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            
+        </div>
+        <div fxFlex="none" style="display: table; height: 100%;">
+            <span style="display: table-cell; vertical-align: middle; padding-right:5px;">Asignado a:</span>
+        </div>
+        <div fxFlex="none" *ngIf="gruposAsignados">
+            <mat-chip-list aria-label="Fish selection" [selectable]="false">
+                <mat-chip *ngFor="let grupo of gruposAsignados" color="accent" selected>{{grupo.descripcion}}</mat-chip>
+            </mat-chip-list>
+        </div>
+    </section>
+    <mat-card fxFlex fxLayout="column" style="overflow: auto;">
         <section fxFlex *ngIf="listaEstrategias.length == 0">
             <div class="not-results-found">No se encontraron actividades asignadas</div>
         </section>

@@ -17,6 +17,7 @@ export class ListaActividadesComponent implements OnInit {
   isLoading:boolean;
   selectedEstrategiaIndex:number;
   selectedActividadIndex:number;
+  gruposAsignados:any[];
 
   ngOnInit() {
     //this.listaEstrategias = [];
@@ -63,6 +64,7 @@ export class ListaActividadesComponent implements OnInit {
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
           this.listaEstrategias = response.data;
+          this.gruposAsignados = response.grupos;
           /*if(response.data.total > 0){
             response.data.data.forEach(registro => {
               let dateString = registro.fecha_llamada+'T'+registro.hora_llamada;

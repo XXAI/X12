@@ -33,11 +33,69 @@ class PacientesCovidController extends Controller
     {
 
         try{
-                $parametros = Input::all();
+            $loggedUser = auth()->userOrFail();
+             //permiso para ver todos los pacientes fa7QWns1FDzcIZjC44OAsHtswKYhOsPN
+            $permiso = DB::table('permissions')
+            ->leftJoin('permission_user', 'permissions.id', '=', 'permission_user.permission_id')
+            ->where('permission_user.user_id', '=', $loggedUser->id)
+            ->where('permission_user.permission_id', '=', 'fa7QWns1FDzcIZjC44OAsHtswKYhOsPN')
+            ->first();
+
+            $parametros = Input::all();
+
+            if($permiso || $loggedUser->is_superuser=='1' )
+            {
+
+               
+
+            
+
+                
 
                 $pacientes = PacientesCovid::select('pacientes_covid.*')
                 ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid', 'responsable')
                 ->orderBy("egreso_id", "asc", "no_caso", "asc");
+            }
+            else
+            {
+               
+                $grupo = DB::table('grupos_estrategicos_usuarios')
+                ->leftJoin('users', 'id', '=', 'grupos_estrategicos_usuarios.user_id')
+                ->where('grupos_estrategicos_usuarios.user_id', '=', $loggedUser->id)
+                ->first();
+
+                if($grupo)
+                {
+                    $pacientes = PacientesCovid::select('pacientes_covid.*')
+                    ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid', 'responsable.grupo')
+                    ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                    ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                    ->where('GE.id','=',$grupo->grupo_estrategico_id)
+                    ->orderBy("egreso_id", "asc", "no_caso", "asc"); 
+
+                }
+                else{
+
+                    $pacientes = PacientesCovid::select('pacientes_covid.*')
+                    ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid', 'responsable')
+                    ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                    ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                    
+                    ->orderBy("egreso_id", "asc", "no_caso", "asc"); 
+
+                }
+
+                
+    
+                /* $pacientes = PacientesCovid::select('pacientes_covid.*')
+                ->with('municipio', 'tipo_atencion', 'tipo_unidad', 'estatus_covid', 'derechohabiencia', 'tipo_transmision', 'egreso_covid', 'responsable.grupo')
+                 ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                ->orderBy("egreso_id", "asc", "no_caso", "asc") ; */
+    
+                //return response()->json(['data'=>$pacientes],HttpResponse::HTTP_OK);
+    
+            }
 
                 if(isset($parametros['query']) && $parametros['query']){
                     $pacientes = $pacientes->where(function($query)use($parametros){
@@ -58,6 +116,7 @@ class PacientesCovidController extends Controller
                 }
 
             return response()->json(['data'=>$pacientes],HttpResponse::HTTP_OK);
+        
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

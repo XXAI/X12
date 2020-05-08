@@ -17,7 +17,7 @@ export const APPS:App [] = [
     { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg",  permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
     { name:'Contagios',             route: "listado-indices",             icon: "assets/icons/indice_contacto.svg",       permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i" },
     { name:'Mapa',                  route: "mapa-visor",                  icon: "assets/icons/mapa.png"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
-    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
+    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg",        permission:"0ZV9m4evdNTeQGfBqM4azfyRjpj5nu1t" },
     { name:'Graficas',              route: "casos-graficas",              icon: "assets/icons/graficas.svg",        permission:"n7Mak8Umm4uNJbiZ87IdxSdvTaDx76j9" },
     { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",              permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
     { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",              permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },

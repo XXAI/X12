@@ -72,3 +72,24 @@ table {
   height: 60px;
   margin: 0 10px;
 }
+
+.green
+{
+    background-color: green !important;
+    color: white;
+    font-weight: bold;
+}
+
+.orange
+{
+    background-color: orange !important;
+    color: white;
+    font-weight: bold;
+}
+
+.red
+{
+    background-color: red !important;
+    color: white;
+    font-weight: bold;
+}

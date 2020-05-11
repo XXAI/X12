@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SharedService } from '../../shared/shared.service';
 import { AvancesActividadesService } from '../avances-actividades.service';
@@ -45,6 +45,9 @@ export class ListaAvancesDialogoComponent implements OnInit {
 
   displayedColumns: string[] = ['user','fecha_avance','avance','observaciones','actions'];
   dataSource: any = [];
+
+  actividadMetas:any[];
+  formAvanceMetas:FormGroup;
 
   ngOnInit() {
     this.formAvance = this.formBuilder.group({
@@ -91,15 +94,12 @@ export class ListaAvancesDialogoComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          if(response.data.total > 0){
-            response.data.data.forEach(registro => {
-              let dateString = registro.fecha_llamada+'T'+registro.hora_llamada;
-              let newDate = new Date(dateString);
-              registro.fecha_hora_llamada = newDate;
-            });
-            this.dataSource = response.data.data;
-            this.resultsLength = response.data.total;
+          if(response.avances.total > 0){
+            this.dataSource = response.avances.data;
+            this.resultsLength = response.avances.total;
           }
+
+          this.actividadMetas = response.actividad_meta_grupo;
         }
         this.isLoading = false;
       },
@@ -115,7 +115,7 @@ export class ListaAvancesDialogoComponent implements OnInit {
     return event;
   }
 
-  guardaraAvance(){
+  guardarAvance(){
     this.isLoadingAction = true;
     let formData = JSON.parse(JSON.stringify(this.formAvance.value));
 
@@ -196,6 +196,42 @@ export class ListaAvancesDialogoComponent implements OnInit {
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.formAvance.get('fecha_avance').patchValue(fecha_hoy);
 
+    if(this.actividadMetas.length > 0){
+      this.formAvance.get('avance').patchValue(0);
+      this.formAvance.get('avance').disable();
+
+      let form_metas = {};
+      for (let index = 0; index < this.actividadMetas.length; index++) {
+        const meta = this.actividadMetas[index];
+        let meta_form = {
+          actividad_id:[meta.actividad_id],
+          actividad_meta_id:[meta.actividad_meta_id],
+          actividad_meta_grupo_id:[meta.id],
+          distrito_id:[meta.distrito_id],
+          municipio_id:[meta.municipio_id],
+          localidad_id:[meta.localidad_id],
+          fecha_avance:[fecha_hoy,Validators.required],
+          id:['']
+        };
+        /*form_metas['meta_'+meta.id] = this.formBuilder.group({
+          //avance:['',Validators.required],
+          //observaciones:[''],
+        });*/
+
+        if(meta.total_avance >= meta.total_programado){
+          meta_form['avance'] = [''];
+        }else{
+          meta_form['avance'] = ['',Validators.required];
+        }
+
+        form_metas['meta_'+meta.id] = this.formBuilder.group(meta_form);
+      }
+      //this.formAvanceMetas = this.formBuilder.group(form_metas);
+      this.formAvance.addControl('division_metas',this.formBuilder.group(form_metas));
+    }else{
+      this.formAvance.get('avance').enable();
+    }
+
     this.mostrarFormulario = true;
     this.selectedTab = 1;
   }
@@ -203,6 +239,18 @@ export class ListaAvancesDialogoComponent implements OnInit {
   ocultarFormulario(){
     this.mostrarFormulario = false;
     this.selectedTab = 0;
+    this.formAvance.removeControl('division_metas');
+  }
+
+  sumarAvances(){
+    let avances = this.formAvance.get('division_metas').value;
+    
+    let total_avance =  0;
+    for(let i in avances){
+      total_avance += +avances[i].avance;
+    }
+    
+    this.formAvance.get('avance').patchValue(total_avance);
   }
 
 }

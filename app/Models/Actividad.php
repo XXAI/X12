@@ -17,6 +17,10 @@ class Actividad extends Model
         return $this->hasMany('App\Models\ActividadMeta','actividad_id','id');
     }
 
+    public function metasGrupos(){
+        return $this->hasMany('App\Models\ActividadMetaGrupo','actividad_id','id')->whereNull('actividad_meta_id');
+    }
+
     public function avances(){
         return $this->hasMany('App\Models\AvanceActividad','actividad_id','id');
     }

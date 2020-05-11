@@ -11,8 +11,8 @@ class ActividadMeta extends Model
     protected $table = 'actividades_metas';
     protected $fillable = ['id','actividad_id','distrito_id','municipio_id','localidad_id','meta_programada'];
 
-    public function metasUsuarios(){
-        return $this->hasMany('App\Models\ActividadMetaUsuario','actividad_meta_id','id');
+    public function metasGrupos(){
+        return $this->hasMany('App\Models\ActividadMetaGrupo','actividad_meta_id','id');
     }
 
     public function distrito(){

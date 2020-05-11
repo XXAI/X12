@@ -80,9 +80,9 @@
             </mat-tab>
             <mat-tab label="Formulario Avance" *ngIf="mostrarFormulario">
               <ng-template matTabContent>
-                    <div fxLayout="column" style="height: 100%;">
+                    <div fxLayout="column" style="height: 100%;" [formGroup]="formAvance">
                         <div fxFlex="none" style="padding:5px 0;">
-                            <div fxFlex fxLayout="row" fxLayoutAlign="space-between" [formGroup]="formAvance">
+                            <div fxFlex fxLayout="row" fxLayoutAlign="space-between">
                                 <mat-form-field fxFlex="20">
                                     <mat-label>Fecha (aaaa-mm-dd)</mat-label>
                                     <input matInput mascaraFecha formControlName="fecha_avance" required>
@@ -93,6 +93,7 @@
                                     <mat-label>Avance</mat-label>
                                     <input matInput formControlName="avance" required>
                                     <mat-error *ngIf="formAvance.get('avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                    <mat-hint *ngIf="actividadMetas.length > 0">Suma Automatica</mat-hint>
                                 </mat-form-field>
                                 <mat-form-field  fxFlex="58">
                                     <mat-label>Observaciones</mat-label>
@@ -102,20 +103,32 @@
                         </div>
                         <div fxFlex style="overflow:auto;">
                             <mat-divider></mat-divider>
-                            <!--mat-list role="list">
-                                <mat-list-item role="listitem">
-                                    <div fxLayout="row">
-                                        safsdf
+                            <div fxLayout="column" *ngIf="actividadMetas.length > 0">
+                                <div fxFlex="none" *ngFor="let meta of actividadMetas">
+                                    <div fxLayout="row" style="width: 100%;" [formGroup]="formAvance.get('division_metas.meta_'+meta.id)">
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{meta.distrito}}</div>
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{(meta.municipio)?meta.municipio:'---'}}</div>
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{(meta.localidad)?meta.localidad:'---'}}</div>
+                                        <mat-form-field fxFlex="20" style="padding-right:5px;" appearance="legacy">
+                                            <mat-label>Fecha</mat-label>
+                                            <input matInput mascaraFecha formControlName="fecha_avance" required>
+                                            <mat-error *ngIf="formAvance.get('division_metas.meta_'+meta.id+'.fecha_avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field fxFlex="20" appearance="legacy">
+                                            <mat-label>Avance</mat-label>
+                                            <input matInput formControlName="avance" (blur)="sumarAvances()">
+                                            <mat-error *ngIf="formAvance.get('division_metas.meta_'+meta.id+'.avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                        </mat-form-field>
                                     </div>
                                     <mat-divider></mat-divider>
-                                </mat-list-item>
-                            </mat-list-->
+                                </div>
+                            </div>
                         </div>
                         <div fxFlex="none" fxLayout="row">
                             <div fxFlex></div>
                             <div fxFlex="none">
                                 <button mat-button (click)="ocultarFormulario()">Cancelar</button>&nbsp;
-                                <button mat-raised-button color="primary" (click)="guardaraAvance()" [disabled]="!formAvance.valid || isLoadingAction" [class.button-spinner]="isLoadingAction"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+                                <button mat-raised-button color="primary" (click)="guardarAvance()" [disabled]="!formAvance.valid || isLoadingAction" [class.button-spinner]="isLoadingAction"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
                             </div>
                         </div>
                     </div>

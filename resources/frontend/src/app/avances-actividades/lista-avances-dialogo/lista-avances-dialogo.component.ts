@@ -46,6 +46,7 @@ export class ListaAvancesDialogoComponent implements OnInit {
   displayedColumns: string[] = ['user','fecha_avance','avance','observaciones','actions'];
   dataSource: any = [];
 
+  toggleFechaEnabled:boolean = true;
   actividadMetas:any[];
   formAvanceMetas:FormGroup;
 
@@ -117,6 +118,11 @@ export class ListaAvancesDialogoComponent implements OnInit {
 
   guardarAvance(){
     this.isLoadingAction = true;
+
+    if(!this.toggleFechaEnabled && this.actividadMetas.length > 0){
+      this.toggleBloqueoFechas();
+    }
+
     let formData = JSON.parse(JSON.stringify(this.formAvance.value));
 
     formData.actividad_id = this.actividad.id;
@@ -131,7 +137,16 @@ export class ListaAvancesDialogoComponent implements OnInit {
           this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
           this.ocultarFormulario();
           this.isLoadingAction = false;
-      });
+        },
+        errorResponse =>{
+          var errorMessage = "Ocurrió un error.";
+          if(errorResponse.status == 409){
+            errorMessage = errorResponse.error.error.message;
+          }
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+          this.isLoadingAction = false;
+        }
+      );
     }else{
       this.avancesActividadesService.guardarAvance(formData).subscribe(
         response => {
@@ -140,7 +155,16 @@ export class ListaAvancesDialogoComponent implements OnInit {
           this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
           this.ocultarFormulario();
           this.isLoadingAction = false;
-      });
+        },
+        errorResponse =>{
+          var errorMessage = "Ocurrió un error.";
+          if(errorResponse.status == 409){
+            errorMessage = errorResponse.error.error.message;
+          }
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+          this.isLoadingAction = false;
+        }
+      );
     }
   }
 
@@ -148,8 +172,16 @@ export class ListaAvancesDialogoComponent implements OnInit {
     this.isLoadingAction = true;
     this.avancesActividadesService.verAvance(id).subscribe(
       response => {
-        console.log(response);
-        this.verFormulario();
+        //En caso de que tenga avances por meta/grupo
+        let avances_hijos = {};
+        if(response.data.avances_hijos && response.data.avances_hijos.length > 0){
+          //Crear arreglo de Avances de Metas
+          for (const index in response.data.avances_hijos) {
+            let avance = response.data.avances_hijos[index];
+            avances_hijos[avance.actividad_meta_id+'_'+avance.grupo_estrategico_id] = avance;
+          }
+        }
+        this.verFormulario(avances_hijos);
         response.data.avance = +response.data.avance;
         this.formAvance.patchValue(response.data);
         this.isLoadingAction = false;
@@ -190,8 +222,13 @@ export class ListaAvancesDialogoComponent implements OnInit {
     });
   }
 
-  verFormulario(){
+  verFormulario(avances_hijos?:any){
     this.formAvance.reset();
+    let esEditar:boolean = false;
+
+    if(avances_hijos){
+      esEditar = true;
+    }
 
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.formAvance.get('fecha_avance').patchValue(fecha_hoy);
@@ -203,6 +240,19 @@ export class ListaAvancesDialogoComponent implements OnInit {
       let form_metas = {};
       for (let index = 0; index < this.actividadMetas.length; index++) {
         const meta = this.actividadMetas[index];
+        let fecha = fecha_hoy;
+        let id = '';
+        let avance = undefined;
+
+        if(esEditar){
+          let avance_guardado = avances_hijos[meta.actividad_meta_id+'_'+meta.grupo_estrategico_id];
+          if(avance_guardado){
+            avance = +avance_guardado.avance;
+            id = avance_guardado.id;
+            fecha = avance_guardado.fecha_avance;
+          }
+        }
+
         let meta_form = {
           actividad_id:[meta.actividad_id],
           actividad_meta_id:[meta.actividad_meta_id],
@@ -210,18 +260,14 @@ export class ListaAvancesDialogoComponent implements OnInit {
           distrito_id:[meta.distrito_id],
           municipio_id:[meta.municipio_id],
           localidad_id:[meta.localidad_id],
-          fecha_avance:[fecha_hoy,Validators.required],
-          id:['']
+          fecha_avance:[fecha,Validators.required],
+          id:[id]
         };
-        /*form_metas['meta_'+meta.id] = this.formBuilder.group({
-          //avance:['',Validators.required],
-          //observaciones:[''],
-        });*/
 
-        if(meta.total_avance >= meta.total_programado){
-          meta_form['avance'] = [''];
+        if(+meta.total_avance >= +meta.meta_programada){
+          meta_form['avance'] = [avance];
         }else{
-          meta_form['avance'] = ['',Validators.required];
+          meta_form['avance'] = [avance,Validators.required];
         }
 
         form_metas['meta_'+meta.id] = this.formBuilder.group(meta_form);
@@ -234,6 +280,34 @@ export class ListaAvancesDialogoComponent implements OnInit {
 
     this.mostrarFormulario = true;
     this.selectedTab = 1;
+  }
+
+  patchFechaActual(){
+    let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.formAvance.get('fecha_avance').patchValue(fecha_hoy);
+  }
+
+  aplicarFechaMetas(){
+    let fecha_aplicar = this.formAvance.get('fecha_avance').value;
+    let grupo_avances = this.formAvance.get('division_metas').value;
+    
+    for(let i in grupo_avances){
+      this.formAvance.get('division_metas.'+i+'.fecha_avance').patchValue(fecha_aplicar);
+    }
+  }
+
+  toggleBloqueoFechas(){
+    let grupo_avances = this.formAvance.get('division_metas').value;
+    
+    for(let i in grupo_avances){
+      if(this.toggleFechaEnabled){
+        this.formAvance.get('division_metas.'+i+'.fecha_avance').disable();
+      }else{
+        this.formAvance.get('division_metas.'+i+'.fecha_avance').enable();
+      }
+    }
+
+    this.toggleFechaEnabled = !this.toggleFechaEnabled;
   }
 
   ocultarFormulario(){

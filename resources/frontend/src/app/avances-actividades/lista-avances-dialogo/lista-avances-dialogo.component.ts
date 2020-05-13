@@ -224,6 +224,7 @@ export class ListaAvancesDialogoComponent implements OnInit {
 
   verFormulario(avances_hijos?:any){
     this.formAvance.reset();
+    this.toggleFechaEnabled = true;
     let esEditar:boolean = false;
 
     if(avances_hijos){

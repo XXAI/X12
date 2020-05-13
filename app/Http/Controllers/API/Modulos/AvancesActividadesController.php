@@ -347,6 +347,7 @@ class AvancesActividadesController extends Controller
 
             $actividad_id = $avance->actividad_id;
 
+            $avance->avancesHijos()->delete();
             $avance->delete();
 
             $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))

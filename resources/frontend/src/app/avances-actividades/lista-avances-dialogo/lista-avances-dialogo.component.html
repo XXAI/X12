@@ -83,11 +83,18 @@
                     <div fxLayout="column" style="height: 100%;" [formGroup]="formAvance">
                         <div fxFlex="none" style="padding:5px 0;">
                             <div fxFlex fxLayout="row" fxLayoutAlign="space-between">
-                                <mat-form-field fxFlex="20">
+                                <mat-form-field fxFlex="21">
                                     <mat-label>Fecha (aaaa-mm-dd)</mat-label>
                                     <input matInput mascaraFecha formControlName="fecha_avance" required>
-                                    <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+                                    <mat-hint>Ejemplo: 2020-01-30</mat-hint>
                                     <mat-error *ngIf="formAvance.get('fecha_avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                    <button matSuffix mat-icon-button [matMenuTriggerFor]="menu" [attr.aria-label]="'Menu Fecha'" [attr.aria-pressed]="'MenuFecha'">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item (click)="patchFechaActual()"><mat-icon>today</mat-icon> Usar fecha actual</button>
+                                        <button mat-menu-item (click)="aplicarFechaMetas()" *ngIf="actividadMetas.length > 0" [disabled]="!toggleFechaEnabled"><mat-icon>date_range</mat-icon> Aplicar fecha en avances</button>
+                                    </mat-menu>
                                 </mat-form-field>
                                 <mat-form-field fxFlex="20">
                                     <mat-label>Avance</mat-label>
@@ -95,13 +102,28 @@
                                     <mat-error *ngIf="formAvance.get('avance').hasError('required')">Este campo es obligatorio</mat-error>
                                     <mat-hint *ngIf="actividadMetas.length > 0">Suma Automatica</mat-hint>
                                 </mat-form-field>
-                                <mat-form-field  fxFlex="58">
+                                <mat-form-field  fxFlex>
                                     <mat-label>Observaciones</mat-label>
                                     <textarea matInput formControlName="observaciones" rows="1"></textarea>
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div fxFlex style="overflow:auto;">
+                        <div fxFlex="none"  *ngIf="actividadMetas.length > 0">
+                            <div fxLayout="column">
+                                <div fxFlex="none">
+                                    <div fxLayout="row" style="width: 100%;">
+                                        <div fxFlex="20" class="cabecera-avances">Distrito</div>
+                                        <div fxFlex="20" class="cabecera-avances">Municipio</div>
+                                        <div fxFlex="20" class="cabecera-avances">Localidad</div>
+                                        <div fxFlex="20" class="cabecera-avances">
+                                            <button mat-icon-button (click)="toggleBloqueoFechas()"><mat-icon>{{(toggleFechaEnabled)?'lock_open':'lock'}}</mat-icon></button>Fecha
+                                        </div>
+                                        <div fxFlex="20" class="cabecera-avances">Avance</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div fxFlex style="overflow:auto; padding:5px;">
                             <mat-divider></mat-divider>
                             <div fxLayout="column" *ngIf="actividadMetas.length > 0">
                                 <div fxFlex="none" *ngFor="let meta of actividadMetas">
@@ -118,6 +140,7 @@
                                             <mat-label>Avance</mat-label>
                                             <input matInput formControlName="avance" (blur)="sumarAvances()">
                                             <mat-error *ngIf="formAvance.get('division_metas.meta_'+meta.id+'.avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                            <mat-hint align="end">{{ meta.total_avance | number:'1.0-2' }} / {{ meta.meta_programada | number:'1.0-2' }}</mat-hint>
                                         </mat-form-field>
                                     </div>
                                     <mat-divider></mat-divider>

@@ -116,7 +116,7 @@ class AvancesActividadesController extends Controller
 
             $actividad_grupo = ActividadMetaGrupo::where('actividad_id',$parametros['actividad_id'])->whereNull('actividad_meta_id')->whereIn('grupo_estrategico_id',$grupos_ids)->get();
 
-            $actividad_meta_grupo = ActividadMetaGrupo::select('actividades_metas_grupos.id','actividades_metas_grupos.actividad_id','actividades_metas_grupos.actividad_meta_id',
+            $actividad_meta_grupo = ActividadMetaGrupo::select('actividades_metas_grupos.id','actividades_metas_grupos.actividad_id','actividades_metas_grupos.actividad_meta_id','actividades_metas_grupos.grupo_estrategico_id',
                                                                 'actividades_metas_grupos.meta_programada','actividades_metas.meta_programada as total_programado','catalogo_distritos.descripcion as distrito',
                                                                 'actividades_metas.distrito_id','catalogo_municipios.descripcion as municipio','actividades_metas.municipio_id',
                                                                 'catalogo_localidades.descripcion as localidad','actividades_metas.localidad_id',DB::raw('SUM(avances_actividades.avance) as total_avance'))
@@ -126,7 +126,8 @@ class AvancesActividadesController extends Controller
                                             ->leftJoin('catalogo_localidades','catalogo_localidades.id','=','actividades_metas.localidad_id')
                                             ->leftJoin('avances_actividades',function($join){
                                                 $join->on('avances_actividades.actividad_meta_id','=','actividades_metas_grupos.actividad_meta_id')
-                                                    ->on('avances_actividades.grupo_estrategico_id','=','actividades_metas_grupos.grupo_estrategico_id');
+                                                    ->on('avances_actividades.grupo_estrategico_id','=','actividades_metas_grupos.grupo_estrategico_id')
+                                                    ->whereNull('avances_actividades.deleted_at');
                                             })
                                             ->where('actividades_metas_grupos.actividad_id',$parametros['actividad_id'])
                                             ->whereNotNull('actividades_metas_grupos.actividad_meta_id')
@@ -149,6 +150,8 @@ class AvancesActividadesController extends Controller
     public function store(Request $request)
     {
         try{
+            DB::beginTransaction();
+
             $auth_user = auth()->user();
             $parametros = Input::all();
             $grupos_ids = $auth_user->grupos->pluck('id');
@@ -157,47 +160,39 @@ class AvancesActividadesController extends Controller
             //TODO:si el usuario tiene mas de un grupo asignado
             $parametros['grupo_estrategico_id'] = $grupos_ids[0];
 
+            $avances_metas = [];
             if(isset($parametros['division_metas']) && $parametros['division_metas']){
+                //$actividad = Actividad::find($parametros['actividad_id']);
+
                 $suma_avances_metas = 0;
-                $avances_metas = [];
                 foreach ($parametros['division_metas'] as $llave => $meta) {
                     $avance_meta = [
-                        `estrategia_id`         => $parametros['estrategia_id'],
-                        `actividad_id`          => $meta['actividad_id'],
-                        `actividad_meta_id`     => $meta['actividad_meta_id'],
-                        `grupo_estrategico_id`  => $parametros['grupo_estrategico_id'],
-                        `avance`                => $meta['avance'],
-                        `fecha_avance`          => $meta['fecha_avance'],
-                        `user_id`               => $parametros['user_id']
+                        'estrategia_id'         => $parametros['estrategia_id'],
+                        'actividad_id'          => $meta['actividad_id'],
+                        'actividad_meta_id'     => $meta['actividad_meta_id'],
+                        'grupo_estrategico_id'  => $parametros['grupo_estrategico_id'],
+                        'avance'                => $meta['avance'],
+                        'fecha_avance'          => $meta['fecha_avance'],
+                        'user_id'               => $parametros['user_id']
                     ];
+                    
                     $avances_metas[] = $avance_meta;
                     $suma_avances_metas += $meta['avance'];
                 }
+
+                //$actividad->avances()->createMany($avances_metas);
+                //AvanceActividad::createMany($avances_metas);
+
                 $parametros['avance'] = $suma_avances_metas;
             }
 
             $avance = AvanceActividad::create($parametros);
+
+            if(count($avances_metas) > 0){
+                $avance->avancesHijos()->createMany($avances_metas);
+            }
+
             
-            /*if(isset($parametros['id']) && $parametros['id']){
-                $llamada = LlamadaCallCenter::find($parametros['id']);
-                $parametros['recibio_llamada'] = $auth_user->id;
-                $parametros['turno_id'] = $auth_user->turno_id;
-
-                unset($parametros['hora_llamada']);
-                unset($parametros['fecha_llamada']);
-
-                $llamada->update($parametros);
-            }else{
-                $ultimo_folio = LLamadaCallCenter::max('folio');
-                $ultimo_folio = $ultimo_folio+1;
-
-                $parametros['folio'] = $ultimo_folio;
-                $parametros['recibio_llamada'] = $auth_user->id;
-                $parametros['turno_id'] = $auth_user->turno_id;
-
-                $llamada = LlamadaCallCenter::create($parametros);
-            }*/
-
             $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
                                     ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
                                         $join->on('actividades_metas_grupos.actividad_id','=','actividades.id')
@@ -218,9 +213,10 @@ class AvancesActividadesController extends Controller
                 $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->grupo_meta_programada)*100;
             }
             
-
-            return response()->json(['data'=>$actividad,'metas'=>$avances_metas],HttpResponse::HTTP_OK);
+            DB::commit();
+            return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
+            DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
@@ -234,9 +230,13 @@ class AvancesActividadesController extends Controller
     public function show($id)
     {
         try{
+            $auth_user = auth()->user();
+            $grupos_ids = $auth_user->grupos->pluck('id');
             
-            $avance = AvanceActividad::find($id);
-            
+            $avance = AvanceActividad::with(['avancesHijos'=>function($avancesHijos)use($grupos_ids){
+                $avancesHijos->whereIn('grupo_estrategico_id',$grupos_ids);
+            }])->find($id);
+
             return response()->json(['data'=>$avance],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
@@ -253,6 +253,8 @@ class AvancesActividadesController extends Controller
     public function update(Request $request, $id)
     {
         try{
+            DB::beginTransaction();
+
             $auth_user = auth()->user();
             $parametros = Input::all();
             $grupos_ids = $auth_user->grupos->pluck('id');
@@ -262,7 +264,44 @@ class AvancesActividadesController extends Controller
 
             $avance = AvanceActividad::find($id);
 
+            $avances_metas = [];
+            if(isset($parametros['division_metas']) && $parametros['division_metas']){
+                $suma_avances_metas = 0;
+                foreach ($parametros['division_metas'] as $llave => $meta) {
+                    $avance_meta = [
+                        'id'                    => $meta['id'],
+                        'estrategia_id'         => $parametros['estrategia_id'],
+                        'actividad_id'          => $meta['actividad_id'],
+                        'actividad_meta_id'     => $meta['actividad_meta_id'],
+                        'grupo_estrategico_id'  => $parametros['grupo_estrategico_id'],
+                        'avance'                => $meta['avance'],
+                        'fecha_avance'          => $meta['fecha_avance'],
+                        'user_id'               => $parametros['user_id']
+                    ];
+                    
+                    $avances_metas[] = $avance_meta;
+                    $suma_avances_metas += $meta['avance'];
+                }
+
+                $parametros['avance'] = $suma_avances_metas;
+            }
+
             $avance->update($parametros);
+
+            if(count($avances_metas) > 0){
+                $nuevos_avances = [];
+                for ($i=0; $i < count($avances_metas) ; $i++) {
+                    $avance_meta = AvanceActividad::find($avances_metas[$i]['id']);
+                    if($avance_meta){
+                        $avance_meta->update($avances_metas[$i]);
+                    }else{
+                        $nuevos_avances[] = $avances_metas[$i];
+                    }
+                }
+                if(count($nuevos_avances)){
+                    $avance->avancesHijos()->createMany($nuevos_avances);
+                }
+            }
 
             $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
                                     ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
@@ -283,10 +322,11 @@ class AvancesActividadesController extends Controller
             }else{
                 $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->grupo_meta_programada)*100;
             }
-            
 
+            DB::commit();
             return response()->json(['data'=>$actividad],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
+            DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
@@ -301,20 +341,33 @@ class AvancesActividadesController extends Controller
     {
         try{
             $auth_user = auth()->user();
+            $grupos_ids = $auth_user->grupos->pluck('id');
             
             $avance = AvanceActividad::find($id);
 
             $actividad_id = $avance->actividad_id;
 
+            $avance->avancesHijos()->delete();
             $avance->delete();
 
-            $actividad = Actividad::with('avanceAcumulado')->where('id',$actividad_id)->first();
+            $actividad = Actividad::select('actividades.*',DB::raw('SUM(actividades_metas_grupos.meta_programada) as grupo_meta_programada'))
+                                    ->leftJoin('actividades_metas_grupos',function($join)use($grupos_ids){
+                                        $join->on('actividades_metas_grupos.actividad_id','=','actividades.id')
+                                            ->whereIn('grupo_estrategico_id',$grupos_ids)
+                                            ->whereNull('actividades_metas_grupos.actividad_meta_id')
+                                            ->whereNull('actividades_metas_grupos.deleted_at');
+                                    })->groupBy('actividades.id')->whereNotNull('actividades_metas_grupos.id')
+                                    ->with(['avanceAcumulado'=>function($avanceAcumulado)use($grupos_ids){
+                                        $avanceAcumulado->whereIn('avances_actividades.grupo_estrategico_id',$grupos_ids);
+                                    }])
+                                    ->where('actividades.id',$actividad_id)
+                                    ->first();
 
             $actividad->meta_abierta = ($actividad->total_meta_programada)?false:true;
             if($actividad->meta_abierta){
                 $actividad->porcentaje = 0;
             }else{
-                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->total_meta_programada)*100;
+                $actividad->porcentaje = ($actividad->avanceAcumulado->total_avance/$actividad->grupo_meta_programada)*100;
             }
             
 

@@ -1,1 +1,31 @@
-<p>form works!</p>
+<h1 mat-dialog-title><span *ngIf="responsable.id">Editar</span> <span *ngIf="!responsable.id">Nuevo</span> Responsable</h1>
+<div mat-dialog-content>
+    <div class="form-container" [formGroup]="responsableForm">
+        <div class="form-loading-shade" *ngIf="isLoading"><mat-spinner *ngIf="isLoading"></mat-spinner></div>
+
+        <div class="form-loading-shade" *ngIf="!isLoading && !responsable">No se encontraron los datos del Responsable</div>
+        <br>
+
+        <mat-form-field>
+            <input matInput id="descripcion" formControlName="descripcion" placeholder="Nombre" required>
+            <mat-error *ngIf="responsableForm.get('descripcion').invalid && (responsableForm.get('descripcion').dirty || responsableForm.get('descripcion').touched)">
+                <span *ngIf="responsableForm.get('descripcion').errors.required">El nombre es obligatorio</span>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput id="folio" formControlName="folio" placeholder="Grupo" required>
+            <mat-error *ngIf="responsableForm.get('folio').invalid && (responsableForm.get('folio').dirty || responsableForm.get('folio').touched)">
+                <span *ngIf="responsableForm.get('folio').errors.required">El folio es obligatorio</span>
+            </mat-error>
+        </mat-form-field>
+
+    </div>
+</div>
+<mat-divider></mat-divider>
+<div mat-dialog-actions>
+    <span fxFlex></span>
+    <button mat-button (click)='onNoClick()'>Cancelar</button>
+    <button mat-raised-button (click)="saveResponsable()" color="primary" [disabled]="responsableForm.invalid || isLoading"><mat-icon>save</mat-icon> Guardar</button>
+</div>
+

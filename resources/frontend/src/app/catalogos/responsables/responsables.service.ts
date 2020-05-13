@@ -16,14 +16,16 @@ export class ResponsablesService {
   getResponsablesList(payload):Observable<any> {
     return this.http.get<any>(this.url,{params: payload}).pipe(
       map( response => {
+        console.log("responsables",response);
         return response;
       })
     );
   }
 
-  getAllResponsables():Observable<any> {
+ getAllResponsables():Observable<any> {
     return this.http.get<any>(this.url,{}).pipe(
       map( response => {
+        
         return response;
       })
     );

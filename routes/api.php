@@ -108,6 +108,15 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('graficas-covid',                      'API\Modulos\PacientesCovidController@getGraficas');
     Route::get('concentrado-casos-covid',             'API\Modulos\PacientesCovidController@getConcentradoCasos');
 
+    /**
+     * Catalogos
+     */
+
+     //responsables
+
+
+     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
+
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

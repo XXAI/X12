@@ -44,7 +44,7 @@ import { GraficasModule } from './graficas/graficas.module';
 import { EstrategiasModule } from './estrategias/estrategias.module';
 import { ConcentradosModule } from './concentrados/concentrados.module';
 import { AvancesActividadesModule } from './avances-actividades/avances-actividades.module';
-
+import { CatalogosModule } from './catalogos/catalogos.module';
 
 
 @NgModule({
@@ -82,6 +82,7 @@ import { AvancesActividadesModule } from './avances-actividades/avances-activida
     AvancesActividadesModule,
     GoogleChartsModule.forRoot(),
     ConcentradosModule,
+    CatalogosModule,
     WildcardRoutingModule,
   ],
   providers: [

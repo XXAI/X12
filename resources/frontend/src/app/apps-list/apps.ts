@@ -33,4 +33,11 @@ export const APPS:App [] = [
         {name:'Concentrado de datos',     route:'casos-concentrados',     icon:'picture_as_pdf',                        permission:"Z52PdlZk2XCCbIPS28NO3M17WzZMF0lI" }
       ],
     },
+
+    { name: "Catalogos", route: "catalogos", icon: "assets/icons/catalogos.svg", isHub:true, hideHome:true, 
+        children: [
+            {name: "Responsables",          route:"diagnosticos",           icon: "adjust",                permission:"uc5EjMH6WSVn79Wx8BJfAwddC3eMgcRI" },
+             ]
+    }
+
 ]

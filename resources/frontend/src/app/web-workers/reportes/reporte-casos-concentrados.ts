@@ -5,7 +5,7 @@ export class ReporteCasoConcentrados {
     afiliacion;
 
     getDocumentDefinition(reportData:any) {
-console.log("acaaaaaaa",reportData.items);
+//console.log("acaaaaaaa",reportData.items);
         let contadorLineasHorizontalesV = 0;
 
         let datos = {
@@ -87,12 +87,7 @@ console.log("acaaaaaaa",reportData.items);
             }
         };
 
-
-        let indice_actual;//(datos.content.length -1);
-
-
-        datos.content.push({
-
+        let tabla_vacia = {
           table: {
             headerRows:1,
             dontBreakRows: true,
@@ -100,7 +95,6 @@ console.log("acaaaaaaa",reportData.items);
             widths: [ 30,30, 40, 70, 130, 120, 70,100, 100, 100,30 ],
             margin: [0,0,0,0],
             body: [
-
               [
                 {text: "Grupo", style: 'cabecera'},
                 {text: "N° Caso", style: 'cabecera'},
@@ -116,24 +110,27 @@ console.log("acaaaaaaa",reportData.items);
               ]
             ]
           }
-        });
+        };
+        
+        datos.content.push(JSON.parse(JSON.stringify(tabla_vacia)));
 
-        indice_actual = datos.content.length -1;
-
+        let indice_actual = datos.content.length-1;
+        let folio_actual = '';
+        let page_break = false;
+        
         for(let i = 0; i < reportData.items.length; i++){
-          //console.log("iiiii", reportData.items.length);
+          
           let paciente = reportData.items[i];
 
+          var fecha=paciente.fecha_alta_probable.split("-", 3);
+          var fecha_modificada=fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 
-              var fecha=paciente.fecha_alta_probable.split("-", 3);
-              var fecha_modificada=fecha[2]+"/"+fecha[1]+"/"+fecha[0];
-
-
-
-
-
+          folio_actual = paciente.responsable.folio;
+          if(reportData.items[i+1] && folio_actual != reportData.items[i+1].responsable.folio){
+            page_break = true;
+          }
+          
           datos.content[indice_actual].table.body.push([
-
             { text: paciente.responsable.folio, style: 'tabla_datos'},
             { text: paciente.no_caso, style: 'tabla_datos'},
             { text: paciente.sexo, style: 'tabla_datos'},
@@ -141,18 +138,23 @@ console.log("acaaaaaaa",reportData.items);
             { text: paciente.municipio.descripcion , style: 'tabla_datos'},
             { text: paciente.responsable.descripcion , style: 'tabla_datos'},
             //{ text:fecha, style: 'tabla_datos'},
-            { text:fecha_modificada, style: 'tabla_datos'},
+            { text: fecha_modificada, style: 'tabla_datos'},
             { text: paciente.tipo_atencion.descripcion , style: 'tabla_datos'},
             { text: paciente.estatus_covid.descripcion , style: 'tabla_datos'},
             { text: paciente.tipo_atencion.descripcion , style: 'tabla_datos'},
-            { text: paciente.municipio.distrito.clave, style: 'tabla_datos'}
+            { text: paciente.municipio.distrito.clave,   style: 'tabla_datos'}
           ]);
+
+          if(page_break){
+            datos.content.push({ text:'', pageBreak:'after' });
+            datos.content.push(JSON.parse(JSON.stringify(tabla_vacia)));
+            indice_actual = datos.content.length-1;
+            page_break = false;
+          }
+
         }
 
         //console.log("aquiqqqqqq",datos.content[1]);
-
-
-
         return datos;
       }
 }

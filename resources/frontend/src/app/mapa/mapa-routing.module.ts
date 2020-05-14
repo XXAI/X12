@@ -4,6 +4,7 @@ import { VisorComponent } from './visor/visor.component';
 
 const routes: Routes = [
   { path: 'mapa-visor', component: VisorComponent, data: { hideHeader: true } },
+  { path: 'mapa-casos-visor', component: VisorComponent },
 ];
 
 @NgModule({

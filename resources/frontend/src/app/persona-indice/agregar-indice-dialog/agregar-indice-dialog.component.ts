@@ -400,7 +400,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
     );
   }
 
-  obtenerIniciales(nombre_completo:string)
+  obtenerIniciales()
   {
     let alias = this.infoIndiceForm.controls['nombre'].value.charAt(0)+this.infoIndiceForm.controls['apellido_paterno'].value.charAt(0) +this.infoIndiceForm.controls['apellido_materno'].value.charAt(0)  
     this.infoIndiceForm.controls['alias'].setValue(alias);

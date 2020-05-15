@@ -158,9 +158,7 @@
                 </mat-select>
                 <mat-error *ngIf="positivosForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
             </mat-form-field>
-            <div  fxFlex.gt-sm="10" fxFlex.lt-sm="100" >
-                <button mat-raised-button color="primary" (click)="localizarPersona()"><mat-icon>not_listed_location</mat-icon> Localizar</button>
-            </div>
+            
         </div>   
         <div fxLayout="row">
             <div fxFlex></div>

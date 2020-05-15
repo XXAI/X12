@@ -18,6 +18,7 @@ use App\Models\CasosCovid\TiposTransmisiones;
 use App\Models\CasosCovid\TipoUnidad;
 use App\Models\CasosCovid\EgresosCovid;
 use App\Models\Municipio;
+use App\Models\Localidad;
 use Carbon\Carbon;
 
 
@@ -350,10 +351,14 @@ class PacientesCovidController extends Controller
         }
     }
 
+    
     public function getCatalogos(){
+        //$parametros = Input::all();
+        //return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
         try{
 
             $municipios                 = Municipio::orderBy('descripcion');
+            //$localidades                 = Localidad::getModel();
             $derechohabiencias          = Derechohabiencias::orderBy("descripcion");
             $responsables               = Responsable::orderBy("descripcion");
             $estatusCovid               = EstatusCovid::orderBy("descripcion");
@@ -367,6 +372,7 @@ class PacientesCovidController extends Controller
             $catalogo_covid = [
 
                 'municipios'                             => $municipios         ->get(),
+                //'localidades'                             => $localidades        ->get(),
                 'derechohabiencias'                      => $derechohabiencias  ->get(),
                 'responsables'                           => $responsables       ->get(),
                 'estatusCovid'                           => $estatusCovid       ->get(),

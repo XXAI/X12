@@ -15,6 +15,7 @@ use DB;
 
 use App\Models\PersonaIndice;
 use App\Models\PersonaContacto;
+use Carbon\Carbon;
 
 class PersonaContactoController extends Controller
 {
@@ -107,6 +108,15 @@ class PersonaContactoController extends Controller
                 }
             }
 
+            //Cambiar
+            //return response()->json(['data'=>$parametros],500);
+            $fecha = new Carbon($datos_persona['fecha_confirmacion']);
+            $fecha->addDays(14);
+            $datos_persona['fecha_alta_14']= $fecha;
+
+            
+            $fecha->addDays(7);
+            $datos_persona['fecha_alta_21']= $fecha;
             $persona = PersonaIndice::create($datos_persona);
             
 

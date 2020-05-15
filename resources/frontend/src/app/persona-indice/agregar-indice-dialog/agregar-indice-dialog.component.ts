@@ -223,15 +223,18 @@ export class AgregarIndiceDialogComponent implements OnInit {
   cargarLocalidades(event){
     let municipio = event.option.value;
 
-    let carga_catalogos = [
+    /*let carga_catalogos = [
       {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
-    ];
+    ];*/
+    let carga_catalogos = {municipio: municipio.id};
+    
     this.catalogos['localidades'] = false;
     this.infoIndiceForm.get('localidad_id').reset();
     this.infoIndiceForm.get('localidad').reset();
 
-    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+    this.indiceService.obtenerLocalidad(carga_catalogos).subscribe(
       response => {
+        console.log(response);
         if(response.data['localidades'].length > 0){
           this.catalogos['localidades'] = response.data['localidades'];
         }
@@ -306,6 +309,11 @@ export class AgregarIndiceDialogComponent implements OnInit {
 
     if(contactData.localidad_id){
       contactData.localidad_id = contactData.localidad_id.id;
+    }
+   
+    
+    if(contactData.responsable_id){
+      contactData.responsable_id = contactData.responsable_id.id;
     }
 
 

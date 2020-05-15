@@ -25,6 +25,7 @@ Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
 Route::post('obtener-catalogos',                    'API\Servicios\CatalogosController@getCatalogs');
+Route::get('obtener-localidad',                    'API\Servicios\CatalogosController@getlocalidad');
 Route::post('obtener-infografias',                  'API\Servicios\InfografiaController@getInfografias');
 
 Route::get('autocomplete-estados',                  'API\Servicios\SearchCatalogsController@getEstadosAutocomplete');

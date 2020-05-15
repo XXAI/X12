@@ -63,4 +63,22 @@ class CatalogosController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+
+    public function getlocalidad(){
+        $parametros = Input::all();
+        //return response()->json(['data'=>$parametros['municipio']], HttpResponse::HTTP_OK);
+        try{
+
+            $localidades                 = Localidad::where("municipio_id", "=", $parametros['municipio'])->get();
+            $catalogo_covid = [
+
+                'localidades'                             => $localidades,
+            
+            ];
+
+            return response()->json(['data'=>$catalogo_covid], HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 }

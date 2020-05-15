@@ -510,7 +510,8 @@ class PacientesCovidController extends Controller
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
                     ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','R.id','asc') ;
+                    ->orderBy('R.folio', 'asc','pacientes_covid.responsable_id', 'asc') ;
+
 
             }
 
@@ -530,7 +531,7 @@ class PacientesCovidController extends Controller
                     ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     ->where('GE.id','=',$grupo->grupo_estrategico_id)
-                    ->orderBy('R.folio', 'asc','R.id','asc') ;
+                    ->orderBy('pacientes_covid.responsable_id', 'asc') ;
 
                 }
                 else{
@@ -539,7 +540,7 @@ class PacientesCovidController extends Controller
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
                     ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','R.id','asc') ;
+                    ->orderBy('pacientes_covid.responsable_id', 'asc') ;
                 }
 
 

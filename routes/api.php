@@ -82,6 +82,14 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('estrategias',               'API\Modulos\EstrategiasController');
 
     /**
+     * Modulo de Grupos Estrategicos
+     */
+    Route::apiResource('grupos-estrategicos',       'API\Modulos\GrupoEstrategicoController');
+    Route::get('grupos-buscar-usuarios',            'API\Modulos\GrupoEstrategicoController@buscarUsuarios');
+    Route::get('grupo-usuarios/{id}',               'API\Modulos\GrupoEstrategicoController@obtenerListaUsuarios');
+    Route::put('sincronizar-grupo-usuarios/{id}',   'API\Modulos\GrupoEstrategicoController@sincronizarUsuarios');
+
+    /**
      * Avances Actividades
      */
     Route::apiResource('avances-actividades',       'API\Modulos\AvancesActividadesController');

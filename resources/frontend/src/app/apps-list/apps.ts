@@ -19,6 +19,7 @@ export const APPS:App [] = [
     { name:'Mapa',                  route: "mapa-casos-visor",            icon: "assets/icons/mapa.png",                  permission:"kjBw52kYMsDiR0xdK1O9em7n7YPi18Ez" },
     { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg",       permission:"0ZV9m4evdNTeQGfBqM4azfyRjpj5nu1t" },
     { name:'Graficas',              route: "casos-graficas",              icon: "assets/icons/graficas.svg",              permission:"n7Mak8Umm4uNJbiZ87IdxSdvTaDx76j9" },
+    { name:'Grupos',                route: "grupos-estrategicos",         icon: "assets/icons/grupos.svg",                permission:"vU9g00gC50MOdtUR0Rx7Q0vd2VrA3sOt" },
     { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",           permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
     { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",   permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },
     { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true,
@@ -27,7 +28,6 @@ export const APPS:App [] = [
       ],
     },
     { name:'Llenar Formulario',     route:'llenar-formulario-sistema',            icon: 'assets/icons/clipboard.svg',     permission:"aTRn5wKRr1iwaknd4ZtNmVRwG5dSYrRJ"},
-
     { name:'Reportes',      route: "casos-concentrados",  icon: "assets/icons/estadisticas.svg", isHub:true, hideHome:true,
       children:[
         {name:'Concentrado de datos',     route:'casos-concentrados',     icon:'picture_as_pdf',                        permission:"Z52PdlZk2XCCbIPS28NO3M17WzZMF0lI" }

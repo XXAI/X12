@@ -32,6 +32,18 @@ export interface IndiceData {
   colonia?: string;
   referencia?: string;
   observaciones?: string;
+  alias?: string;
+  edad?: string;
+  sexo?: string;
+  responsable_id?: string;
+  tipo_atencion_id?: string;
+  tipo_unidad_id?: string;
+  derechohabiente_id?: string;
+  tipo_transmision_id?: string;
+  fecha_inicio_sintoma?: string;
+  fecha_confirmacion?: string;
+  fecha_alta_probable?: string;
+  estatus_covid_id?: string;
 }
 
 @Component({
@@ -53,6 +65,11 @@ export class AgregarIndiceDialogComponent implements OnInit {
   estatus_caso:number = 0;
   id_indice:number = 0;
   check_celular:boolean = false;
+  catalogo_unidades:any = [];
+  catalogo_atencion :any = [];
+  catalogo_derechohabiencias :any = [];
+  catalogo_transmision :any = [];
+  catalogo_estatus :any = [];
 
   constructor(private indiceService: IndiceService, public dialog: MatDialog,  private formBuilder: FormBuilder, private router: Router,
     public dialogRef: MatDialogRef<AgregarIndiceDialogComponent>,
@@ -87,7 +104,22 @@ export class AgregarIndiceDialogComponent implements OnInit {
       colonia: ['',Validators.required],
       referencia: [''],
       no_caso: ['',Validators.required],
-      observaciones: ['',Validators.required]
+      observaciones: ['',Validators.required],
+      
+      alias:['',Validators.required],
+      edad:['',Validators.required],
+      sexo:['',Validators.required],
+      responsable_id:['',Validators.required],
+      tipo_atencion_id:['',Validators.required],
+      tipo_unidad_id:['',Validators.required],
+      derechohabiente_id:['',Validators.required],
+      tipo_transmision_id:['',Validators.required],
+      fecha_inicio_sintoma:['',Validators.required],
+      fecha_confirmacion:['',Validators.required],
+      fecha_alta_probable:['',Validators.required],
+      estatus_covid_id:['',Validators.required]
+     
+     
     });
 
     this.fechaEjemplo = Date();
@@ -99,12 +131,23 @@ export class AgregarIndiceDialogComponent implements OnInit {
 
     this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
       response => {
-        this.catalogos = response.data;
+        let respuesta = response.data;
+        this.catalogos = respuesta;
         console.log(this.catalogos);
         this.actualizarValidacionesCatalogos('municipios');
 
+        this.catalogo_unidades = respuesta.tipo_unidad;
+        this.catalogo_atencion = respuesta.tipo_atencion;
+        this.catalogo_derechohabiencias = respuesta.derechohabiencias;
+        this.catalogo_transmision = respuesta.tipos_transmisiones;
+        this.catalogo_estatus = respuesta.estatusCovid;
+        
+        
+        //this.filteredCatalogs['municipios'] = this.positivosForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
+        //this.filteredCatalogs['responsables'] = this.positivosForm.controls['responsable_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'responsables','descripcion')));
         this.filteredCatalogs['municipios'] = this.infoIndiceForm.controls['municipio_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'municipios','descripcion')));
           this.filteredCatalogs['localidades'] = this.infoIndiceForm.controls['localidad_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'localidades','descripcion')));
+          this.filteredCatalogs['responsables'] = this.infoIndiceForm.controls['responsable_id'].valueChanges.pipe(startWith(''),map(value => this._filter(value,'responsables','descripcion')));
         
         if(this.data != null)
         {
@@ -347,5 +390,12 @@ export class AgregarIndiceDialogComponent implements OnInit {
         this.actualizarValidacionesCatalogos('localidades');
       }
     );
+  }
+
+  obtenerIniciales(nombre_completo:string)
+  {
+    let alias = this.infoIndiceForm.controls['nombre'].value.charAt(0)+this.infoIndiceForm.controls['apellido_paterno'].value.charAt(0) +this.infoIndiceForm.controls['apellido_materno'].value.charAt(0)  
+    this.infoIndiceForm.controls['alias'].setValue(alias);
+    //console.log(nombre);
   }
 }

@@ -9,7 +9,8 @@ import { map } from 'rxjs/operators';
 })
 export class IndiceService {
 
-  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  //url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
   url_persona_indice = `${environment.base_url}/persona-indice`;
   url_persona_contacto = `${environment.base_url}/indice-contacto`;
 
@@ -33,11 +34,11 @@ export class IndiceService {
   }
 
   obtenerCatalogos(payload) {
-    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
-      map( (response) => {
+    return this.http.get<any>(this.url_obtener_catalogos,{params:payload}).pipe(
+      map( response => {
         return response;
-      }
-    ));
+      })
+    );
   }
 
   guardarContacto(payload) {

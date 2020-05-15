@@ -22,4 +22,24 @@ class PersonaIndice extends Model
     public function localidad(){
         return $this->belongsTo('App\Models\Localidad','localidad_id','id');
     }
+
+    public function tipo_atencion(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TipoAtencion', 'tipo_atencion_id');
+    }
+
+    public function tipo_unidad(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TipoUnidad', 'tipo_unidad_id');
+    }
+
+    public function responsable(){
+
+        return $this->belongsTo('App\Models\CasosCovid\Responsable', 'responsable_id');
+    }
+
+    public function estatus_covid(){
+
+        return $this->belongsTo('App\Models\CasosCovid\EstatusCovid', 'estatus_covid_id');
+    }
 }

@@ -18,6 +18,7 @@ use App\Models\CasosCovid\TiposTransmisiones;
 use App\Models\CasosCovid\TipoUnidad;
 use App\Models\CasosCovid\EgresosCovid;
 use App\Models\Municipio;
+use App\Models\PersonaIndice;
 use App\Models\Localidad;
 use Carbon\Carbon;
 
@@ -351,7 +352,7 @@ class PacientesCovidController extends Controller
         }
     }
 
-    
+
     public function getCatalogos(){
         //$parametros = Input::all();
         //return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
@@ -512,11 +513,11 @@ class PacientesCovidController extends Controller
                 if($permiso || $loggedUser->is_superuser=='1' )
             {
 
-                    $casos = PacientesCovid::select('pacientes_covid.*')
+                    $casos = PersonaIndice::select('persona_indice.*')
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
-                    ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                    ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','pacientes_covid.responsable_id', 'asc') ;
+                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc') ;
 
 
             }

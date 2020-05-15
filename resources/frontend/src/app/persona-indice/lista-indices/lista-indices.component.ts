@@ -118,6 +118,7 @@ export class ListaIndicesComponent implements OnInit {
   {
     let configDialog = {};
     configDialog['data'] = obj_indice;
+    console.log(obj_indice);
     const dialogRef = this.dialog.open(AgregarIndiceDialogComponent, configDialog);
     dialogRef.afterClosed().subscribe(valid => {
       if(valid)

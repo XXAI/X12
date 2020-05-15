@@ -44,6 +44,7 @@ export interface IndiceData {
   fecha_confirmacion?: string;
   fecha_alta_probable?: string;
   estatus_covid_id?: string;
+  responsable?: string;
 }
 
 @Component({
@@ -152,6 +153,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
         if(this.data != null)
         {
           this.infoIndiceForm.controls['municipio_id'].setValue(this.data.municipio);
+          this.infoIndiceForm.controls['localidad_id'].setValue(this.data.localidad);
+          this.infoIndiceForm.controls['responsable_id'].setValue(this.data.responsable);
           this.cargarLocalidadesEdit(this.data.municipio);
         }
       }
@@ -164,8 +167,20 @@ export class AgregarIndiceDialogComponent implements OnInit {
       this.infoIndiceForm.controls['apellido_paterno'].setValue(this.data.apellido_paterno);
       this.infoIndiceForm.controls['apellido_materno'].setValue(this.data.apellido_materno);
       this.infoIndiceForm.controls['nombre'].setValue(this.data.nombre);
+      this.infoIndiceForm.controls['alias'].setValue(this.data.alias);
+      this.infoIndiceForm.controls['edad'].setValue(this.data.edad);
+      this.infoIndiceForm.controls['sexo'].setValue(this.data.sexo);
       this.infoIndiceForm.controls['fecha_nacimiento'].setValue(this.data.fecha_nacimiento);
       this.infoIndiceForm.controls['email'].setValue(this.data.email);
+      this.infoIndiceForm.controls['tipo_atencion_id'].setValue(this.data.tipo_atencion_id);
+      this.infoIndiceForm.controls['tipo_unidad_id'].setValue(this.data.tipo_unidad_id);
+      this.infoIndiceForm.controls['derechohabiente_id'].setValue(this.data.derechohabiente_id);
+      this.infoIndiceForm.controls['tipo_transmision_id'].setValue(this.data.tipo_transmision_id);
+      this.infoIndiceForm.controls['fecha_inicio_sintoma'].setValue(this.data.fecha_inicio_sintoma);
+      this.infoIndiceForm.controls['fecha_confirmacion'].setValue(this.data.fecha_confirmacion);
+      this.infoIndiceForm.controls['fecha_alta_probable'].setValue(this.data.fecha_alta_probable);
+      this.infoIndiceForm.controls['estatus_covid_id'].setValue(this.data.estatus_covid_id);
+      
       if(this.data.telefono_casa)
       {
         this.infoIndiceForm.controls['telefono_contacto'].setValue(this.data.telefono_casa);
@@ -247,14 +262,15 @@ export class AgregarIndiceDialogComponent implements OnInit {
   cargarLocalidadesEdit(municipioEdit){
     let municipio = municipioEdit;
 
-    let carga_catalogos = [
+    /*let carga_catalogos = [
       {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
-    ];
+    ];*/
+    let carga_catalogos = {municipio: municipio.id};
     this.catalogos['localidades'] = false;
     this.infoIndiceForm.get('localidad_id').reset();
     this.infoIndiceForm.get('localidad').reset();
 
-    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+    this.indiceService.obtenerLocalidad(carga_catalogos).subscribe(
       response => {
         if(response.data['localidades'].length > 0){
           this.catalogos['localidades'] = response.data['localidades'];

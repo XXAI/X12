@@ -11,7 +11,9 @@ use \DB, \Response, \Exception;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActividadMeta;
-
+use App\Models\Distrito;
+use App\Models\Municipio;
+use App\Models\Localidad;
 use App\Helpers\HttpStatusCodes;
 
 
@@ -155,8 +157,18 @@ class ActividadesMetasController extends Controller
             if($actividad){
                 $actividad->estrategia;
             }
-            $object->distrito;
-            $object->municipio;
+            $distrito = $object->distrito;
+
+            $object->distritos = Distrito::all();
+
+            if($distrito){
+                
+                $object->municipios = Municipio::where("distrito_id","=",$distrito->id)->get();
+            }
+            $municipio = $object->municipio;
+            if($municipio){
+                $object->localidades = Localidad::where("municipio_id","=",$municipio->id)->get();
+            }
             $object->localidad;
 
 
@@ -175,16 +187,21 @@ class ActividadesMetasController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $rules = [
-            'descripcion' => ['required'],
-            'estrategia_id' => ['required'],
-            'total_meta_programada' => ['numeric']
+            //'actividad_id' => ['required'],
+            'meta_programada' => ['numeric']
         ];
 
         $messages = [
             'required' => 'required',
             'numeric' => 'numeric',
         ];
+        $validator = Validator::make($request->all(), $rules,$messages);
+
+        if ($validator->fails()) {
+            return  response()->json($validator->messages(), 409);
+        }
 
         DB::beginTransaction();
         try {
@@ -195,26 +212,42 @@ class ActividadesMetasController extends Controller
                 throw new Exception("Registro inexistente",404);
             } 
 
-            $validator = Validator::make($request->all(), $rules,$messages);
-
-            if ($validator->fails()) {
-                return  response()->json($validator->messages(), 409);
-            }
-        
-            $object->descripcion = $request['descripcion'];
-            if(isset($request['total_meta_programada'])){
-                $object->total_meta_programada = $request['total_meta_programada'];
+            if(isset($request['meta_programada'])){
+                $object->meta_programada = $request['meta_programada'];
             } else {
-                $object->total_meta_programada = null;
+                $object->meta_programada = null;
             }
             
+            if(isset($request['distrito_id'])){
+                $object->distrito_id = $request['distrito_id'];
+            } else {
+                $object->distrito_id = null;
+            }
+
+            if(isset($request['municipio_id'])){
+                $object->municipio_id = $request['municipio_id'];
+            }  else {
+                $object->municipio_id = null;
+            }
+
+            if(isset($request['localidad_id'])){
+                $object->localidad_id = $request['localidad_id'];
+            } else {
+                $object->localidad_id = null;
+            } 
+            
             $object->save();
+
             DB::commit();
         }catch (\Exception $e) {
             DB::rollback();
-            return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
+            return Response::json(['message' => $e->getMessage()], HttpStatusCodes::parse($e->getCode()));
         }
-        $object->estrategia;
+
+        $object->distrito;
+        $object->municipio;
+        $object->localidad;
+        
         return $object;
     }
 

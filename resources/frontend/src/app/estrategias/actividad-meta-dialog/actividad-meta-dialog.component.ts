@@ -76,14 +76,41 @@ export class ActividadMetaDialogComponent implements OnInit, OnDestroy, AfterVie
 
     if(this.data.actividad_meta != null){
       this.id = this.data.actividad_meta.id;  
-      
+      console.log(this.id);
      
       this.objectSubscription = merge(
         this.apiService.ver(this.id).pipe(
           map( response => {
             this.form.get("distrito_id").setValue(response.distrito_id);  
             this.form.get("meta_programada").setValue(response.meta_programada);  
+
+            if(response.distritos){
+              this.distritos = response.distritos;
+              
+            }
+
+            if(response.distrito_id != null){
+              this.showMunicipios = true;
+              console.log(response.municipios);
+              this.municipios = response.municipios;
+            }
+
+            if(response.municipio_id != null){
+              this.form.get("municipio_id").setValue(response.municipio_id);  
+              this.showLocalidades = true;
+              this.localidades = response.localidades;
+            }
+
+            if(response.localidad_id != null){
+              this.form.get("localidad_id").setValue(response.localidad_id);  
+            }
+
+            
             this.object = response;
+
+            this.enableCatalogos();
+
+            
             return true;
           })
         )
@@ -95,7 +122,6 @@ export class ActividadMetaDialogComponent implements OnInit, OnDestroy, AfterVie
         }
       )
     } else {
-      console.log(this.data);
       this.loadDistritos();
     
       this.loading = false;
@@ -134,7 +160,6 @@ export class ActividadMetaDialogComponent implements OnInit, OnDestroy, AfterVie
     this.distritoSubscription = this.apiService.distritos().subscribe( response => {
       this.loadingCatalogos = false;
       this.distritos = response.data.distritos;
-      this
      
       this.enableCatalogos();
     }, error=> {
@@ -251,10 +276,27 @@ export class ActividadMetaDialogComponent implements OnInit, OnDestroy, AfterVie
     this.loading = true;
     
     var payload = this.form.value;
-    payload.actividad_id = this.data.actividad_meta.actividad_id;
+    //payload.actividad_id = this.data.actividad_meta.actividad_id;
+    console.log(this.id);
 
-    if(payload.total_meta_programada == ""){
-      delete payload.total_meta_programada;
+    if(payload.meta_programada == ""  || payload.meta_programada == null){
+     
+      delete payload.meta_programada;
+    }
+
+    if(payload.distrito_id == ""){
+      delete payload.municipio_id;
+      delete payload.municipio_id;
+      delete payload.localidad_id;
+    }
+
+    if(payload.municipio_id == ""){
+      delete payload.municipio_id;
+      delete payload.localidad_id;
+    }
+
+    if(payload.localidad_id == ""){
+      delete payload.localidad_id;
     }
 
     this.apiService.editar(this.id,payload).subscribe(
@@ -266,7 +308,7 @@ export class ActividadMetaDialogComponent implements OnInit, OnDestroy, AfterVie
           duration: 4000,
         });
         console.log(response);
-        this.dialogRef.close({ last_action: "editar", data: this.data.actividad});
+        this.dialogRef.close({ last_action: "editar", data: this.data.actividad_meta});
       },
       errorResponse => {
         this.loading = false;

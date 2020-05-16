@@ -29,7 +29,7 @@ class PersonaContactoController extends Controller
         try{
        
         $parametros = Input::all();
-        $persona = PersonaIndice::with("contactos", "municipio", "localidad", "responsable");    
+        $persona = PersonaIndice::with("contactos", "municipio", "localidad", "responsable", 'estatus_covid');    
         if(isset($parametros['query']) && $parametros['query']){
                 $persona = $persona->where(function($query)use($parametros){
                 return $query->whereRaw(' concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )

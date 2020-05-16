@@ -13,6 +13,7 @@ use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Estatus;
+use App\Models\EstatusCovid;
 use App\Models\Valoracion;
 use App\Models\CategoriaLlamada;
 use App\Models\Turno;
@@ -32,6 +33,7 @@ class CatalogosController extends Controller
                 'categoria_llamada' => CategoriaLlamada::getModel(),
                 'turnos' => Turno::getModel(),
                 'grupos_estrategicos'=>GrupoEstrategico::getModel(),
+                'estatusCovid' => EstatusCovid::orderBy("descripcion")
             ];
 
             $parametros = Input::all();

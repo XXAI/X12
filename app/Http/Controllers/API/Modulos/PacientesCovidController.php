@@ -412,11 +412,57 @@ class PacientesCovidController extends Controller
             return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
         }
     }
+    
+    public function actualizarEgresoIndice(Request $request, $id)
+    {
+
+        $object = PersonaIndice::find($id);
+
+        $inputs = Input::all();
+
+        DB::beginTransaction();
+        try {
+
+            $object->egreso_id                  = $inputs['egreso_id'];
+            $object->save();
+
+            DB::commit();
+
+            return response()->json($object,HttpResponse::HTTP_OK);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 
     public function actualizarEstatus(Request $request, $id)
     {
 
         $object = PacientesCovid::find($id);
+
+        $inputs = Input::all();
+
+        DB::beginTransaction();
+        try {
+
+            $object->estatus_covid_id                  = $inputs['estatus_id'];
+            $object->save();
+
+            DB::commit();
+
+            return response()->json($object,HttpResponse::HTTP_OK);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function actualizarEstatusIndice(Request $request, $id)
+    {
+
+        $object = PersonaIndice::find($id);
 
         $inputs = Input::all();
 

@@ -15,6 +15,9 @@ export class IndiceService {
   url_persona_indice = `${environment.base_url}/persona-indice`;
   url_persona_contacto = `${environment.base_url}/indice-contacto`;
 
+  url_salida = `${environment.base_url}/pacientes-indice-salida`;
+  url_estatus = `${environment.base_url}/pacientes-indice-estatus`;
+
   constructor(private http: HttpClient) { }
 
   
@@ -75,6 +78,22 @@ export class IndiceService {
   
   editarContacto(id, payload) {
     return this.http.put<any>(this.url_persona_contacto+"/"+id,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  registroSalida(id:any, tipo_movimiento:number) {
+    return this.http.put<any>(this.url_salida+"/"+id,{egreso_id: tipo_movimiento}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+  
+  actualizarEstatus(id:any, estatus:number) {
+    return this.http.put<any>(this.url_estatus+"/"+id,{estatus_id: estatus}).pipe(
       map( (response) => {
         return response;
       }

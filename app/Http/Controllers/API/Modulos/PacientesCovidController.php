@@ -371,7 +371,6 @@ class PacientesCovidController extends Controller
 
 
             $catalogo_covid = [
-
                 'municipios'                             => $municipios         ->get(),
                 //'localidades'                             => $localidades        ->get(),
                 'derechohabiencias'                      => $derechohabiencias  ->get(),

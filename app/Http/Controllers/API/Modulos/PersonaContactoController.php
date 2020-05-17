@@ -117,6 +117,7 @@ class PersonaContactoController extends Controller
             
             $fecha->addDays(7);
             $datos_persona['fecha_alta_21']= $fecha;
+            $datos_persona['egreso_id']= 1;
             $persona = PersonaIndice::create($datos_persona);
             
 

@@ -25,6 +25,7 @@ Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
 Route::post('obtener-catalogos',                    'API\Servicios\CatalogosController@getCatalogs');
+Route::get('obtener-localidad',                    'API\Servicios\CatalogosController@getlocalidad');
 Route::post('obtener-infografias',                  'API\Servicios\InfografiaController@getInfografias');
 
 Route::get('autocomplete-estados',                  'API\Servicios\SearchCatalogsController@getEstadosAutocomplete');
@@ -84,6 +85,14 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('actividades-metas-grupos',      'API\Modulos\ActividadesMetasGruposController');
 
     /**
+     * Modulo de Grupos Estrategicos
+     */
+    Route::apiResource('grupos-estrategicos',       'API\Modulos\GrupoEstrategicoController');
+    Route::get('grupos-buscar-usuarios',            'API\Modulos\GrupoEstrategicoController@buscarUsuarios');
+    Route::get('grupo-usuarios/{id}',               'API\Modulos\GrupoEstrategicoController@obtenerListaUsuarios');
+    Route::put('sincronizar-grupo-usuarios/{id}',   'API\Modulos\GrupoEstrategicoController@sincronizarUsuarios');
+
+    /**
      * Avances Actividades
      */
     Route::apiResource('avances-actividades',       'API\Modulos\AvancesActividadesController');
@@ -105,10 +114,22 @@ Route::group(['middleware'=>'auth'],function($router){
 
 
     Route::apiResource('pacientes-covid',             'API\Modulos\PacientesCovidController');
-    Route::put('pacientes-covid-salida/{id}',         'API\Modulos\PacientesCovidController@actualizarEstatus');
+    Route::put('pacientes-covid-salida/{id}',         'API\Modulos\PacientesCovidController@actualizarEgreso');
+    Route::put('pacientes-covid-estatus/{id}',         'API\Modulos\PacientesCovidController@actualizarEstatus');
+    Route::put('pacientes-indice-salida/{id}',         'API\Modulos\PacientesCovidController@actualizarEgresoIndice');
+    Route::put('pacientes-indice-estatus/{id}',         'API\Modulos\PacientesCovidController@actualizarEstatusIndice');
     Route::get('catalogos-covid',                     'API\Modulos\PacientesCovidController@getCatalogos');
     Route::get('graficas-covid',                      'API\Modulos\PacientesCovidController@getGraficas');
     Route::get('concentrado-casos-covid',             'API\Modulos\PacientesCovidController@getConcentradoCasos');
+
+    /**
+     * Catalogos
+     */
+
+     //responsables
+
+
+     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
 
 });
 

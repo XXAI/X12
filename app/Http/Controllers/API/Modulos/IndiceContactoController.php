@@ -122,11 +122,15 @@ class IndiceContactoController extends Controller
             
 
             $persona = PersonaContacto::create($datos_persona);
+
             if($datos_persona['estatus_salud_id'] == 2)
             {
                 $persona_indice = PersonaIndice::create($datos_persona);
+                $persona_indice_caso = PersonaIndice::find($datos_persona['persona_indice_id']);
+                $persona_indice->dispositivo_id=$persona_indice_caso->no_caso;
                 $persona->persona_nuevo_indice_id = $persona_indice->id;
                 $persona->save();
+                $persona_indice->save();
             }
 
             DB::commit();
@@ -212,9 +216,15 @@ class IndiceContactoController extends Controller
                 
                 if($persona->estatus_salud_id == 2)
                 {
+                    $persona_indice_caso = PersonaIndice::find($persona->persona_indice_id);
+                    
                     $persona_indice = PersonaIndice::create($datos_persona);
+                    $persona_indice->dispositivo_id=$persona_indice_caso->no_caso;
                     $persona->persona_nuevo_indice_id = $persona_indice->id;
+                    
                     $persona->no_caso = $datos_persona['no_caso'];
+
+                    $persona_indice->save();
                 }
             }
             

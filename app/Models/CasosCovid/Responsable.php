@@ -9,5 +9,9 @@ class Responsable extends Model
 {
     use SoftDeletes;
     protected $table = 'catalogo_responsables';
-    protected $fillable = ['id','descripcion'];
+    protected $fillable = ['id','descripcion','folio'];
+
+    public function grupo(){
+        return $this->hasOne('App\Models\GrupoEstrategico','id');
+    }
 }

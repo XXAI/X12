@@ -16,16 +16,28 @@ export const APPS:App [] = [
     { name:'Call Center',           route: "call-center",                 icon: "assets/icons/phone.svg",                 permission:"roEJ83ekTBadrqqh24zvZqe1XOFIQHJk" },
     { name:'Contingencias',         route: "listado-contingencias",       icon: "assets/icons/professions-and-jobs.svg",  permission:"xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L" },
     { name:'Contagios',             route: "listado-indices",             icon: "assets/icons/indice_contacto.svg",       permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i" },
-    { name:'Mapa',                  route: "mapa-visor",                  icon: "assets/icons/mapa.png"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
-    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
-    { name:'Graficas',              route: "casos-graficas",              icon: "assets/icons/graficas.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
-    { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",              permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
-    { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",              permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },
+    { name:'Mapa',                  route: "mapa-casos-visor",            icon: "assets/icons/mapa.png",                  permission:"kjBw52kYMsDiR0xdK1O9em7n7YPi18Ez" },
+    { name:'Casos Positivos',       route: "casos-positivos",             icon: "assets/icons/indice_contacto.svg",       permission:"0ZV9m4evdNTeQGfBqM4azfyRjpj5nu1t" },
+    { name:'Graficas',              route: "casos-graficas",              icon: "assets/icons/graficas.svg",              permission:"n7Mak8Umm4uNJbiZ87IdxSdvTaDx76j9" },
+    { name:'Grupos',                route: "grupos-estrategicos",         icon: "assets/icons/grupos.svg",                permission:"vU9g00gC50MOdtUR0Rx7Q0vd2VrA3sOt" },
+    { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",           permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
+    { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",   permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },
     { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true,
       children:[
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file',                       permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"}
       ],
     },
     { name:'Llenar Formulario',     route:'llenar-formulario-sistema',            icon: 'assets/icons/clipboard.svg',     permission:"aTRn5wKRr1iwaknd4ZtNmVRwG5dSYrRJ"},
-    { name:'Concentrado de casos',       route: "casos-concentrados",             icon: "assets/icons/estadisticas.svg"/*,        permission:"L66kwrzam7WU23VRh0aiV91p8ZbPoN7i"*/ },
+    { name:'Reportes',      route: "casos-concentrados",  icon: "assets/icons/estadisticas.svg", isHub:true, hideHome:true,
+      children:[
+        {name:'Concentrado de datos',     route:'casos-concentrados',     icon:'picture_as_pdf',                        permission:"Z52PdlZk2XCCbIPS28NO3M17WzZMF0lI" }
+      ],
+    },
+
+    { name: "Catalogos", route: "catalogos", icon: "assets/icons/catalogos.svg", isHub:true, hideHome:true, 
+        children: [
+            {name: "Responsables",          route:"diagnosticos",           icon: "adjust",                permission:"uc5EjMH6WSVn79Wx8BJfAwddC3eMgcRI" },
+             ]
+    }
+
 ]

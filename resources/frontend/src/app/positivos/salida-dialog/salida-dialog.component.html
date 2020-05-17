@@ -1,0 +1,42 @@
+<mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title>Caso No {{ data.no_caso }}</mat-card-title>
+      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-content>
+        <table class="table" style="width: 100%;">
+            <tr><td class="titulo">Responsable</td><td>{{ data.responsable }}</td></tr>
+            <tr><td class="titulo">Tipo Atención</td><td> {{ data.tipo_atencion.descripcion }}</td></tr>
+            <tr><td class="titulo">Unidad</td><td>{{ data.tipo_unidad.descripcion}}</td></tr>
+            <tr><td class="titulo">Estatus</td><td>{{ data.estatus_covid.descripcion }}</td></tr>
+            <tr><td class="titulo">Derechohabiente</td><td>{{ data.derechohabiencia.descripcion }}</td></tr>
+            <tr><td class="titulo">Contactos</td><td>{{ data.contactos }}</td></tr>
+            <tr><td class="titulo">Tipo Transmisión</td><td>{{ data.tipo_transmision.descripcion }}</td></tr>
+            <tr><td class="titulo">Fecha Inicio Sintomas</td><td> {{ data.fecha_inicio_sintoma }}</td></tr>
+            <tr><td class="titulo">Fecha Confirmación</td><td>{{ data.fecha_confirmacion }}</td></tr>
+            
+        </table>
+        <br>
+        <mat-card-title>¿Dar Salida Médica por?</mat-card-title>
+        <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
+            <div fxFlex.sm="33" >
+                <button mat-raised-button color="primary" (click)="alta_medica()"> Alta Médica</button>
+            </div>
+            <div fxFlex.sm="33" >
+                <button mat-raised-button color="warn" (click)="defuncion()"> Defunción</button>
+            </div>
+            <div fxFlex.sm="33" >
+                <button mat-raised-button  (click)="this.dialogRef.close({ estatus: false});"> Cancelar</button>
+            </div>
+           
+            
+        </div>
+
+       
+    </mat-card-content>
+    
+    <mat-card-actions>
+        <div fxFlex></div>
+        
+    </mat-card-actions>
+  </mat-card>

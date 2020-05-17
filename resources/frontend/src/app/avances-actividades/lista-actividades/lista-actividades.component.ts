@@ -15,11 +15,14 @@ export class ListaActividadesComponent implements OnInit {
 
   listaEstrategias:any[];
   isLoading:boolean;
+  selectedEstrategiaIndex:number;
+  selectedActividadIndex:number;
+  gruposAsignados:any[];
 
   ngOnInit() {
-    this.listaEstrategias = [];
+    //this.listaEstrategias = [];
 
-    for (let index = 0; index < 7; index++) {
+    /*for (let index = 0; index < 7; index++) {
       let estrategia = {
         nombre:'Estrategia '+(index+1),
         actividades:[]
@@ -32,23 +35,27 @@ export class ListaActividadesComponent implements OnInit {
         let total_meta_programada = ((Math.floor(Math.random() * (10 - 1 + 1)) + 1) > 5);
         let ultimo_reporte = Date();
         estrategia.actividades.push({
+          id:index_actividad+1,
           descripcion:'Actividad '+(index_actividad+1),
           semana_actual: reportado,
-          fecha_ultimo_reporte: ultimo_reporte,
+          avance_acumulado:{
+            ultima_fecha_avance: ultimo_reporte,
+            total_avance: porcentaje_lleno, 
+          },
           porcentaje: porcentaje_lleno,
-          avance: porcentaje_lleno,
           meta_abierta: total_meta_programada
         });
       }
 
       this.listaEstrategias.push(estrategia);
-    }
+    }*/
 
     this.loadListadoActividades();
   }
 
   loadListadoActividades(){
     let params = {};
+    this.listaEstrategias = [];
 
     this.avancesActividadesService.getListadoActividades(params).subscribe(
       response =>{
@@ -56,13 +63,15 @@ export class ListaActividadesComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          if(response.data.total > 0){
+          this.listaEstrategias = response.data;
+          this.gruposAsignados = response.grupos;
+          /*if(response.data.total > 0){
             response.data.data.forEach(registro => {
               let dateString = registro.fecha_llamada+'T'+registro.hora_llamada;
               let newDate = new Date(dateString);
               registro.fecha_hora_llamada = newDate;
             });
-          }
+          }*/
         }
         this.isLoading = false;
       },
@@ -78,14 +87,15 @@ export class ListaActividadesComponent implements OnInit {
     return event;
   }
 
-  verAvances(actividadID){
-    console.log(actividadID);
-    
+  verAvances(actividad,estrategia_index,actividad_index){
+    this.selectedEstrategiaIndex = estrategia_index;
+    this.selectedActividadIndex = actividad_index;
+
     let configDialog = {
       width: '99%',
       maxHeight: '90vh',
       height: '643px',
-      data:{actividadID: actividadID},
+      data:{actividadData: actividad},
       panelClass: 'no-padding-dialog'
     };
     
@@ -94,7 +104,7 @@ export class ListaActividadesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(valid => {
       if(valid){
-        console.log('Aceptar');
+        this.listaEstrategias[this.selectedEstrategiaIndex].actividades[this.selectedActividadIndex] = valid;
       }else{
         console.log('Cancelar');
       }

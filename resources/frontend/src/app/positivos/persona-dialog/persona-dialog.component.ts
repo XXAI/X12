@@ -21,7 +21,6 @@ export interface PersonaIndiceData {
   fecha_confirmacion?: string;
   egreso_id?: number;
   egreso_covid?: any;
-  
 }
 
 @Component({

@@ -1,0 +1,78 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <div class="data-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div>
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            <h3 style="margin-top:0px; margin-bottom:3px;">Grupo:</h3>
+            {{descripcionGrupo}}
+        </div>
+        <div fxFlex="none" style="text-align: center;">
+            <h3 style="margin-top:0px; margin-bottom:3px;">Folio:</h3>
+            {{folioGrupo}}
+        </div>
+    </section>
+    <mat-divider></mat-divider>
+    <section fxFlex fxLayout="row">
+        <mat-card fxFlex="50" fxLayout="column">
+            <div fxFlex="none">
+                <div fxLayout="column">
+                    <div fxFlex="none">
+                        <mat-form-field style="width: 100%;" appearance="outline">
+                            <mat-label>Buscar</mat-label>
+                            <input matInput [(ngModel)]="searchQuery" (keyup.escape)="cleanSearch()" (keyup.enter)="search()" placeholder="Buscar">
+                            <button matSuffix *ngIf="searchQuery" mat-icon-button (click)="cleanSearch()" [attr.aria-label]="'Clean Query'" [attr.aria-pressed]="'cleanQuery'">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex fxLayout="row">
+                        <div fxFlex></div>
+                        <section fxFlex="none">
+                            <button mat-button (click)="limpiarResultados()">Limpiar</button>&nbsp;
+                            <button mat-raised-button color="accent" (click)="search()">
+                                <mat-icon>search</mat-icon> Buscar
+                            </button>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div fxFlex style="overflow: auto;">
+                <mat-divider style="margin-bottom:5px;"></mat-divider>
+                <mat-list>
+                    <mat-list-item *ngFor="let usuario of resultadosBusquedaUsuarios">
+                      <img matListAvatar src="{{usuario.avatar}}" alt="Avatar Usuario">
+                      <h3 matLine> {{usuario.username}} </h3>
+                      <p matLine>
+                        <span> {{usuario.name}} </span>
+                      </p>
+                      <button *ngIf="!listaUsuariosControl[usuario.id]" mat-stroked-button color="accent" (click)="agregarUsuario(usuario)"><mat-icon>chevron_right</mat-icon></button>
+                      <mat-icon *ngIf="listaUsuariosControl[usuario.id]" color="primary">check_circle</mat-icon>
+                      <mat-divider></mat-divider>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </mat-card>
+        <div fxFlex="50" fxLayout="column">
+            <div fxFlex style="overflow: auto;">
+                <mat-list>
+                    <mat-list-item *ngFor="let usuario of listaUsuariosAsignados; index as i;">
+                      <img matListAvatar src="{{usuario.avatar}}" alt="Avatar Usuario">
+                      <h3 matLine> {{usuario.username}} </h3>
+                      <p matLine>
+                        <span> {{usuario.name}} </span>
+                      </p>
+                      <button mat-stroked-button color="warn" (click)="quitarUsuario(i)"><mat-icon>remove_circle</mat-icon></button>
+                      <mat-divider></mat-divider>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+            <mat-divider style="margin-bottom:5px;"></mat-divider>
+            <div fxFlex="none" fxLayout="row">
+                <div fxFlex></div>
+                <div fxFlex="none">
+                    <button mat-button (click)="close()">Cancelar</button>&nbsp;
+                    <button mat-raised-button color="primary" (click)="guardarUsuariosAsingados()"><mat-icon>save</mat-icon> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

@@ -1,12 +1,12 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
     <section fxFlex="none" fxLayout="row">
         <div fxFlex>
-            <h3>Descripción Actividad</h3>
-            Descripcion completa de la actividad numero 1
+            <h3>Actividad</h3>
+            {{actividad.descripcion}}
         </div>
         <div fxFlex="none" style="text-align: center;">
-            <h3>Meta Programada</h3>
-            45456
+            <h3>Progreso</h3>
+            {{ ((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number:'1.0-2' }} <span *ngIf="!actividad.meta_abierta">/</span> {{ actividad.grupo_meta_programada | number:'1.0-2'}}
         </div>
     </section>
     <section fxFlex>
@@ -29,7 +29,7 @@
                         <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
 
                             <ng-container matColumnDef="user">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+                                <th mat-header-cell *matHeaderCellDef width="1" mat-sort-header> Usuario </th>
                                 <td mat-cell *matCellDef="let row"> {{row.usuario.username}} </td>
                             </ng-container>
 
@@ -40,18 +40,23 @@
 
                             <ng-container matColumnDef="avance" >
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Avance </th>
-                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.avance}} </td>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.avance | number:'1.0-2'}} </td>
                             </ng-container>
 
                             <ng-container matColumnDef="observaciones" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Observaciones </th>
-                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.observaciones}} </td>
+                                <th mat-header-cell *matHeaderCellDef width="1" mat-sort-header fxHide.xs="true"> Observaciones </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"><mat-icon matTooltip="{{row.observaciones}}" [matTooltipPosition]="'below'" *ngIf="row.observaciones">description</mat-icon></td>
                             </ng-container>
 
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                                 <td mat-cell *matCellDef="let row; let i = index" width="1">
-                                    <button mat-stroked-button color="primary"><mat-icon>contact_phone</mat-icon></button>
+                                    <button mat-icon-button color="primary" (click)="cargarAvance(row.id)" aria-label="Editar" [class.button-spinner]="isLoadingAction" [disabled]="isLoadingAction">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="accent" (click)="borrarAvance(row.id)" aria-label="Borrar" [class.button-spinner]="isLoadingAction" [disabled]="isLoadingAction">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
                                 </td>
                             </ng-container>
 
@@ -75,42 +80,78 @@
             </mat-tab>
             <mat-tab label="Formulario Avance" *ngIf="mostrarFormulario">
               <ng-template matTabContent>
-                    <div fxLayout="column" style="height: 100%;">
-                        <div fxFlex="none">
-                            <div fxFlex fxLayout="row" fxLayoutAlign="space-between" [formGroup]="formAvance">
-                                <mat-form-field fxFlex="20">
+                    <div fxLayout="column" style="height: 100%;" [formGroup]="formAvance">
+                        <div fxFlex="none" style="padding:5px 0;">
+                            <div fxFlex fxLayout="row" fxLayoutAlign="space-between">
+                                <mat-form-field fxFlex="21">
                                     <mat-label>Fecha (aaaa-mm-dd)</mat-label>
                                     <input matInput mascaraFecha formControlName="fecha_avance" required>
-                                    <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+                                    <mat-hint>Ejemplo: 2020-01-30</mat-hint>
                                     <mat-error *ngIf="formAvance.get('fecha_avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                    <button matSuffix mat-icon-button [matMenuTriggerFor]="menu" [attr.aria-label]="'Menu Fecha'" [attr.aria-pressed]="'MenuFecha'">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item (click)="patchFechaActual()"><mat-icon>today</mat-icon> Usar fecha actual</button>
+                                        <button mat-menu-item (click)="aplicarFechaMetas()" *ngIf="actividadMetas.length > 0" [disabled]="!toggleFechaEnabled"><mat-icon>date_range</mat-icon> Aplicar fecha en avances</button>
+                                    </mat-menu>
                                 </mat-form-field>
                                 <mat-form-field fxFlex="20">
                                     <mat-label>Avance</mat-label>
                                     <input matInput formControlName="avance" required>
                                     <mat-error *ngIf="formAvance.get('avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                    <mat-hint *ngIf="actividadMetas.length > 0">Suma Automatica</mat-hint>
                                 </mat-form-field>
-                                <mat-form-field  fxFlex="58">
+                                <mat-form-field  fxFlex>
                                     <mat-label>Observaciones</mat-label>
                                     <textarea matInput formControlName="observaciones" rows="1"></textarea>
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div fxFlex style="overflow:auto;">
+                        <div fxFlex="none"  *ngIf="actividadMetas.length > 0">
+                            <div fxLayout="column">
+                                <div fxFlex="none">
+                                    <div fxLayout="row" style="width: 100%;">
+                                        <div fxFlex="20" class="cabecera-avances">Distrito</div>
+                                        <div fxFlex="20" class="cabecera-avances">Municipio</div>
+                                        <div fxFlex="20" class="cabecera-avances">Localidad</div>
+                                        <div fxFlex="20" class="cabecera-avances">
+                                            <button mat-icon-button (click)="toggleBloqueoFechas()"><mat-icon>{{(toggleFechaEnabled)?'lock_open':'lock'}}</mat-icon></button>Fecha
+                                        </div>
+                                        <div fxFlex="20" class="cabecera-avances">Avance</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div fxFlex style="overflow:auto; padding:5px;">
                             <mat-divider></mat-divider>
-                            <mat-list role="list">
-                                <mat-list-item role="listitem">
-                                    <div fxLayout="row">
-                                        safsdf
+                            <div fxLayout="column" *ngIf="actividadMetas.length > 0">
+                                <div fxFlex="none" *ngFor="let meta of actividadMetas">
+                                    <div fxLayout="row" style="width: 100%;" [formGroup]="formAvance.get('division_metas.meta_'+meta.id)">
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{meta.distrito}}</div>
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{(meta.municipio)?meta.municipio:'---'}}</div>
+                                        <div fxFlex="20" style="display: flex; align-items: center;">{{(meta.localidad)?meta.localidad:'---'}}</div>
+                                        <mat-form-field fxFlex="20" style="padding-right:5px;" appearance="legacy">
+                                            <mat-label>Fecha</mat-label>
+                                            <input matInput mascaraFecha formControlName="fecha_avance" required>
+                                            <mat-error *ngIf="formAvance.get('division_metas.meta_'+meta.id+'.fecha_avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field fxFlex="20" appearance="legacy">
+                                            <mat-label>Avance</mat-label>
+                                            <input matInput formControlName="avance" (blur)="sumarAvances()">
+                                            <mat-error *ngIf="formAvance.get('division_metas.meta_'+meta.id+'.avance').hasError('required')">Este campo es obligatorio</mat-error>
+                                            <mat-hint align="end">{{ meta.total_avance | number:'1.0-2' }} / {{ meta.meta_programada | number:'1.0-2' }}</mat-hint>
+                                        </mat-form-field>
                                     </div>
                                     <mat-divider></mat-divider>
-                                </mat-list-item>
-                            </mat-list>
+                                </div>
+                            </div>
                         </div>
                         <div fxFlex="none" fxLayout="row">
                             <div fxFlex></div>
                             <div fxFlex="none">
                                 <button mat-button (click)="ocultarFormulario()">Cancelar</button>&nbsp;
-                                <button mat-raised-button color="primary"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+                                <button mat-raised-button color="primary" (click)="guardarAvance()" [disabled]="!formAvance.valid || isLoadingAction" [class.button-spinner]="isLoadingAction"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
                             </div>
                         </div>
                     </div>

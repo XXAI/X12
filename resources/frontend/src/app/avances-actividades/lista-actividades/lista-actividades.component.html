@@ -1,6 +1,22 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <mat-card fxFlex fxLayout="column">
-        <section fxFlex="none" fxLayout="column" *ngFor="let estrategia of listaEstrategias">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            
+        </div>
+        <div fxFlex="none" style="display: table; height: 100%;">
+            <span style="display: table-cell; vertical-align: middle; padding-right:5px;">Asignado a:</span>
+        </div>
+        <div fxFlex="none" *ngIf="gruposAsignados">
+            <mat-chip-list aria-label="Fish selection" [selectable]="false">
+                <mat-chip *ngFor="let grupo of gruposAsignados" color="accent" selected>{{grupo.descripcion}}</mat-chip>
+            </mat-chip-list>
+        </div>
+    </section>
+    <mat-card fxFlex fxLayout="column" style="overflow: auto;">
+        <section fxFlex *ngIf="listaEstrategias.length == 0">
+            <div class="not-results-found">No se encontraron actividades asignadas</div>
+        </section>
+        <section fxFlex="none" fxLayout="column" *ngFor="let estrategia of listaEstrategias; index as i;">
             <div fxFlex>
                 <h2>
                     {{estrategia.nombre}}
@@ -8,35 +24,38 @@
                 </h2>
             </div>
             <div fxFlex fxLayout="row raw" >
-                <section fxFlex="50" *ngFor="let actividad of estrategia.actividades" style="padding:5px;">
+                <section fxFlex="50" *ngFor="let actividad of estrategia.actividades; index as j;" style="padding:5px;">
                     <mat-card fxLayout="column" >
                         <div fxFlex fxLayout="row"  style="padding-bottom:5px;">
                             <div fxFlex>
                                 {{actividad.descripcion}}
                             </div>
                             <div fxFlex="none">
-                                <button mat-flat-button color="accent" aria-label="Agregar Avance" (click)="verAvances(1)">
+                                <button mat-flat-button color="accent" aria-label="Agregar Avance" (click)="verAvances(actividad,i,j)">
                                     <mat-icon>launch</mat-icon>
                                 </button>
                             </div>
                         </div>
                         <div fxFlex>
                             <div class="meta-abierta" *ngIf="actividad.meta_abierta">
-                                {{actividad.avance | number}}
+                                {{((actividad.avance_acumulado)?actividad.avance_acumulado.total_avance:0) | number}}
                             </div>
                             <div class="porcentaje-barra" *ngIf="!actividad.meta_abierta">
-                                <span class="porcentaje-lleno" [style.width]="actividad.porcentaje+'%'">{{actividad.porcentaje}}%</span>
+                                <span class="porcentaje-lleno" [style.width]="actividad.porcentaje+'%'">{{actividad.porcentaje | number:'1.0-0'}}%</span>
                             </div>
                         </div>
                         <div fxFlex style="padding-top:15px;" fxLayout="row">
-                            <mat-chip-list aria-label="Fish selection" fxFlex="none">
-                                <mat-chip color="primary" [disableRipple]="true" [selectable]="false" [selected]="actividad.semana_actual" >
-                                    <mat-icon>{{ (actividad.semana_actual)?'check_circle':'schedule' }}</mat-icon>&nbsp;Avance {{ (actividad.semana_actual)?'Realizado':'Pendiente' }}
+                            <mat-chip-list aria-label="Fish selection" fxFlex="none" *ngIf="actividad.avance_acumulado">
+                                <mat-chip [color]="(actividad.avance_acumulado.dias_ultimo_avance >= 7)?'warn':'primary'" [disableRipple]="true" [selectable]="false" [selected]="(actividad.avance_acumulado.dias_ultimo_avance == 0 || actividad.avance_acumulado.dias_ultimo_avance >= 7)" >
+                                    <mat-icon>{{ (actividad.avance_acumulado.dias_ultimo_avance == 0)?'check_circle':'schedule' }}</mat-icon>&nbsp;Actualizado: {{ (actividad.avance_acumulado.dias_ultimo_avance == 0)?'Hoy':'Hace '+actividad.avance_acumulado.dias_ultimo_avance+' Dia(s)' }}
                                 </mat-chip>
                             </mat-chip-list>
                             <div fxFlex></div>
                             <div fxFlex="none" style="text-align: center;">
-                                <mat-hint>Ulima Actualización:<br>{{actividad.fecha_ultimo_reporte | date:'dd/MM/yyyy'}}</mat-hint>
+                                <mat-hint>Ulima Actualización:<br> 
+                                    <span *ngIf="!actividad.avance_acumulado">Sin Avances</span> 
+                                    <span *ngIf="actividad.avance_acumulado">{{actividad.avance_acumulado.ultima_fecha_avance | date:'dd/MM/yyyy'}}</span>
+                                </mat-hint>
                             </div>
                         </div>
                     </mat-card>

@@ -9,9 +9,14 @@ import { map } from 'rxjs/operators';
 })
 export class IndiceService {
 
-  url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  //url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
+  url_obtener_localidad = `${environment.base_url}/obtener-localidad`;
   url_persona_indice = `${environment.base_url}/persona-indice`;
   url_persona_contacto = `${environment.base_url}/indice-contacto`;
+
+  url_salida = `${environment.base_url}/pacientes-indice-salida`;
+  url_estatus = `${environment.base_url}/pacientes-indice-estatus`;
 
   constructor(private http: HttpClient) { }
 
@@ -33,11 +38,18 @@ export class IndiceService {
   }
 
   obtenerCatalogos(payload) {
-    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
-      map( (response) => {
+    return this.http.get<any>(this.url_obtener_catalogos,{params:payload}).pipe(
+      map( response => {
         return response;
-      }
-    ));
+      })
+    );
+  }
+  obtenerLocalidad(payload) {
+    return this.http.get<any>(this.url_obtener_localidad , {params:payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
   }
 
   guardarContacto(payload) {
@@ -66,6 +78,22 @@ export class IndiceService {
   
   editarContacto(id, payload) {
     return this.http.put<any>(this.url_persona_contacto+"/"+id,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  registroSalida(id:any, tipo_movimiento:number) {
+    return this.http.put<any>(this.url_salida+"/"+id,{egreso_id: tipo_movimiento}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+  
+  actualizarEstatus(id:any, estatus:number) {
+    return this.http.put<any>(this.url_estatus+"/"+id,{estatus_id: estatus}).pipe(
       map( (response) => {
         return response;
       }

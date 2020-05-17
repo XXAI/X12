@@ -15,6 +15,7 @@ use DB;
 
 use App\Models\PersonaIndice;
 use App\Models\PersonaContacto;
+use Carbon\Carbon;
 
 class PersonaContactoController extends Controller
 {
@@ -28,7 +29,7 @@ class PersonaContactoController extends Controller
         try{
        
         $parametros = Input::all();
-        $persona = PersonaIndice::with("contactos", "municipio", "localidad");    
+        $persona = PersonaIndice::with("contactos", "municipio", "localidad", "responsable", 'estatus_covid');    
         if(isset($parametros['query']) && $parametros['query']){
                 $persona = $persona->where(function($query)use($parametros){
                 return $query->whereRaw(' concat(nombre," ", apellido_paterno, " ", apellido_materno) like "%'.$parametros['query'].'%"' )
@@ -107,6 +108,16 @@ class PersonaContactoController extends Controller
                 }
             }
 
+            //Cambiar
+            //return response()->json(['data'=>$parametros],500);
+            $fecha = new Carbon($datos_persona['fecha_confirmacion']);
+            $fecha->addDays(14);
+            $datos_persona['fecha_alta_14']= $fecha;
+
+            
+            $fecha->addDays(7);
+            $datos_persona['fecha_alta_21']= $fecha;
+            $datos_persona['egreso_id']= 1;
             $persona = PersonaIndice::create($datos_persona);
             
 
@@ -172,7 +183,27 @@ class PersonaContactoController extends Controller
             $persona->apellido_paterno = $datos_persona['apellido_paterno'];
             $persona->apellido_materno = $datos_persona['apellido_materno'];
             $persona->nombre = $datos_persona['nombre'];
+            $persona->alias         = $datos_persona['alias'];
+            $persona->sexo           = $datos_persona['sexo'];
+            $persona->edad           = $datos_persona['edad'];
             $persona->fecha_nacimiento = $datos_persona['fecha_nacimiento'];
+            
+            $persona->responsable_id        = $datos_persona['responsable_id'];
+            $persona->tipo_atencion_id        = $datos_persona['tipo_atencion_id'];
+            $persona->tipo_unidad_id        = $datos_persona['tipo_unidad_id'];
+            $persona->estatus_covid_id        = $datos_persona['estatus_covid_id'];
+            $persona->derechohabiente_id        = $datos_persona['derechohabiente_id'];
+            $persona->tipo_transmision_id        = $datos_persona['tipo_transmision_id'];
+            $persona->fecha_inicio_sintoma        = $datos_persona['fecha_inicio_sintoma'];
+            $persona->fecha_confirmacion        = $datos_persona['fecha_confirmacion'];
+            $fecha = new Carbon($datos_persona['fecha_confirmacion']);
+            $fecha->addDays(14);
+            $persona->fecha_alta_14        = $fecha->format('Y-m-d');
+            $fecha->addDays(7);
+            $persona->fecha_alta_21        = $fecha->format('Y-m-d');
+            $persona->fecha_alta_probable        = $datos_persona['fecha_alta_probable'];
+            
+
             $persona->email = $datos_persona['email'];
             $persona->estado_id = $datos_persona['estado_id'];
             $persona->municipio_id = $datos_persona['municipio_id'];

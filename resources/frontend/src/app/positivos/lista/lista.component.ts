@@ -11,6 +11,8 @@ import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
 import { PositivosService } from '../positivos.service';
 import { PersonaDialogComponent} from '../persona-dialog/persona-dialog.component';
+import { SalidaDialogComponent} from '../salida-dialog/salida-dialog.component';
+import { ActualizacionDialogComponent} from '../actualizacion-dialog/actualizacion-dialog.component';
 
 @Component({
   selector: 'app-lista',
@@ -33,7 +35,7 @@ export class ListaComponent implements OnInit {
   selectedItemIndex: number = -1;
   sexo:any = ['', 'MASCULINO', 'FEMENINO'];
 
-  displayedColumns: string[] = ['no_caso', 'municipio','sexo', 'edad', 'responsable', 'actions'];
+  displayedColumns: string[] = ['edicion', 'no_caso', 'municipio','sexo', 'edad', 'responsable', 'estatus', 'actions'];
   dataSource: any = [];
 
   constructor(private sharedService: SharedService, public dialog: MatDialog, public positivosService: PositivosService, public mediaObserver: MediaObserver, private route: Router) { }
@@ -97,7 +99,7 @@ export class ListaComponent implements OnInit {
   ver_paciente(obj)
   {
     this.datos_paciente = obj;
-    let configDialog = {};
+    let configDialog = { width: '800px'};
     configDialog['data'] = this.datos_paciente;
     console.log(configDialog);
     const dialogRef = this.dialog.open(PersonaDialogComponent, configDialog);
@@ -105,6 +107,62 @@ export class ListaComponent implements OnInit {
       if(valid)
       {
         
+      }
+    });
+  }
+
+  dar_salida(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = { width: '800px'};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(SalidaDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      console.log(valid);
+      if(valid.estatus)
+      {
+        if(valid.resultado == 1)
+        {
+          this.confirmAlta(valid.id);
+        }else if(valid.resultado == 2)
+        {
+          this.confirmDefuncion(valid.id);
+        }
+      }
+    });
+  }
+
+  actualizarEstatus(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = { width: '800px'};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(ActualizacionDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid.estatus)
+      {
+        this.positivosService.actualizarEstatus(valid.id, valid.resultado).subscribe(
+          response => {
+            if(response.error) {
+              let errorMessage = response.error.message;
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+            } else {
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
+              this.applyFilter();
+            }
+            this.isLoading = false;
+          },
+          errorResponse =>{
+            var errorMessage = "Ocurrió un error.";
+            if(errorResponse.status == 409){
+              errorMessage = errorResponse.error.error.message;
+            }
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+            this.isLoading = false;
+          }
+        );
       }
     });
   }
@@ -124,7 +182,7 @@ export class ListaComponent implements OnInit {
               this.sharedService.showSnackBar(errorMessage, null, 3000);
             } else {
               //this.selectedItemIndex = -1;
-              
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
               this.applyFilter();
             }
             this.isLoading = false;
@@ -157,6 +215,7 @@ export class ListaComponent implements OnInit {
               let errorMessage = response.error.message;
               this.sharedService.showSnackBar(errorMessage, null, 3000);
             } else {
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
              this.applyFilter();
             }
             this.isLoading = false;

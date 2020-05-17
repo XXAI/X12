@@ -9,10 +9,12 @@ import { PositivosRoutingModule } from './positivos-routing.module';
 import { ListaComponent } from './lista/lista.component';
 import { FormularioComponent } from './formulario/formulario.component';
 import { PersonaDialogComponent } from './persona-dialog/persona-dialog.component';
+import { SalidaDialogComponent } from './salida-dialog/salida-dialog.component';
+import { ActualizacionDialogComponent } from './actualizacion-dialog/actualizacion-dialog.component';
 
 
 @NgModule({
-  declarations: [ListaComponent, FormularioComponent, PersonaDialogComponent],
+  declarations: [ListaComponent, FormularioComponent, PersonaDialogComponent, SalidaDialogComponent, ActualizacionDialogComponent],
   imports: [
     CommonModule,
     PositivosRoutingModule,
@@ -22,7 +24,9 @@ import { PersonaDialogComponent } from './persona-dialog/persona-dialog.componen
     { provide: MatPaginatorIntl, useValue: getEspPaginatorIntl() }
   ],
   entryComponents:[
-    PersonaDialogComponent
+    PersonaDialogComponent,
+    SalidaDialogComponent,
+    ActualizacionDialogComponent
   ],
 })
 export class PositivosModule { }

@@ -20,12 +20,20 @@ class Actividad extends Model
     public function estrategia(){
         return $this->belongsTo('App\Models\Estrategia','estrategia_id');
     }
+    
+    public function metasGrupos(){
+        return $this->hasMany('App\Models\ActividadMetaGrupo','actividad_id','id')->whereNull('actividad_meta_id');
+    }
 
     public function avances(){
         return $this->hasMany('App\Models\AvanceActividad','actividad_id','id');
     }
 
     public function avanceAcumulado(){
-        return $this->hasOne('App\Models\AvanceActividad','actividad_id','id')->select('actividad_id',DB::raw('SUM(avance) as total_avance'),DB::raw('MAX(fecha_avance) as ultima_fecha_avance'))->groupBy('actividad_id')->whereNull('deleted_at');
+        return $this->hasOne('App\Models\AvanceActividad','actividad_id','id')
+                    ->select('actividad_id','grupo_estrategico_id',DB::raw('SUM(avance) as total_avance'),DB::raw('MAX(fecha_avance) as ultima_fecha_avance'),DB::raw('DATEDIFF(current_date(),MAX(fecha_avance)) as dias_ultimo_avance'))
+                    ->whereNull('actividad_meta_id')
+                    ->groupBy('actividad_id')
+                    ->whereNull('deleted_at');
     }
 }

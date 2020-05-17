@@ -11,6 +11,8 @@ import { PermissionsList } from '../../auth/models/permissions-list';
 import { MediaObserver } from '@angular/flex-layout';
 import { IndiceService } from '../indice.service';
 import { AgregarIndiceDialogComponent} from '../agregar-indice-dialog/agregar-indice-dialog.component';
+import { SalidaDialogComponent} from '../salida-dialog/salida-dialog.component';
+import { ActualizacionDialogComponent} from '../actualizacion-dialog/actualizacion-dialog.component';
 
 @Component({
   selector: 'app-lista-indices',
@@ -28,6 +30,7 @@ export class ListaIndicesComponent implements OnInit {
   mediaSize: string;
 
   searchQuery: string = '';
+  datos_paciente:any;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -118,6 +121,7 @@ export class ListaIndicesComponent implements OnInit {
   {
     let configDialog = {};
     configDialog['data'] = obj_indice;
+    console.log(obj_indice);
     const dialogRef = this.dialog.open(AgregarIndiceDialogComponent, configDialog);
     dialogRef.afterClosed().subscribe(valid => {
       if(valid)
@@ -126,4 +130,126 @@ export class ListaIndicesComponent implements OnInit {
       }
     });
   } 
+
+  actualizarEstatus(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = { width: '800px'};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(ActualizacionDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid.estatus)
+      {
+        this.indiceService.actualizarEstatus(valid.id, valid.resultado).subscribe(
+          response => {
+            if(response.error) {
+              let errorMessage = response.error.message;
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+            } else {
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
+              this.applyFilter();
+            }
+            this.isLoading = false;
+          },
+          errorResponse =>{
+            var errorMessage = "Ocurrió un error.";
+            if(errorResponse.status == 409){
+              errorMessage = errorResponse.error.error.message;
+            }
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+            this.isLoading = false;
+          }
+        );
+      }
+    });
+  }
+
+  confirmAlta(id:string = ''){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data: {dialogTitle:'Salida de Paciente',dialogMessage:'Esta seguro de dar salida por alta al paciente?',btnColor:'warn',btnText:'Dar de Alta'}
+    });
+
+    dialogRef.afterClosed().subscribe(reponse => {
+      if(reponse){
+        this.indiceService.registroSalida(id, 2).subscribe(
+          response => {
+            if(response.error) {
+              let errorMessage = response.error.message;
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+            } else {
+              //this.selectedItemIndex = -1;
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
+              this.applyFilter();
+            }
+            this.isLoading = false;
+          },
+          errorResponse =>{
+            var errorMessage = "Ocurrió un error.";
+            if(errorResponse.status == 409){
+              errorMessage = errorResponse.error.error.message;
+            }
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+            this.isLoading = false;
+          }
+        );
+        
+      }
+    });
+  }
+
+  confirmDefuncion(id:string = ''){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data: {dialogTitle:'Salida de Paciente',dialogMessage:'Esta seguro de dar salida por Defunción al paciente?',btnColor:'warn',btnText:'Defunción'}
+    });
+
+    dialogRef.afterClosed().subscribe(reponse => {
+      if(reponse){
+        this.indiceService.registroSalida(id, 3).subscribe(
+          response => {
+            if(response.error) {
+              let errorMessage = response.error.message;
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+            } else {
+              this.sharedService.showSnackBar("Se actualizo Correctamente", null, 3000);
+             this.applyFilter();
+            }
+            this.isLoading = false;
+          },
+          errorResponse =>{
+            var errorMessage = "Ocurrió un error.";
+            if(errorResponse.status == 409){
+              errorMessage = errorResponse.error.error.message;
+            }
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+            this.isLoading = false;
+          }
+        );
+      }
+    });
+  }
+
+  dar_salida(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = { width: '800px'};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(SalidaDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      console.log(valid);
+      if(valid.estatus)
+      {
+        if(valid.resultado == 1)
+        {
+          this.confirmAlta(valid.id);
+        }else if(valid.resultado == 2)
+        {
+          this.confirmDefuncion(valid.id);
+        }
+      }
+    });
+  }
 }

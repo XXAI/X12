@@ -4,17 +4,17 @@
       <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
-        <table class="table">
+        <table class="table" style="width: 100%;">
             <tr><td class="titulo">Edad</td><td>{{ data.edad}}</td></tr>
             <tr><td class="titulo">Sexo</td><td> {{ catalogo_sexo[data.sexo] }}</td></tr>
             <tr><td class="titulo">Municipio</td><td>{{ data.municipio.descripcion }}</td></tr>
             <tr><td class="titulo">Responsable</td><td>{{ data.responsable }}</td></tr>
-            <tr><td class="titulo">Tipo Atención</td><td> {{ data.tipo_atencion.descripcion }}</td></tr>
-            <tr><td class="titulo">Unidad</td><td>{{ data.tipo_unidad.descripcion}}</td></tr>
-            <tr><td class="titulo">Estatus</td><td>{{ data.estatus_covid.descripcion }}</td></tr>
-            <tr><td class="titulo">Derechohabiente</td><td>{{ data.derechohabiencia.descripcion }}</td></tr>
+            <tr><td class="titulo">Tipo Atención</td><td> <span *ngIf="data.tipo_atencion">{{ data.tipo_atencion.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Unidad</td><td><span *ngIf="data.tipo_unidad">{{ data.tipo_unidad.descripcion}}</span></td></tr>
+            <tr><td class="titulo">Estatus</td><td><span *ngIf="data.estatus_covid">{{ data.estatus_covid.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Derechohabiente</td><td><span *ngIf="data.derechohabiencia">{{ data.derechohabiencia.descripcion }}</span></td></tr>
             <tr><td class="titulo">Contactos</td><td>{{ data.contactos }}</td></tr>
-            <tr><td class="titulo">Tipo Transmisión</td><td>{{ data.tipo_transmision.descripcion }}</td></tr>
+            <tr><td class="titulo">Tipo Transmisión</td><td><span *ngIf="data.tipo_transmision">{{ data.tipo_transmision.descripcion }}</span></td></tr>
             <tr><td class="titulo">Fecha Inicio Sintomas</td><td> {{ data.fecha_inicio_sintoma }}</td></tr>
             <tr><td class="titulo">Fecha Confirmación</td><td>{{ data.fecha_confirmacion }}</td></tr>
             <tr><td colspan="2" style="text-align: center;" [ngClass]="{'green': data.egreso_id == 2, 'black': data.egreso_id == 3}">{{ data.egreso_covid.descripcion }}</td></tr>

@@ -13,11 +13,13 @@ import { AgregarContactoDialogComponent } from './agregar-contacto-dialog/agrega
 import { MapaComponent } from './mapa/mapa.component';
 import { AgmCoreModule } from '@agm/core';
 import { AgregarIndiceDialogComponent } from './agregar-indice-dialog/agregar-indice-dialog.component';
+import { SalidaDialogComponent } from './salida-dialog/salida-dialog.component';
+import { ActualizacionDialogComponent } from './actualizacion-dialog/actualizacion-dialog.component';
 
 
 
 @NgModule({
-  declarations: [ListaIndicesComponent, IndiceContactoComponent, AgregarContactoDialogComponent, MapaComponent, AgregarIndiceDialogComponent],
+  declarations: [ListaIndicesComponent, IndiceContactoComponent, AgregarContactoDialogComponent, MapaComponent, AgregarIndiceDialogComponent, SalidaDialogComponent, ActualizacionDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -29,7 +31,9 @@ import { AgregarIndiceDialogComponent } from './agregar-indice-dialog/agregar-in
   entryComponents:[
     AgregarContactoDialogComponent,
     MapaComponent,
-    AgregarIndiceDialogComponent
+    AgregarIndiceDialogComponent,
+    SalidaDialogComponent,
+    ActualizacionDialogComponent
   ],
 })
 export class PersonaIndiceModule { }

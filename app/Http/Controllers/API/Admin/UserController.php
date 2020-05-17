@@ -88,7 +88,7 @@ class UserController extends Controller
                 $usuario->username = $parametros['username'];
                 $usuario->password = Hash::make($parametros['password']);
                 $usuario->is_superuser = $parametros['is_superuser'];
-                $usuario->avatar = $parametros['avatar'];
+                $usuario->avatar = ($parametros['avatar'])?$parametros['avatar']:'assets/avatars/01-mexican.svg';
                 $usuario->turno_id = $parametros['turno_id'];
                 
                 $usuario->save();
@@ -96,13 +96,16 @@ class UserController extends Controller
                 if(!$usuario->is_superuser){
                     $roles = $parametros['roles'];
                     $permisos = $parametros['permissions'];
+                    $grupos = $parametros['groups'];
                 }else{
                     $roles = [];
                     $permisos = [];
+                    $grupos = [];
                 }
                 
                 $usuario->roles()->sync($roles);
                 $usuario->permissions()->sync($permisos);
+                $usuario->grupos()->sync($grupos);
 
                 DB::commit();
 
@@ -125,7 +128,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return response()->json(['data'=>User::with('roles','permissions')->find($id)],HttpResponse::HTTP_OK);
+        return response()->json(['data'=>User::with('roles','permissions','grupos')->find($id)],HttpResponse::HTTP_OK);
     }
 
     /**
@@ -173,13 +176,16 @@ class UserController extends Controller
                 if(!$usuario->is_superuser){
                     $roles = $parametros['roles'];
                     $permisos = $parametros['permissions'];
+                    $grupos = $parametros['groups'];
                 }else{
                     $roles = [];
                     $permisos = [];
+                    $grupos = [];
                 }
 
                 $usuario->roles()->sync($roles);
                 $usuario->permissions()->sync($permisos);
+                $usuario->grupos()->sync($grupos);
 
                 DB::commit();
 

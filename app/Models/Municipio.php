@@ -18,7 +18,8 @@ class Municipio extends Model
     public function estado(){
         return $this->belongsTo('App\Models\Estado','estado_id','id');
     }
+    
     public function distrito(){
-        return $this->belongsTo('App\Models\Distrito','distrito_id','id');
+        return $this->belongsTo('App\Models\CasosCovid\Distrito','distrito_id','id');
     }
 }

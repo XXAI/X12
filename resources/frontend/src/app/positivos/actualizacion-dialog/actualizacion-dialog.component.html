@@ -1,0 +1,41 @@
+<mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title>Caso No {{ data.no_caso }}</mat-card-title>
+      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-content>
+        <table class="table" style="width: 100%;">
+            <tr><td class="titulo">Responsable</td><td>{{ data.responsable }}</td></tr>
+            <tr><td class="titulo">Tipo Atención</td><td> {{ data.tipo_atencion.descripcion }}</td></tr>
+            <tr><td class="titulo">Unidad</td><td>{{ data.tipo_unidad.descripcion}}</td></tr>
+            <tr><td class="titulo">Estatus</td><td>{{ data.estatus_covid.descripcion }}</td></tr>
+            <tr><td class="titulo">Derechohabiente</td><td>{{ data.derechohabiencia.descripcion }}</td></tr>
+            <tr><td class="titulo">Contactos</td><td>{{ data.contactos }}</td></tr>
+            <tr><td class="titulo">Tipo Transmisión</td><td>{{ data.tipo_transmision.descripcion }}</td></tr>
+            <tr><td class="titulo">Fecha Inicio Sintomas</td><td> {{ data.fecha_inicio_sintoma }}</td></tr>
+            <tr><td class="titulo">Fecha Confirmación</td><td>{{ data.fecha_confirmacion }}</td></tr>
+            
+        </table>
+        <br>
+        <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between" [formGroup]="estatusForm">
+            
+            <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
+                <mat-label>Estatus</mat-label>
+                <mat-select formControlName="estatus_covid_id" >
+                    <mat-option *ngFor="let item of catalogo_estatus" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
+                    
+                </mat-select>
+                <mat-error *ngIf="estatusForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field>
+        </div>
+       
+    </mat-card-content>
+    
+    <mat-card-actions>
+        <div fxFlex></div>
+        <button mat-raised-button color="primary" (click)="actualizar()"> Actualizar</button>
+        <button mat-raised-button (click)="this.dialogRef.close(false);"> Cancelar</button>
+    </mat-card-actions>
+  </mat-card>

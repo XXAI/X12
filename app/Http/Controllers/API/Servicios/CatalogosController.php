@@ -13,6 +13,7 @@ use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Estatus;
+use App\Models\CasosCovid\EstatusCovid;
 use App\Models\Valoracion;
 use App\Models\CategoriaLlamada;
 use App\Models\Turno;
@@ -33,7 +34,9 @@ class CatalogosController extends Controller
                 'categoria_llamada' => CategoriaLlamada::getModel(),
                 'turnos' => Turno::getModel(),
                 'distritos' => Distrito::getModel(),
-                'grupos' => GrupoEstrategico::getModel()
+                'grupos' => GrupoEstrategico::getModel(),
+                'grupos_estrategicos'=>GrupoEstrategico::getModel(),
+                'estatusCovid' => EstatusCovid::orderBy("descripcion")
             ];
 
             $parametros = Input::all();
@@ -61,6 +64,24 @@ class CatalogosController extends Controller
             }
 
             return response()->json(['data' => $catalogos],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function getlocalidad(){
+        $parametros = Input::all();
+        //return response()->json(['data'=>$parametros['municipio']], HttpResponse::HTTP_OK);
+        try{
+
+            $localidades                 = Localidad::where("municipio_id", "=", $parametros['municipio'])->get();
+            $catalogo_covid = [
+
+                'localidades'                             => $localidades,
+            
+            ];
+
+            return response()->json(['data'=>$catalogo_covid], HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

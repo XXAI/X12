@@ -28,4 +28,36 @@ export class AvancesActividadesService {
       })
     );
   }
+
+  guardarAvance(payload) {
+    return this.http.post<any>(this.url_avances,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  modificarAvance(id,payload) {
+    return this.http.put<any>(this.url_avances+'/'+id,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  verAvance(id) {
+    return this.http.get<any>(this.url_avances+'/'+id).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  borrarAvance(id) {
+    return this.http.delete<any>(this.url_avances+'/'+id).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
 }

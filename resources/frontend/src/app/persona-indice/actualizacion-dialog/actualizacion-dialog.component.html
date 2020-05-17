@@ -1,0 +1,41 @@
+<mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title>Caso No {{ data.no_caso }}</mat-card-title>
+      <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-content>
+        <table class="table" style="width: 100%;">
+            <tr><td class="titulo">Responsable</td><td><span *ngIf="data.responsable">{{ data.responsable }}</span></td></tr>
+            <tr><td class="titulo">Tipo Atención</td><td> <span *ngIf="data.tipo_atencion">{{ data.tipo_atencion.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Unidad</td><td><span *ngIf="data.tipo_unidad">{{ data.tipo_unidad.descripcion}}</span></td></tr>
+            <tr><td class="titulo">Estatus</td><td><span *ngIf="data.estatus_covid">{{ data.estatus_covid.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Derechohabiente</td><td><span *ngIf="data.derechohabiencia">{{ data.derechohabiencia.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Contactos</td><td><span *ngIf="data.contactos">{{ data.contactos }}</span></td></tr>
+            <tr><td class="titulo">Tipo Transmisión</td><span *ngIf="data.tipo_transmision">{{ data.tipo_transmision.descripcion }}</span><td></td></tr>
+            <tr><td class="titulo">Fecha Inicio Sintomas</td><td><span *ngIf="data.fecha_inicio_sintoma">{{ data.contactos }}</span></td></tr>
+            <tr><td class="titulo">Fecha Confirmación</td><td><span *ngIf="data.fecha_confirmacion">{{ data.fecha_confirmacion }}</span></td></tr>
+            
+        </table>
+        <br>
+        <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between" [formGroup]="estatusForm">
+            
+            <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
+                <mat-label>Estatus</mat-label>
+                <mat-select formControlName="estatus_covid_id" >
+                    <mat-option *ngFor="let item of catalogo_estatus" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
+                    
+                </mat-select>
+                <mat-error *ngIf="estatusForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field>
+        </div>
+       
+    </mat-card-content>
+    
+    <mat-card-actions>
+        <div fxFlex></div>
+        <button mat-raised-button color="primary" (click)="actualizar()"> Actualizar</button>
+        <button mat-raised-button (click)="this.dialogRef.close(false);"> Cancelar</button>
+    </mat-card-actions>
+  </mat-card>

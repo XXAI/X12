@@ -31,7 +31,8 @@ class PacientesCovid extends Model
         'fecha_alta_21',
         'dias_evolucion',
         'fecha_alta_probable',
-        'egreso_id'
+        'egreso_id',
+
     ];
 
     public function municipio(){
@@ -75,7 +76,7 @@ class PacientesCovid extends Model
         return $this->belongsTo('App\Models\CasosCovid\EgresosCovid', 'egreso_id');
     }
 
-    
+
 
 
 }

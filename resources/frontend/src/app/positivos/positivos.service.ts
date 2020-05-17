@@ -12,6 +12,7 @@ export class PositivosService {
   url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
   url = `${environment.base_url}/pacientes-covid`;
   url_salida = `${environment.base_url}/pacientes-covid-salida`;
+  url_estatus = `${environment.base_url}/pacientes-covid-estatus`;
 
   constructor(private http: HttpClient) { }
 
@@ -59,6 +60,14 @@ export class PositivosService {
   
   registroSalida(id:any, tipo_movimiento:number) {
     return this.http.put<any>(this.url_salida+"/"+id,{egreso_id: tipo_movimiento}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+  
+  actualizarEstatus(id:any, estatus:number) {
+    return this.http.put<any>(this.url_estatus+"/"+id,{estatus_id: estatus}).pipe(
       map( (response) => {
         return response;
       }

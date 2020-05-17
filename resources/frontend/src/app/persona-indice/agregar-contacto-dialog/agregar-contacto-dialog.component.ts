@@ -183,25 +183,28 @@ export class AgregarContactoDialogComponent implements OnInit {
   }
 
   cargarLocalidadesEdit(municipioEdit){
+    
     let municipio = municipioEdit;
+    if(municipio)
+    {
+      let carga_catalogos = [
+        {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
+      ];
+      this.catalogos['localidades'] = false;
+      this.infoContactoForm.get('localidad_id').reset();
+      this.infoContactoForm.get('localidad').reset();
 
-    let carga_catalogos = [
-      {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
-    ];
-    this.catalogos['localidades'] = false;
-    this.infoContactoForm.get('localidad_id').reset();
-    this.infoContactoForm.get('localidad').reset();
-
-    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
-      response => {
-        if(response.data['localidades'].length > 0){
-          this.catalogos['localidades'] = response.data['localidades'];
-          this.infoContactoForm.controls['localidad_id'].setValue(this.data.localidad);
+      this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+        response => {
+          if(response.data['localidades'].length > 0){
+            this.catalogos['localidades'] = response.data['localidades'];
+            this.infoContactoForm.controls['localidad_id'].setValue(this.data.localidad);
+          }
+          
+          this.actualizarValidacionesCatalogos('localidades');
         }
-        
-        this.actualizarValidacionesCatalogos('localidades');
-      }
-    );
+      );
+    }
   }
 
   actualizarValidacionesCatalogos(catalogo){
@@ -236,14 +239,15 @@ export class AgregarContactoDialogComponent implements OnInit {
   cargarLocalidades(event){
     let municipio = event.option.value;
 
-    let carga_catalogos = [
+    /*let carga_catalogos = [
       {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:municipio.id}},
-    ];
+    ];*/
+    let carga_catalogos = {municipio: municipio.id};
     this.catalogos['localidades'] = false;
     this.infoContactoForm.get('localidad_id').reset();
     this.infoContactoForm.get('localidad').reset();
 
-    this.indiceService.obtenerCatalogos(carga_catalogos).subscribe(
+    this.indiceService.obtenerLocalidad(carga_catalogos).subscribe(
       response => {
         if(response.data['localidades'].length > 0){
           this.catalogos['localidades'] = response.data['localidades'];
@@ -469,4 +473,16 @@ export class AgregarContactoDialogComponent implements OnInit {
     );
   }
 
+  obtenerIniciales()
+  {
+    let alias = "";
+      alias += this.infoContactoForm.controls['nombre'].value.charAt(0);
+    
+      alias += this.infoContactoForm.controls['apellido_paterno'].value.charAt(0);
+    
+      alias += this.infoContactoForm.controls['apellido_materno'].value.charAt(0);
+  
+    this.infoContactoForm.controls['alias'].setValue(alias);
+    //console.log(nombre);
+  }
 }

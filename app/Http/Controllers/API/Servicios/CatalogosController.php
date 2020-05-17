@@ -13,7 +13,7 @@ use App\Models\Estado;
 use App\Models\Municipio;
 use App\Models\Localidad;
 use App\Models\Estatus;
-use App\Models\EstatusCovid;
+use App\Models\CasosCovid\EstatusCovid;
 use App\Models\Valoracion;
 use App\Models\CategoriaLlamada;
 use App\Models\Turno;

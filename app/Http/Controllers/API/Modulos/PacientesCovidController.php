@@ -19,6 +19,7 @@ use App\Models\CasosCovid\TipoUnidad;
 use App\Models\CasosCovid\EgresosCovid;
 use App\Models\Municipio;
 use App\Models\PersonaIndice;
+use App\Models\PersonaContacto;
 use App\Models\Localidad;
 use Carbon\Carbon;
 
@@ -559,10 +560,10 @@ class PacientesCovidController extends Controller
             {
 
                     $casos = PersonaIndice::select('persona_indice.*')
-                    ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
+                    ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
                     ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc') ;
+                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc','persona_indice.dispositivo_id','asc') ;
 
 
             }
@@ -578,9 +579,16 @@ class PacientesCovidController extends Controller
                 if($grupo)
                 {
 
-                    $casos = PacientesCovid::select('pacientes_covid.*')
+                   /*  $casos = PacientesCovid::select('pacientes_covid.*')
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
                     ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                    ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                    ->where('GE.id','=',$grupo->grupo_estrategico_id)
+                    ->orderBy('pacientes_covid.responsable_id', 'asc') ; */
+
+                    $casos = PersonaIndice::select('persona_indice.*')
+                    ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
+                    ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     ->where('GE.id','=',$grupo->grupo_estrategico_id)
                     ->orderBy('pacientes_covid.responsable_id', 'asc') ;
@@ -588,11 +596,13 @@ class PacientesCovidController extends Controller
                 }
                 else{
 
-                    $casos = PacientesCovid::select('pacientes_covid.*')
-                    ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid')
-                    ->join('catalogo_responsables as R', 'R.id', '=', 'pacientes_covid.responsable_id')
+                    $casos = PersonaIndice::select('persona_indice.*')
+                    ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
+                    ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('pacientes_covid.responsable_id', 'asc') ;
+                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc','persona_indice.dispositivo_id','asc') ;
+
+
                 }
 
 

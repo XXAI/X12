@@ -128,12 +128,12 @@
     <mat-form-field fxFlex.gt-sm="10" fxFlex.lt-sm="100" >
         <mat-label>C.P.</mat-label>
         <input matInput formControlName="codigo_postal">
-        <mat-error *ngIf="infoIndiceForm.get('codigo_postal').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+        <mat-error *ngIf="infoIndiceForm.get('codigo_postal').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
     <mat-form-field fxFlex.gt-sm="30" fxFlex.lt-sm="100" >
         <mat-label>Colonia o Barrio</mat-label>
         <input matInput formControlName="colonia">
-        <mat-error *ngIf="infoIndiceForm.get('colonia').hasError('required')">Formato de Correo Electronico incorrecto</mat-error>
+        <mat-error *ngIf="infoIndiceForm.get('colonia').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
     <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
         <mat-label>Referencia</mat-label>

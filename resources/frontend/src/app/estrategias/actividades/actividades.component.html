@@ -11,9 +11,11 @@
                    
                 <h3>Estrategia <mat-icon style="font-size: 12px; width:12px">arrow_forward</mat-icon> Actividad</h3>         
                 <hr>   
-                <p style="font-weight: 200;">{{ object?.estrategia?.nombre}}</p>  
-                <h2 style="font-weight: 200;">{{ object?.descripcion}}</h2>   
+                <h2 style="font-weight: 200;">{{ object?.descripcion}}</h2> 
                 <h4 >Meta programada (Total): {{ object?.total_meta_programada != null ? object?.total_meta_programada : "Ninguna"}}</h4>
+                <small style="font-weight: 200;">Estrategia: <strong>{{ object?.estrategia?.nombre}}</strong></small>  
+                  
+                
                              
             </section>
         </div>

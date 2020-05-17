@@ -9,9 +9,11 @@
             <section class="mat-typography"  *ngIf="!editar && id != null">
                 <h3>Estrategia <mat-icon style="font-size: 12px; width:12px">arrow_forward</mat-icon> Actividad <mat-icon style="font-size: 12px; width:12px">arrow_forward</mat-icon> Meta</h3>         
                 <hr>  
-                <p style="font-weight: 200;">{{ object?.actividad?.estrategia?.nombre}} / {{ object?.actividad?.descripcion}}</p>  
                 <h4 >Meta programada: {{ object?.meta_programada != null ? object?.meta_programada : "Ninguna"}}</h4>
                 <h5 >{{ object?.distrito_id != null ? object?.distrito.descripcion : ""}}{{ object?.municipio_id != null ? " / " + object?.municipio.descripcion : ""}}{{ object?.localidad_id != null ? " / " + object?.localidad.descripcion : ""}}</h5>                                           
+            
+                <small style="font-weight: 200;">Actividad: <strong>{{ object?.actividad?.descripcion}}</strong></small> <br>
+                <small style="font-weight: 200;">Estrategia: <strong>{{ object?.actividad?.estrategia?.nombre}}</strong></small> 
             </section>
         </div>
         <div fxFlex="none" fxLayout="row">

@@ -7,7 +7,7 @@
               
         <div fxFlex="none" fxLayout="column">
             <section class="mat-typography"  *ngIf="!editar && id != null">
-                <h2>Estrategia</h2>  
+                <h3>Estrategia <mat-icon style="  font-size: 10px;">arrow_forward</mat-icon></h3>  
                 <h2 style="font-weight: 200;">{{ object?.nombre}}</h2>                
             </section>
             <section class="mat-typography"  *ngIf="editar && id == null">

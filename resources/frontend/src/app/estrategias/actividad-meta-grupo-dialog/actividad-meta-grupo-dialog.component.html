@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>{{data.edit ? "Editar meta de grupo" : "Crear meta por grupo"}}</h1>
+<div mat-dialog-content>
+    <div class="spinner-container" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+    </div>
+    
+    <form class="form" [formGroup]="form" (ngSubmit)="guardar()" (keyup.enter)="guardar()" *ngIf="!loading">
+       
+        
+        <mat-form-field>
+            <mat-label>Grupo</mat-label>
+            <mat-select name="grupo_estrategico_id" formControlName="grupo_estrategico_id">
+            <mat-option>--</mat-option>
+            <mat-option *ngFor="let grupo of grupos " [value]="grupo.id">
+                {{grupo.descripcion}}
+            </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form?.controls['grupo_estrategico_id']?.hasError('exists')">La opción elegida no es válida.</mat-error>
+            <mat-error *ngIf="form?.controls['grupo_estrategico_id']?.hasError('required')">Por favor seleccione un grupo</mat-error>
+        </mat-form-field>        
+        <mat-form-field>
+            <mat-label>Meta programada</mat-label>
+            <input type="number" matInput name="meta_programada" formControlName="meta_programada" maxlength="255">            
+            <mat-error *ngIf="form?.controls['meta_programada']?.hasError('numeric')">Campo tipo numérico</mat-error>
+        </mat-form-field>
+    </form>
+    
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-button  color="warn" (click)="borrar()" *ngIf="data.edit">Borrar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="loading">Guardar</button>
+</div>

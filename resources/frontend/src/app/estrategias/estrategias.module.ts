@@ -9,10 +9,11 @@ import { ActividadesComponent } from './actividades/actividades.component';
 import { ActividadDialogComponent } from './actividad-dialog/actividad-dialog.component';
 import { ActividadMetaDialogComponent } from './actividad-meta-dialog/actividad-meta-dialog.component';
 import { ActividadesMetasComponent } from './actividades-metas/actividades-metas.component';
+import { ActividadMetaGrupoDialogComponent } from './actividad-meta-grupo-dialog/actividad-meta-grupo-dialog.component';
 
 
 @NgModule({
-  declarations: [ListaComponent, EstrategiaComponent, ActividadesComponent, ActividadDialogComponent, ActividadMetaDialogComponent, ActividadesMetasComponent],
+  declarations: [ListaComponent, EstrategiaComponent, ActividadesComponent, ActividadDialogComponent, ActividadMetaDialogComponent, ActividadesMetasComponent, ActividadMetaGrupoDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -20,7 +21,8 @@ import { ActividadesMetasComponent } from './actividades-metas/actividades-metas
   ],
   entryComponents: [
     ActividadDialogComponent,
-    ActividadMetaDialogComponent
+    ActividadMetaDialogComponent,
+    ActividadMetaGrupoDialogComponent
   ]
 })
 export class EstrategiasModule { }

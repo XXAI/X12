@@ -5,11 +5,11 @@ import { SharedService } from 'src/app/shared/shared.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, merge, NEVER } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { ActividadesMetasDataSource } from '../data-source/actividades-metas.data-source';
-import { ActividadesService } from '../data-source/actividades.service';
+import { ActividadesMetasGruposDataSource } from '../data-source/actividades-metas-grupos.data-source';
+import { ActividadesMetasGruposService } from '../data-source/actividades-metas-grupos.service';
 import { ActividadesMetasService } from '../data-source/actividades-metas.service';
 import { MatPaginator, MatSort, MatDialog } from '@angular/material';
-import { ActividadDialogComponent } from '../actividad-dialog/actividad-dialog.component';
+import { ActividadMetaGrupoDialogComponent } from '../actividad-meta-grupo-dialog/actividad-meta-grupo-dialog.component';
 import { ActividadMetaDialogComponent } from '../actividad-meta-dialog/actividad-meta-dialog.component';
 
 @Component({
@@ -22,7 +22,7 @@ export class ActividadesMetasComponent implements OnInit, OnDestroy, AfterViewIn
   constructor(
     private sharedService: SharedService, 
     private fb: FormBuilder,  
-    private actividadesService: ActividadesService,
+    private actividadesMetasGruposService: ActividadesMetasGruposService,
     private actividadesMetasService: ActividadesMetasService,
     private route: ActivatedRoute,
     private router: Router,
@@ -36,7 +36,7 @@ export class ActividadesMetasComponent implements OnInit, OnDestroy, AfterViewIn
   id:any;
   object:any;
 
-  displayedColumns: string[] = ['id','distrito','municipio','localidad','meta_programada'];
+  displayedColumns: string[] = ['id','grupo','meta_programada'];
   dataSource: any = [];
   inputSearchTxt:string = "";
   filter: string = "";
@@ -52,7 +52,7 @@ export class ActividadesMetasComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnInit() {
 
-    this.dataSource = new ActividadesMetasDataSource(this.actividadesMetasService);    
+    this.dataSource = new ActividadesMetasGruposDataSource(this.actividadesMetasGruposService);    
     
 
     this.isLoading = true;
@@ -136,25 +136,43 @@ export class ActividadesMetasComponent implements OnInit, OnDestroy, AfterViewIn
     });
   }
 
-  openDialogCreate(): void{
+  openDialogEditGrupo(row:any): void{
+
+    var item: any = {
+      edit: true, 
+      actividad_meta_grupo: row
+    }
+    const dialogRef = this.dialog.open(ActividadMetaGrupoDialogComponent, { width: "600px",data:item});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null){
+        if(result.last_action == "editar"){
+          this.loadData();
+        }
+        if(result.last_action == "delete"){
+          this.loadData();
+        }
+      }     
+    });
+  }
+
+  openDialogCreateGrupo(): void{
 
     var item: any = {
       edit: false, 
-      actividad: null,
-      actividad_id: this.id
+      actividad_meta_grupo: null,
+      actividad_id: this.object.actividad_id,
+      actividad_meta_id: this.id
     }
-    const dialogRef = this.dialog.open(ActividadMetaDialogComponent, { width: "600px",data:item});
+    const dialogRef = this.dialog.open(ActividadMetaGrupoDialogComponent, { width: "600px",data:item});
 
     dialogRef.afterClosed().subscribe(result => {
       if(result != null){
         if(result.last_action == "crear"){
-          this.router.navigate(['meta/'+ result.data],{ relativeTo: this.route });
+          this.loadData();
         }
       }
      
     });
   }
-
-
-
 }

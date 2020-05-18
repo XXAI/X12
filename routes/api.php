@@ -61,6 +61,11 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('exportar-query',                    'API\Admin\DevReporterController@exportExcel');
 
     /**
+     *  Modulo de Variables Globales
+     */
+    Route::apiResource('variables-globales',        'API\Admin\VariablesGlobalesController');
+
+    /**
      *  Modulo de Reportes
      */
     Route::apiResource('formulario',            'API\Modulos\FormularioController');

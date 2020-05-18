@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterPersonaIndice extends Migration
+class AlterPersonaIndiceAddEstatusCovid extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class AlterPersonaIndice extends Migration
      */
     public function up()
     {
-        Schema::table('persona_indice', function (Blueprint $table) {
-           
-            $table->smallInteger('estatus_covid_id')->after('longitud');
-        });
+        if(!Schema::hasColumn('persona_indice', 'estatus_covid_id')){
+            Schema::table('persona_indice', function (Blueprint $table) {
+                $table->smallInteger('estatus_covid_id')->after('longitud');
+            });
+        }
     }
 
     /**

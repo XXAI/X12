@@ -84,8 +84,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
 
   ngOnInit() {
     this.infoIndiceForm = this.formBuilder.group({
-      apellido_paterno:['',Validators.required],
-      apellido_materno:['',Validators.required],
+      apellido_paterno:[''],
+      apellido_materno:[''],
       nombre:['',Validators.required],
       fecha_nacimiento:[''],
       email:[''],

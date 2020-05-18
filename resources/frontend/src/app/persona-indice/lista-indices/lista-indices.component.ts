@@ -13,6 +13,7 @@ import { IndiceService } from '../indice.service';
 import { AgregarIndiceDialogComponent} from '../agregar-indice-dialog/agregar-indice-dialog.component';
 import { SalidaDialogComponent} from '../salida-dialog/salida-dialog.component';
 import { ActualizacionDialogComponent} from '../actualizacion-dialog/actualizacion-dialog.component';
+import { PersonaDialogComponent} from '../persona-dialog/persona-dialog.component';
 
 @Component({
   selector: 'app-lista-indices',
@@ -72,11 +73,10 @@ export class ListaIndicesComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          console.log(response.data);
           if(response.data.data.length > 0){
             this.dataSource = response.data.data;
-
-            this.resultsLength = response.data.data.length;
+            console.log(response.data.total+"--");
+            this.resultsLength = response.data.total;
           }
         }
         this.isLoading = false;
@@ -91,6 +91,21 @@ export class ListaIndicesComponent implements OnInit {
       }
     );
     return event;
+  }
+
+  ver_paciente(obj)
+  {
+    this.datos_paciente = obj;
+    let configDialog = { width: '800px'};
+    configDialog['data'] = this.datos_paciente;
+    console.log(configDialog);
+    const dialogRef = this.dialog.open(PersonaDialogComponent, configDialog);
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid)
+      {
+        
+      }
+    });
   }
 
   applyFilter(){

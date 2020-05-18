@@ -5,14 +5,15 @@
     </mat-card-header>
     <mat-card-content>
         <table class="table" style="width: 100%;">
-            <tr><td class="titulo">Responsable</td><td><span *ngIf="data.responsable">{{ data.responsable }}</span></td></tr>
+            <tr><td class="titulo">Nombre</td><td>{{ data.nombre }} {{ data.apellido_paterno }} {{ data.apellido_materno }}</td></tr>
+            <tr><td class="titulo">Responsable</td><td><span *ngIf="data.responsable">{{ data.responsable.descripcion }}</span></td></tr>
             <tr><td class="titulo">Tipo Atención</td><td> <span *ngIf="data.tipo_atencion">{{ data.tipo_atencion.descripcion }}</span></td></tr>
             <tr><td class="titulo">Unidad</td><td><span *ngIf="data.tipo_unidad">{{ data.tipo_unidad.descripcion}}</span></td></tr>
             <tr><td class="titulo">Estatus</td><td><span *ngIf="data.estatus_covid">{{ data.estatus_covid.descripcion }}</span></td></tr>
-            <tr><td class="titulo">Derechohabiente</td><td><span *ngIf="data.derechohabiencia">{{ data.derechohabiencia.descripcion }}</span></td></tr>
-            <tr><td class="titulo">Contactos</td><td><span *ngIf="data.contactos">{{ data.contactos }}</span></td></tr>
+            <tr><td class="titulo">Derechohabiente</td><td><span *ngIf="data.derechohabiente">{{ data.derechohabiente.descripcion }}</span></td></tr>
+            <tr><td class="titulo">Contactos</td><td><span *ngIf="data.contactos">{{ data.contactos.length }}</span></td></tr>
             <tr><td class="titulo">Tipo Transmisión</td><span *ngIf="data.tipo_transmision">{{ data.tipo_transmision.descripcion }}</span><td></td></tr>
-            <tr><td class="titulo">Fecha Inicio Sintomas</td><td><span *ngIf="data.fecha_inicio_sintoma">{{ data.contactos }}</span></td></tr>
+            <tr><td class="titulo">Fecha Inicio Sintomas</td><td><span *ngIf="data.fecha_inicio_sintoma">{{ data.fecha_inicio_sintoma }}</span></td></tr>
             <tr><td class="titulo">Fecha Confirmación</td><td><span *ngIf="data.fecha_confirmacion">{{ data.fecha_confirmacion }}</span></td></tr>
             
         </table>

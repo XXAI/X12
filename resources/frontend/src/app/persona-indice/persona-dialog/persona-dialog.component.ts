@@ -10,6 +10,7 @@ export interface PersonaIndiceData {
   nombre?: string;
   apellido_paterno?: string;
   apellido_materno?: string;
+  
   no_caso?: string;
   edad?: string;
   municipio?: any;
@@ -17,6 +18,7 @@ export interface PersonaIndiceData {
   tipo_atencion?: any;
   tipo_unidad?: any;
   estatus_covid?: any;
+  derechohabiencia?: any;
   contactos?: string;
   tipo_transmision?: any;
   fecha_inicio_sintoma?: string;
@@ -27,29 +29,21 @@ export interface PersonaIndiceData {
 }
 
 @Component({
-  selector: 'app-salida-dialog',
-  templateUrl: './salida-dialog.component.html',
-  styleUrls: ['./salida-dialog.component.css']
+  selector: 'app-persona-dialog',
+  templateUrl: './persona-dialog.component.html',
+  styleUrls: ['./persona-dialog.component.css']
 })
-export class SalidaDialogComponent implements OnInit {
+export class PersonaDialogComponent implements OnInit {
 
   catalogo_sexo:any = ['','MASCULINO', 'FEMENINO'];
   constructor(public dialog: MatDialog,  private formBuilder: FormBuilder, private router: Router, 
-    public dialogRef: MatDialogRef<SalidaDialogComponent>,
+    public dialogRef: MatDialogRef<PersonaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PersonaIndiceData,) { }
 
   ngOnInit() {
+    console.log(this.data);
+   
+
   }
 
-  alta_medica()
-  {
-    let resultado:any = { estatus: true, resultado:1, id:this.data.id};
-    this.dialogRef.close(resultado);
-  }
-
-  defuncion()
-  {
-    let resultado:any = { estatus: true, resultado:2, id:this.data.id};
-    this.dialogRef.close(resultado);
-  }
 }

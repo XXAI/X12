@@ -9,10 +9,14 @@ import { IndiceService } from '../indice.service';
 export interface PersonaIndiceData {
   id?: string;
   sexo?: string;
+  nombre?: string;
+  apellido_paterno?: string;
+  apellido_materno?: string;
+  
   no_caso?: string;
   edad?: string;
   municipio?: any;
-  responsable?: string;
+  responsable?: any;
   tipo_atencion?: any;
   tipo_unidad?: any;
   estatus_covid?: any;
@@ -23,6 +27,7 @@ export interface PersonaIndiceData {
   fecha_confirmacion?: string;
   egreso_id?: number;
   egreso_covid?: any;
+  derechohabiente?: any;
 }
 
 @Component({

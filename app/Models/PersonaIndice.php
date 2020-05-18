@@ -43,5 +43,19 @@ class PersonaIndice extends Model
         return $this->belongsTo('App\Models\CasosCovid\EstatusCovid', 'estatus_covid_id');
     }
 
+    public function derechohabiente(){
+
+        return $this->belongsTo('App\Models\CasosCovid\Derechohabiencias', 'derechohabiente_id');
+    }
+    public function tipo_transmision(){
+
+        return $this->belongsTo('App\Models\CasosCovid\TiposTransmision', 'tipo_transmision_id');
+    }
+
+    public function egreso_covid(){
+
+        return $this->belongsTo('App\Models\CasosCovid\EgresosCovid', 'egreso_id');
+    }
+
     
 }

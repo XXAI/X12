@@ -15,11 +15,12 @@ import { AgmCoreModule } from '@agm/core';
 import { AgregarIndiceDialogComponent } from './agregar-indice-dialog/agregar-indice-dialog.component';
 import { SalidaDialogComponent } from './salida-dialog/salida-dialog.component';
 import { ActualizacionDialogComponent } from './actualizacion-dialog/actualizacion-dialog.component';
+import { PersonaDialogComponent } from './persona-dialog/persona-dialog.component';
 
 
 
 @NgModule({
-  declarations: [ListaIndicesComponent, IndiceContactoComponent, AgregarContactoDialogComponent, MapaComponent, AgregarIndiceDialogComponent, SalidaDialogComponent, ActualizacionDialogComponent],
+  declarations: [ListaIndicesComponent, IndiceContactoComponent, PersonaDialogComponent, AgregarContactoDialogComponent, MapaComponent, AgregarIndiceDialogComponent, SalidaDialogComponent, ActualizacionDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -33,7 +34,8 @@ import { ActualizacionDialogComponent } from './actualizacion-dialog/actualizaci
     MapaComponent,
     AgregarIndiceDialogComponent,
     SalidaDialogComponent,
-    ActualizacionDialogComponent
+    ActualizacionDialogComponent,
+    PersonaDialogComponent
   ],
 })
 export class PersonaIndiceModule { }

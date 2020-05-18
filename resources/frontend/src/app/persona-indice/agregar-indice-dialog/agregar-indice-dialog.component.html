@@ -98,7 +98,7 @@
 
     <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" *ngIf="catalogos['localidades']">
         <mat-label>Localidad</mat-label>
-        <input type="text" aria-label="localidad" matInput formControlName="localidad_id" [matAutocomplete]="localidadAutocomplete" required (blur)="checkAutocompleteValue('localidad_id')">
+        <input type="text" aria-label="localidad" matInput formControlName="localidad_id" [matAutocomplete]="localidadAutocomplete" (blur)="checkAutocompleteValue('localidad_id')">
         <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
             <mat-option *ngFor="let item of filteredCatalogs['localidades'] | async" [value]="item">
                 [{{item.clave}}] {{item.descripcion}}

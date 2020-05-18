@@ -87,37 +87,37 @@ export class AgregarIndiceDialogComponent implements OnInit {
       apellido_paterno:['',Validators.required],
       apellido_materno:['',Validators.required],
       nombre:['',Validators.required],
-      fecha_nacimiento:['',Validators.required],
-      email:['',Validators.email],
+      fecha_nacimiento:[''],
+      email:[''],
       telefono_contacto:[''],
       es_celular:[''],
-      estado_id:[7,Validators.required],
-      municipio:['',Validators.required],
-      municipio_id:['',Validators.required],
-      localidad:['',Validators.required],
-      localidad_id:['',Validators.required],
-      codigo_postal:['',Validators.required],
-      latitud:['',Validators.required],
-      longitud:['',Validators.required],
-      calle: ['',Validators.required],
-      no_exterior: ['',Validators.required],
+      estado_id:[7],
+      municipio:[''],
+      municipio_id:[''],
+      localidad:[''],
+      localidad_id:[''],
+      codigo_postal:[''],
+      latitud:[''],
+      longitud:[''],
+      calle: [''],
+      no_exterior: [''],
       no_interior: [''],
-      colonia: ['',Validators.required],
+      colonia: [''],
       referencia: [''],
       no_caso: ['',Validators.required],
-      observaciones: ['',Validators.required],
+      observaciones: [''],
       
       alias:['',Validators.required],
-      edad:['',Validators.required],
-      sexo:['',Validators.required],
+      edad:[''],
+      sexo:[''],
       responsable_id:['',Validators.required],
-      tipo_atencion_id:['',Validators.required],
-      tipo_unidad_id:['',Validators.required],
-      derechohabiente_id:['',Validators.required],
-      tipo_transmision_id:['',Validators.required],
-      fecha_inicio_sintoma:['',Validators.required],
-      fecha_confirmacion:['',Validators.required],
-      fecha_alta_probable:['',Validators.required],
+      tipo_atencion_id:[''],
+      tipo_unidad_id:[''],
+      derechohabiente_id:[''],
+      tipo_transmision_id:[''],
+      fecha_inicio_sintoma:[''],
+      fecha_confirmacion:[''],
+      fecha_alta_probable:[''],
       estatus_covid_id:['',Validators.required]
      
      
@@ -207,7 +207,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
   }
 
   actualizarValidacionesCatalogos(catalogo){
-    switch (catalogo) {
+    /*switch (catalogo) {
       case 'municipios':
         if(this.catalogos['municipios']){
           this.infoIndiceForm.get('municipio').setValidators(null);
@@ -232,7 +232,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
         break;
       default:
         break;
-    } 
+    } */
   }
 
   cargarLocalidades(event){
@@ -254,7 +254,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
           this.catalogos['localidades'] = response.data['localidades'];
         }
         
-        this.actualizarValidacionesCatalogos('localidades');
+        //this.actualizarValidacionesCatalogos('localidades');
       }
     );
   }
@@ -277,7 +277,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
           this.infoIndiceForm.controls['localidad_id'].setValue(this.data.localidad);
         }
         
-        this.actualizarValidacionesCatalogos('localidades');
+        //this.actualizarValidacionesCatalogos('localidades');
       }
     );
   }
@@ -288,7 +288,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
         this.infoIndiceForm.get(field_name).reset();
         if(field_name != 'localidad_id'){
           this.catalogos['localidades'] = false;
-          this.actualizarValidacionesCatalogos('localidades');  
+          //this.actualizarValidacionesCatalogos('localidades');  
         }
       } 
     }, 300);
@@ -410,8 +410,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
         if(response.data['municipios'].length > 0){
           this.catalogos['municipios'] = response.data['municipios'];
         }
-        this.actualizarValidacionesCatalogos('municipios');
-        this.actualizarValidacionesCatalogos('localidades');
+        //this.actualizarValidacionesCatalogos('municipios');
+        //this.actualizarValidacionesCatalogos('localidades');
       }
     );
   }

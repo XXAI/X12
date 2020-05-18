@@ -38,7 +38,8 @@ export class EstrategiasService {
   }
 
   actualizarEstrategia(id,payload) {
-    return this.http.post<any>(this.url_estrategias+'/'+id,payload).pipe(
+    console.log("yo");
+    return this.http.put<any>(this.url_estrategias+'/'+id,payload).pipe(
       map( (response) => {
         return response;
       }

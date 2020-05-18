@@ -1,38 +1,91 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <mat-card fxFlex="none" fxLayout="column">
-        <div fxFlex="none">
-            <div fxFlex fxLayout="row raw" [formGroup]="formEstrategia">
+    <div fxFlex fxLayout="row" *ngIf="isLoading"fxLayoutAlign="center center">
+        <mat-spinner ></mat-spinner>
+    </div>
+    <mat-progress-bar *ngIf="isSaving" mode="indeterminate"></mat-progress-bar>
+    <mat-card fxFlex="none" fxLayout="column" *ngIf="!isLoading"> 
+              
+        <div fxFlex="none" fxLayout="column">
+            <section class="mat-typography"  *ngIf="!editar && id != null">
+                <h3>Estrategia <mat-icon style="  font-size: 10px;">arrow_forward</mat-icon></h3>  
+                <h2 style="font-weight: 200;">{{ object?.nombre}}</h2>                
+            </section>
+            <section class="mat-typography"  *ngIf="editar && id == null">
+                <h1>Nueva</h1>                
+            </section>
+            <section class="mat-typography"  *ngIf="editar && id != null">
+                <h1>Editar</h1>                
+            </section>
+            <form class="form" fxFlex fxLayout="row"[formGroup]="form" (ngSubmit)="guardar()" (keyup.enter)="guardar()" *ngIf="!isLoading &&  editar">
                 <mat-form-field fxFlex="100">
                     <mat-label>Nombre</mat-label>
-                    <input matInput formControlName="nombre" required>
-                    <mat-error *ngIf="formEstrategia.get('nombre').hasError('required')">Este campo es obligatorio</mat-error>
+                    <input matInput name="nombre" formControlName="nombre" >
+                    <mat-error *ngIf="form?.controls['nombre']?.hasError('required')">Campo requerido</mat-error>
                 </mat-form-field>
-            </div>
+            </form>
         </div>
         <div fxFlex="none" fxLayout="row">
             <div fxFlex></div>
-            <div fxFlex="none">
-                <button [routerLink]="'/almacen/salidas'" mat-button>Cancelar</button>
+            <div fxFlex="none" *ngIf="!editar">
+                <button [routerLink]="'/estrategias'" mat-button><mat-icon>arrow_back</mat-icon> Atrás</button>&nbsp;
+                <button mat-button  type="button" (click)="editar=true"><mat-icon>edit</mat-icon> Editar</button>          
+            </div>
+            <div fxFlex="none" *ngIf="editar && id !=null">
+                <button (click)="cancelar()" mat-button [disabled]="isSaving">Cancelar</button>
                 &nbsp;
-                <button mat-raised-button color="accent"><mat-icon>save</mat-icon> Guardar</button>
+                <button mat-raised-button color="primary" type="button" (click)="guardar()" [disabled]="isSaving"><mat-icon>save</mat-icon> Guardar cambios</button>
             </div>
-        </div>
+            <div fxFlex="none" *ngIf="editar && id ==null">
+                <button [routerLink]="'/estrategias'" mat-button [disabled]="isSaving">Cancelar</button>
+                &nbsp;
+                <button mat-raised-button color="accent" type="button" (click)="crear()" [disabled]="isSaving"><mat-icon>save</mat-icon> Guardar</button>
+            </div>
+        </div>        
     </mat-card>
-    <section fxFlex fxLayout="row" fxLayoutGap="10px">
-        <mat-card fxFlex="30" fxLayout="column">
+
+    <section fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="!hideTable">
+        <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">  
+
+            <div class="spinner-container" *ngIf="dataSource.loading$ | async">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>     
+            <section class="mat-typography" >
+                <h3>Actividades</h3>               
+            </section>     
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center" >
+                <mat-form-field fxFlex>                
+                    <mat-label>Buscar actividad</mat-label>
+                    <input matInput  [(ngModel)]="inputSearchTxt" [disabled]="dataSource.loading$ | async"  (keyup.enter)="applyFilter()" placeholder="Buscar por nombre">
+                </mat-form-field>
+                <div>
+                    <button mat-raised-button color="accent" (click)="openDialogCreate()" [disabled]="dataSource.loading$ | async"><mat-icon>add_circle</mat-icon> Crear actividad</button> 
+                </div>                
+
+            </div>    
             
-            <div fxFlex></div>
-            <div fxFlex="none">
+            <table fxFlex mat-table [dataSource]="dataSource" matSort>
+                <!-- Position Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                    <td mat-cell *matCellDef="let element"> {{element.id}} </td>                        
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Acticidad </th>
+                    <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td> 
+                </ng-container>
+
+                <ng-container matColumnDef="total_meta_programada">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Meta programada</th>
+                    <td mat-cell *matCellDef="let element"> {{element.total_meta_programada}} </td> 
+                </ng-container>                
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editarActividad(row)"></tr>
                 
-            </div>
+            </table>
+            <div *ngIf="dataSource.length == 0 "><small>No hay registros.</small></div>
+            <mat-paginator  [length]="dataSource.length" [pageSizeOptions]="[5, 10, 20, 50]"  showFirstLastButtons></mat-paginator>
         </mat-card>
-        <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
-            <div fxFlex>lista</div>
-        </mat-card>
-    </section>
-    
-    <section fxFlex="none" fxLayout="row">
-        <div fxFlex></div>
-        
     </section>
 </section>

@@ -12,6 +12,7 @@ use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
 
 use DB;
+use \Validator,\Hash;
 
 use App\Models\Estrategia;
 
@@ -61,32 +62,28 @@ class EstrategiasController extends Controller
     public function store(Request $request)
     {
         try{
+            $mensajes = [            
+                'required' => "required",
+            ];
+    
+            $reglas = [
+                'nombre' => 'required',                
+            ];
+
             $auth_user = auth()->user();
             $parametros = Input::all();
 
-            if(isset($parametros['id']) && $parametros['id']){
-                $llamada = LlamadaCallCenter::find($parametros['id']);
-                $parametros['recibio_llamada'] = $auth_user->id;
-                $parametros['turno_id'] = $auth_user->turno_id;
+            $v = Validator::make($parametros, $reglas, $mensajes);
 
-                unset($parametros['hora_llamada']);
-                unset($parametros['fecha_llamada']);
-
-                $llamada->update($parametros);
-            }else{
-                $ultimo_folio = LLamadaCallCenter::max('folio');
-                $ultimo_folio = $ultimo_folio+1;
-
-                $parametros['folio'] = $ultimo_folio;
-                $parametros['recibio_llamada'] = $auth_user->id;
-                $parametros['turno_id'] = $auth_user->turno_id;
-
-                $llamada = LlamadaCallCenter::create($parametros);
+            if ($v->fails()) {
+                return response()->json( $v->errors(), 409);
             }
 
-            return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
+            $estrategia = Estrategia::create($parametros);
+
+            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
-            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }
     }
 
@@ -99,18 +96,12 @@ class EstrategiasController extends Controller
     public function show($id)
     {
         try{
-            $parametros = Input::all();
-            
-            $llamada = LlamadaCallCenter::select('llamadas_call_center.*','catalogo_categoria_llamada.categoria as categoria_llamada','catalogo_categoria_llamada.descripcion as categoria_llamada_desc','users.name as recibio_llamada_nombre')
-                                        ->leftjoin('catalogo_categoria_llamada','catalogo_categoria_llamada.id','=','llamadas_call_center.categoria_llamada_id')
-                                        ->leftjoin('users','users.id','=','llamadas_call_center.recibio_llamada')
-                                        ->where('llamadas_call_center.id',$id)
-                                        ->first();
+            $estrategia = Estrategia::find($id);
             
             
-            return response()->json(['data'=>$llamada],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
-            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }
     }
 
@@ -123,7 +114,37 @@ class EstrategiasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            $estrategia = Estrategia::find($id);
+            
+            if(!$estrategia){
+                throw new Exception("No existe el registro");
+            }
+
+            $mensajes = [            
+                'required' => "required",
+            ];
+    
+            $reglas = [
+                'nombre' => 'required',                
+            ];
+
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+
+            $v = Validator::make($parametros, $reglas, $mensajes);
+
+            if ($v->fails()) {
+                return response()->json( $v->errors(), 409);
+            }
+
+            $estrategia->nombre = $parametros["nombre"];
+            $estrategia->save();
+            
+            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
+        }
     }
 
     /**

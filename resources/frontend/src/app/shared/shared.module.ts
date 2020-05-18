@@ -8,9 +8,10 @@ import { IfHasPermissionDirective } from './if-has-permission.directive';
 import { MascaraFechaDirective } from './mascara-fecha.directive';
 import { FormularioContingenciaComponent } from './components/formulario-contingencia/formulario-contingencia.component';
 import { EditarFormularioContingenciaComponent } from './components/editar-formulario-contingencia/editar-formulario-contingencia.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
-  declarations: [IfHasPermissionDirective, MascaraFechaDirective, FormularioContingenciaComponent, EditarFormularioContingenciaComponent],
+  declarations: [IfHasPermissionDirective, MascaraFechaDirective, FormularioContingenciaComponent, EditarFormularioContingenciaComponent, ConfirmDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -29,7 +30,10 @@ import { EditarFormularioContingenciaComponent } from './components/editar-formu
     IfHasPermissionDirective,
     MascaraFechaDirective,
     FormularioContingenciaComponent,
-    EditarFormularioContingenciaComponent
+    EditarFormularioContingenciaComponent    
   ],
+  entryComponents: [
+    ConfirmDialogComponent
+  ]
 })
 export class SharedModule { }

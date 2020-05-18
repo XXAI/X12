@@ -15,6 +15,10 @@ class ActividadMeta extends Model
         return $this->hasMany('App\Models\ActividadMetaGrupo','actividad_meta_id','id');
     }
 
+    public function actividad(){
+        return $this->belongsTo('App\Models\Actividad','actividad_id');
+    }
+
     public function distrito(){
         return $this->belongsTo('App\Models\CasosCovid\Distrito','distrito_id');
     }

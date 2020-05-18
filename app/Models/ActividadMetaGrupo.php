@@ -11,4 +11,7 @@ class ActividadMetaGrupo extends Model
     protected $table = 'actividades_metas_grupos';
     protected $fillable = ['id','actividad_id','actividad_meta_id','grupo_estrategico_id','meta_programada'];
     
+    public function grupo(){
+        return $this->belongsTo('App\Models\GrupoEstrategico','grupo_estrategico_id');
+    }
 }

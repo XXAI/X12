@@ -46,6 +46,7 @@ import { ConcentradosModule } from './concentrados/concentrados.module';
 import { AvancesActividadesModule } from './avances-actividades/avances-actividades.module';
 import { CatalogosModule } from './catalogos/catalogos.module';
 import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategicos.module';
+import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategi
     GoogleChartsModule.forRoot(),
     ConcentradosModule,
     CatalogosModule,
+    ArchivosGruposModule,
     WildcardRoutingModule,
   ],
   providers: [

@@ -17,6 +17,7 @@ use App\Models\CasosCovid\EstatusCovid;
 use App\Models\Valoracion;
 use App\Models\CategoriaLlamada;
 use App\Models\Turno;
+use App\Models\Distrito;
 use App\Models\GrupoEstrategico;
 
 class CatalogosController extends Controller
@@ -32,6 +33,8 @@ class CatalogosController extends Controller
                 'valoracion' => Valoracion::getModel(),
                 'categoria_llamada' => CategoriaLlamada::getModel(),
                 'turnos' => Turno::getModel(),
+                'distritos' => Distrito::getModel(),
+                'grupos' => GrupoEstrategico::getModel(),
                 'grupos_estrategicos'=>GrupoEstrategico::getModel(),
                 'estatusCovid' => EstatusCovid::orderBy("descripcion")
             ];

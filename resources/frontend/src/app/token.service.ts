@@ -16,13 +16,27 @@ export class TokenInterceptor implements HttpInterceptor {
     this.authService = this.injector.get(AuthService);
 
     const token: string = this.authService.getToken();
+  
+    var headers : {}
 
-    request = request.clone({
-      setHeaders: {
+    if (request.body instanceof FormData) {
+      headers = {
+        'Authorization' : `Bearer ${token}`,
+      }
+    } else {
+      headers = {
         'Authorization' : `Bearer ${token}`,
         'Content-type' : 'application/json'
       }
+      request = request.clone({
+        setHeaders: headers
+      });
+    }
+
+    request = request.clone({
+      setHeaders: headers
     });
+    
     return next.handle(request);
   }
 }
@@ -50,7 +64,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             return this.refreshTokenSubject.pipe(
                       filter(result => result !== null),
                       take(1),
-                      switchMap(token => {
+                      switchMap(token => {                        
                         return next.handle(this.addAuthenticationToken(request));
                       })
                     );
@@ -66,7 +80,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 this.refreshTokenInProgress = false;
 
                 this.refreshTokenSubject.next(token);
-
+               
                 return next.handle(this.addAuthenticationToken(request));
               }),
               catchError((response:any)=>{

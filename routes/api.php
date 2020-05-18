@@ -75,6 +75,12 @@ Route::group(['middleware'=>'auth'],function($router){
      */
     Route::apiResource('call-center-llamadas',      'API\Modulos\CallCenterLLamadasController');
     Route::get('busqueda-formularios-llenos',       'API\Modulos\LlenadoFormularioController@buscarFormularioLleno');
+    
+    /**
+     * Modulo de Archivos Grupos
+     */
+    Route::apiResource('archivos-grupos',               'API\Modulos\ArchivosGruposController');
+    Route::get('descargar-archivo-grupo/{id}',          'API\Modulos\ArchivosGruposController@descargar');
 
     /**
      * Modulo de Estrategias

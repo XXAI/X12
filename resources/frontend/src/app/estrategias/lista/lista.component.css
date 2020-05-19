@@ -26,7 +26,12 @@
 table {
   width: 100%;
 }
-  
+
+.mat-row:hover {
+  background: whitesmoke;
+  cursor: pointer;
+}
+
 .mat-form-field {
   font-size: 14px;
   width: 100%;

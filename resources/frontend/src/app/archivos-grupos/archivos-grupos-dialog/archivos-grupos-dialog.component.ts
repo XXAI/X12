@@ -109,11 +109,6 @@ export class ArchivosGruposDialogComponent implements OnInit, OnDestroy, AfterVi
     this.errorArchivo = false;
 
 		if (this.archivo) {
-			/*
-			this.errores = {
-				archivo: null
-			}*/
-			//this.mensajeErrorSync = "";
 			this.archivoSubido = false;
       this.loading = true;
 
@@ -296,6 +291,7 @@ export class ArchivosGruposDialogComponent implements OnInit, OnDestroy, AfterVi
     this.permisosError = false;
     this.errorArchivo = false;
     var  noTieneGrupo = false;
+    var bloqueado = false;
     Object.keys(validationErrors).forEach( prop => {
       const formControl = this.form.get(prop);
       if(formControl){
@@ -314,12 +310,21 @@ export class ArchivosGruposDialogComponent implements OnInit, OnDestroy, AfterVi
         }
         if(prop == "grupo"){
           noTieneGrupo = true;
-          console.log("chuchi");
+        }
+
+        if(prop == "bloqueado"){
+          bloqueado = true;
         }
       }
     });
     if(noTieneGrupo){
       this.snackBar.open("No te han asignado un grupo, habla con un administrador.", "Cerrar", {
+        duration: 4000,
+      });
+    }
+
+    if(bloqueado){
+      this.snackBar.open("Por el momento, la carga de archivos ha sido bloqueada, contacte al administrador.", "Cerrar", {
         duration: 4000,
       });
     }

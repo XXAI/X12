@@ -45,6 +45,16 @@ export class ArchivosGruposService {
   subir(formData: FormData, ):Observable<any> {
 		return this.http.post(`${this.api}/${this.resource}/`, formData);
   }
+
+  getGlobalVariable():Observable<any> {
+    return this.http.get(`${this.api}/variables-globales`,{
+      params: new HttpParams()
+        .set('query','BLOQUEAR-ARCHIVOS-GRUPOS')
+    });
+  }
+  updateGlobalVariable(id:any, params):Observable<any>{
+    return this.http.put(`${this.api}/variables-globales/${id}`,params);
+  }
 /*
   grupos():Observable<any>{
     return this.http.get(`${this.api}/grupos-permisos`,{

@@ -2,13 +2,14 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { SharedService } from 'src/app/shared/shared.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, merge, NEVER } from 'rxjs';
+import { Subscription, merge, NEVER, empty } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ArchivosGruposDataSource } from '../data-source/archivos-grupos.data-source';
 import { ArchivosGruposService } from '../data-source/archivos-grupos.service';
 import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { ArchivosGruposDialogComponent } from '../archivos-grupos-dialog/archivos-grupos-dialog.component';
 import { environment } from 'src/environments/environment';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-lista',
@@ -32,7 +33,7 @@ export class ListaComponent implements OnInit, OnDestroy, AfterViewInit {
   id:any;
   object:any;
 
-  displayedColumns: string[] = ['id','titulo','grupo','created_at','archivo'];
+  displayedColumns: string[] = ['id','titulo','grupo','created_at','archivo','options'];
   dataSource: any = [];
   inputSearchTxt:string = "";
   filter: string = "";
@@ -44,14 +45,26 @@ export class ListaComponent implements OnInit, OnDestroy, AfterViewInit {
   catalogos: any;
   totales: any;
   botonBloquear:boolean;
-
+  variableGlobal:any;
   ngOnInit() {
 
     this.dataSource = new ArchivosGruposDataSource(this.apiService);   
     this.dataSource.loadData('','desc','',0,5);   
     var permisos =  JSON.parse( localStorage.getItem('permissions'));
     if(permisos.kjBw52kYMsDiR0xdKiOWuWxMXhxIIrhy){
-      this.botonBloquear = true;
+     
+
+      this.apiService.getGlobalVariable().subscribe(
+        result => {
+          if(result.data !=null){
+            if(result.data.length > 0){
+              this.botonBloquear = true;
+              this.variableGlobal = result.data[0];
+            }
+          }
+          
+        }
+      )
     } else {
       this.botonBloquear = false;
     }   
@@ -88,7 +101,27 @@ export class ListaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   bloquearSubida(): void {
-    alert("Pendiente de implementar");
+    this.apiService.updateGlobalVariable(this.variableGlobal.id, {valor: "true"}).subscribe(
+      result => {
+        if(result.data !=null){
+          this.variableGlobal = result.data;
+        }
+      }, error => {
+        console.log(error);
+      }
+    );
+  }
+
+  desbloquearSubida(): void {
+    this.apiService.updateGlobalVariable(this.variableGlobal.id, {valor: "false"}).subscribe(
+      result => {
+        if(result.data !=null){
+          this.variableGlobal = result.data;
+        }
+      }, error => {
+        console.log(error);
+      }
+    );
   }
 
   openDialogEdit(): void{
@@ -131,6 +164,31 @@ export class ListaComponent implements OnInit, OnDestroy, AfterViewInit {
   descargar(id:any):void {
     var query = "token=" + localStorage.getItem('token');
 		window.open(`${environment.base_url}/descargar-archivo-grupo/${id}?${query}`);
+  }
+
+  eliminar(row:any){
+    const dialogRef = this.dialog.open(ConfirmDialogComponent,{data:"¿Desea eliminar el archivo: " + row.titulo + "?"});
+    
+    const deleteSubscription = dialogRef.afterClosed().pipe(
+      switchMap((ev) => {
+        if(ev != null && ev == true ){
+          return this.apiService.borrar(row.id);
+        } else {
+          return empty();
+        }
+      })
+    );
+
+    deleteSubscription.subscribe(
+      result => {
+        console.log(result)
+        this.loadData();
+      }, error => {
+        console.log(error)
+      }
+    )
+
+
   }
 
 

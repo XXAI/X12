@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\ArchivoGrupo;
 use App\Models\User;
+use App\Models\VariableGlobal;
 
 use App\Helpers\HttpStatusCodes;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -115,7 +116,12 @@ class ArchivosGruposController extends Controller
         } else {
             return Response::json( [ "grupo" => ["required"]], HttpResponse::HTTP_CONFLICT);
         }
+
+        $bloquear = VariableGlobal::where("nombre","=","BLOQUEAR-ARCHIVOS-GRUPOS")->first();
         
+        if($bloquear && $bloquear->valor == "true"){
+            return Response::json( [ "bloqueado" => ["true"]], HttpResponse::HTTP_CONFLICT);
+        }
         
         DB::beginTransaction();
         try {

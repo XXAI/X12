@@ -150,6 +150,7 @@
         <mat-select formControlName="tipo_contacto_id"  [(value)]="valor_tipo" required>
             <mat-option  [value]="1">EXTRADOMICILIARIO</mat-option>
             <mat-option  [value]="2">INTRADOMICILIARIO</mat-option>
+            <mat-option  [value]="3">LABORAL</mat-option>
         </mat-select>
         <mat-error *ngIf="infoContactoForm.get('tipo_contacto_id').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>

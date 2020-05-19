@@ -53,6 +53,7 @@ export class IndiceContactoComponent implements OnInit {
 
       this.loadListadoContacto();
     });
+    console.log(this.dataSource);
   }
 
   loadListadoContacto(event?){

@@ -45,74 +45,82 @@
 
                             <!-- Name Column -->
                             <ng-container matColumnDef="persona" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header > Persona </th>
-                                <td mat-cell *matCellDef="let row"> {{row.nombre}} {{row.apellido_paterno}} {{ row.apellido_materno}} </td>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header > Paciente / Responsable </th>
+                                <td mat-cell *matCellDef="let row"> 
+                                    {{row.nombre}} {{row.apellido_paterno}} {{ row.apellido_materno}} 
+                                    <div *ngIf="row.responsable">
+                                        / {{ row.responsable.descripcion}}
+                                    </div>
+                                    <div *ngIf="!row.responsable">
+                                     / Sin Responsable
+                                    </div> 
+                                </td>
                             </ng-container>
                     
                             <!-- Email Column -->
-                            <ng-container matColumnDef="email" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Correo Electrónico </th>
+                            <ng-container matColumnDef="derechohabiente" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Derechohabiente </th>
                                 <td mat-cell *matCellDef="let row" fxHide.xs="true"> 
-                                        <span *ngIf="row.email">
-                                            {{row.email}}
+                                        <span *ngIf="row.derechohabiente">
+                                            {{row.derechohabiente.descripcion}}
                                         </span>
-                                        <span *ngIf="!row.email">
+                                        <span *ngIf="!row.derechohabiente">
                                         Sin dato
                                         </span> 
                                      </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="telefono_casa" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Teléfono Casa </th>
+                            <ng-container matColumnDef="responsable" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Fecha Alta Probable </th>
                                 <td mat-cell *matCellDef="let row" fxHide.xs="true"> 
-                                    <span *ngIf="row.telefono_casa">
-                                        {{ row.telefono_casa}}
+                                    <span *ngIf="row.fecha_alta_probable">
+                                        {{row.fecha_alta_probable}}
                                     </span>
-                                    <span *ngIf="!row.telefono_casa">
-                                    Sin dato
+                                    <span *ngIf="!row.fecha_alta_probable">
+                                    Sin Fecha
                                     </span> 
-                                     </td>
+                                </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="telefono_celular" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Teléfono celular </th>
+                            <ng-container matColumnDef="tipo_atencion" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Tipo Atención </th>
                                 <td mat-cell *matCellDef="let row" fxHide.xs="true"> 
-                                    <span *ngIf="row.telefono_celular">
-                                        {{row.telefono_celular}}
+                                    <span *ngIf="row.tipo_atencion">
+                                        {{row.tipo_atencion.descripcion}}
                                     </span>
-                                    <span *ngIf="!row.telefono_celular">
+                                    <span *ngIf="!row.tipo_atencion">
                                     Sin dato
                                     </span> 
                                      </td>
                             </ng-container>
 
                             <ng-container matColumnDef="municipio_localidad" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Municipio / Localidad </th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Municipio </th>
                                 <td mat-cell *matCellDef="let row" fxHide.xs="true"> 
                                     <span *ngIf="row.municipio">
-                                        {{row.municipio.descripcion}} <span *ngIf="row.localidad">/ {{ row.localidad.descripcion}}</span>
+                                        {{row.municipio.descripcion}} <!--<span *ngIf="row.localidad">/ {{ row.localidad.descripcion}}</span>-->
                                     </span>
-                                    <span *ngIf="!row.municipio && !row.localidad">
+                                    <span *ngIf="!row.municipio">
                                        Sin dato
                                     </span> 
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="contacto" >
+                            <!--<ng-container matColumnDef="contacto" >
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Contacto </th>
                                 <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.contactos.length}} </td>
-                            </ng-container>
+                            </ng-container>-->
 
                             <ng-container matColumnDef="actions">
-                                <th mat-header-cell *matHeaderCellDef style="width: 270px;">Acciones</th>
+                                <th mat-header-cell *matHeaderCellDef style="width: 275px;">Acciones</th>
                                     
                                 <td mat-cell *matCellDef="let row; let i = index" width="1">
-                                    <button *ngIf="row.egreso_id == 1 && row.estatus_covid" mat-stroked-button color="primary" style="margin: 0px 3px;" [ngClass]="{'green': row.estatus_covid.id == 3, 'red': row.estatus_covid.id == 4, 'orange': row.estatus_covid.id == 5}" (click)="actualizarEstatus(row)"><mat-icon>loop</mat-icon></button>
+                                    <button *ngIf="row.egreso_id == 1 && row.estatus_covid && row.tipo_atencion_id != 3" mat-stroked-button color="primary" style="margin: 0px 3px;" [ngClass]="{'green': row.estatus_covid.id == 3, 'red': row.estatus_covid.id == 4, 'orange': row.estatus_covid.id == 5}" (click)="actualizarEstatus(row)"><mat-icon>loop</mat-icon></button>
                                     <button *ngIf="row.egreso_id == 1 && !row.estatus_covid" mat-stroked-button color="primary" style="margin: 0px 3px;"  (click)="actualizarEstatus(row)"><mat-icon>loop</mat-icon></button>
                                     <button *ngIf="row.egreso_id == 1" style="margin: 0px 3px;" mat-stroked-button color="danger" (click)="dar_salida(row)"><mat-icon>transfer_within_a_station</mat-icon></button>
                                     <button *ngIf="row.egreso_id == 1" mat-stroked-button color="primary" (click)="editarIndice(row)"><mat-icon>edit</mat-icon></button>
                                     <button *ngIf="row.egreso_id != 1" mat-stroked-button color="primary" (click)="ver_paciente(row)" [ngClass]="{'green': row.egreso_id == 2, 'red': row.egreso_id == 3}"><mat-icon>visibility</mat-icon></button>
-                                    <button mat-stroked-button color="primary" routerLink="/listado-contacto/{{row.id}}"><mat-icon>folder_shared</mat-icon></button>
+                                    <button mat-stroked-button color="primary" routerLink="/listado-contacto/{{row.id}}"><mat-icon>folder_shared</mat-icon> {{row.contactos.length}}</button>
                                 </td>
                             </ng-container>
 

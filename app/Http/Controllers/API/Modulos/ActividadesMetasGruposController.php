@@ -96,6 +96,8 @@ class ActividadesMetasGruposController extends Controller
             return  response()->json($validator->messages(), 409);
         }
 
+        //TODO:Agregar un resumen por grupo, sin actividad_meta_id
+
         DB::beginTransaction();
         try {
             $data = [];
@@ -108,6 +110,18 @@ class ActividadesMetasGruposController extends Controller
             }
 
             $object = ActividadMetaGrupo::create($data);
+
+            $actividad_grupo = ActividadMetaGrupo::where('actividad_id',$request['actividad_id'])->where('grupo_estrategico_id',$request['grupo_estrategico_id'])->whereNull('actividad_meta_id')->first();
+
+            if(!$actividad_grupo){
+                $actividad_grupo = ActividadMetaGrupo::create([ 'actividad_id' => $request['actividad_id'], 'grupo_estrategico_id' => $request['grupo_estrategico_id'] ,'meta_programada' => 0 ]);
+            }
+
+            $suma = ActividadMetaGrupo::where('actividad_id',$request['actividad_id'])->where('grupo_estrategico_id',$request['grupo_estrategico_id'])->whereNotNull('actividad_meta_id')->get();
+            $suma = $suma->sum('meta_programada');
+            $actividad_grupo->meta_programada = $suma;
+            $actividad_grupo->save();
+
             DB::commit();
         }catch (\Exception $e) {
             DB::rollback();
@@ -189,6 +203,17 @@ class ActividadesMetasGruposController extends Controller
             } else {
                 $object->grupo_estrategico_id = null;
             }
+
+            $actividad_grupo = ActividadMetaGrupo::where('actividad_id',$object->actividad_id)->where('grupo_estrategico_id',$request['grupo_estrategico_id'])->whereNull('actividad_meta_id')->first();
+
+            if(!$actividad_grupo){
+                $actividad_grupo = ActividadMetaGrupo::create([ 'actividad_id' => $object->actividad_id, 'grupo_estrategico_id' => $request['grupo_estrategico_id'] ,'meta_programada' => 0 ]);
+            }
+
+            $suma = ActividadMetaGrupo::where('actividad_id',$object->actividad_id)->where('grupo_estrategico_id',$request['grupo_estrategico_id'])->whereNotNull('actividad_meta_id')->get();
+            $suma = $suma->sum('meta_programada');
+            $actividad_grupo->meta_programada = $suma;
+            $actividad_grupo->save();
             
             $object->save();
 

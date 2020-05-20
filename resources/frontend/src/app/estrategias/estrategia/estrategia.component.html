@@ -25,6 +25,9 @@
             </form>
         </div>
         <div fxFlex="none" fxLayout="row">
+            <div fxFlex="none" *ngIf="!editar">
+                <button mat-raised-button color="{{(activado)?'primary':''}}" (click)="toggleActivarEstrategia()" type="button"><mat-icon>{{(activado)?'radio_button_checked':'radio_button_unchecked'}}</mat-icon> {{(activado)?'Desactivar':'Activar'}}</button>          
+            </div>
             <div fxFlex></div>
             <div fxFlex="none" *ngIf="!editar">
                 <button [routerLink]="'/estrategias'" mat-button><mat-icon>arrow_back</mat-icon> Atrás</button>&nbsp;

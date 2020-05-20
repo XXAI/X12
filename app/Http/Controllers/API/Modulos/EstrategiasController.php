@@ -28,7 +28,11 @@ class EstrategiasController extends Controller
         try{
             $parametros = Input::all();
             
-            $estrategias = Estrategia::getModel();
+            $estrategias = Estrategia::select('estrategias.*',DB::raw('count(actividades.id) as total_actividades'))
+                                ->leftjoin('actividades',function($join){
+                                    $join->on('actividades.estrategia_id','=','estrategias.id')->whereNull('actividades.deleted_at');
+                                })
+                                ->groupBy('estrategias.id');
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
@@ -115,10 +119,19 @@ class EstrategiasController extends Controller
     public function update(Request $request, $id)
     {
         try{
+            $auth_user = auth()->user();
+            $parametros = Input::all();
+
             $estrategia = Estrategia::find($id);
             
             if(!$estrategia){
                 throw new Exception("No existe el registro");
+            }
+
+            if(isset($parametros['activado'])){
+                $estrategia->activo = $parametros['activado'];
+                $estrategia->save();
+                return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
             }
 
             $mensajes = [            
@@ -128,9 +141,6 @@ class EstrategiasController extends Controller
             $reglas = [
                 'nombre' => 'required',                
             ];
-
-            $auth_user = auth()->user();
-            $parametros = Input::all();
 
             $v = Validator::make($parametros, $reglas, $mensajes);
 

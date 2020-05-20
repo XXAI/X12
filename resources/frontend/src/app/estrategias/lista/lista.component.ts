@@ -38,7 +38,7 @@ export class ListaComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['id','nombre','activo'];
+  displayedColumns: string[] = ['id','nombre','activo','total_actividades'];
   dataSource: any = [];
 
   ngOnInit() {

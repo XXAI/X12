@@ -32,6 +32,7 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading:boolean;  
   isSaving:boolean;
   editar:boolean;
+  activado:boolean;
   id:any;
   object:any;
 
@@ -103,6 +104,11 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['../../'],{ relativeTo: this.route });
       } else {
         this.object = result.data;
+        if(this.object.activo){
+          this.activado = true;
+        }else{
+          this.activado = false;
+        }
         this.isLoading = false;
         this.form.get("nombre").setValue(result.data.nombre); 
         this.dataSource.loadData(this.id,'','asc','',0,5);   
@@ -189,6 +195,29 @@ export class EstrategiaComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
     
+  }
+
+  toggleActivarEstrategia(){
+    this.isSaving = true;
+    let payload = {
+      'activado': !this.activado
+    };
+
+    this.estrategiasService.actualizarEstrategia(this.id,payload).subscribe(
+      response =>{        
+        this.isSaving = false;
+        this.activado = !this.activado;
+      },
+      errorResponse =>{
+        this.isSaving = false;
+        if(errorResponse.status == 409){
+          this.sharedService.showSnackBar("Ocurrio un error al intentar activar la estrategia", "Cerrar", 4000);
+          this.setErrors(errorResponse.error);
+        } else {
+          this.sharedService.showSnackBar(errorResponse.error.message, "Cerrar",4000);
+        }    
+      }
+    );
   }
 
   openDialogCreate(): void{

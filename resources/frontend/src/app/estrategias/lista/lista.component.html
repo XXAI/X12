@@ -50,8 +50,14 @@
 
                             <ng-container matColumnDef="activo" >
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Activo </th>
-                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.activo}} </td>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> <mat-icon>{{(row.activo)?'check':'remove'}}</mat-icon> </td>
                             </ng-container>
+
+                            <ng-container matColumnDef="total_actividades" >
+                                <th mat-header-cell width="1" *matHeaderCellDef mat-sort-header fxHide.xs="true"> Total Actividades </th>
+                                <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.total_actividades}} </td>
+                            </ng-container>
+
                             <ng-container matColumnDef="noResultsFound">
                                 <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
                                     No se encontraron registros 

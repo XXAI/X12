@@ -59,6 +59,20 @@ class PersonaContactoController extends Controller
             $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
             $persona = $persona->paginate($resultadosPorPagina);
 
+            
+            foreach ($persona as $key => $value) {
+                $persona[$key]->dias = 0;
+                if(!is_null($value->fecha_ingreso_hospital))
+                {
+                    $fecha = new Carbon($value->fecha_ingreso_hospital);
+                    $fecha_actual = new Carbon();
+                    
+                    
+                    $dias = $fecha_actual->diffInDays($fecha);
+                    $persona[$key]->dias = $dias;
+                }
+                //return response()->json(['data'=>$value->fecha_ingreso_hospital],HttpResponse::HTTP_OK);
+            }
         } else {
             $persona = $persona->get();
         }

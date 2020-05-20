@@ -38,6 +38,16 @@
                     <div class="data-table-container">
                         <table #dataTable mat-table [dataSource]="dataSource" class="data-table" matSort>
                             <!-- ID Column -->
+                            <ng-container matColumnDef="sexo">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                <td mat-cell *matCellDef="let row"><mat-icon aria-hidden="false" [ngClass]="{'men': row.sexo == 'M', 'women': row.sexo == 'F'}" aria-label="Example home icon">account_circle</mat-icon></td>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="dias">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header><mat-icon aria-hidden="false" aria-label="Example home icon">local_hospital</mat-icon></th>
+                                <td mat-cell *matCellDef="let row" > {{ row.dias }}</td>
+                            </ng-container>
+                            <!-- ID Column -->
                             <ng-container matColumnDef="no_caso">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> # Caso </th>
                                 <td mat-cell *matCellDef="let row"> {{row.no_caso}} </td>
@@ -45,7 +55,7 @@
 
                             <!-- Name Column -->
                             <ng-container matColumnDef="persona" >
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header > Paciente / Responsable </th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header > Paciente / Responsable / Unidad </th>
                                 <td mat-cell *matCellDef="let row"> 
                                     {{row.nombre}} {{row.apellido_paterno}} {{ row.apellido_materno}} 
                                     <div *ngIf="row.responsable">
@@ -53,6 +63,12 @@
                                     </div>
                                     <div *ngIf="!row.responsable">
                                      / Sin Responsable
+                                    </div> 
+                                    <div *ngIf="row.tipo_unidad && row.tipo_atencion_id == 4">
+                                        / {{ row.tipo_unidad.descripcion}}
+                                    </div>
+                                    <div *ngIf="!row.tipo_unidad">
+                                     / Sin Unidad
                                     </div> 
                                 </td>
                             </ng-container>
@@ -115,6 +131,7 @@
                                 <th mat-header-cell *matHeaderCellDef style="width: 275px;">Acciones</th>
                                     
                                 <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                    
                                     <button *ngIf="row.egreso_id == 1 && row.estatus_covid && row.tipo_atencion_id != 3" mat-stroked-button color="primary" style="margin: 0px 3px;" [ngClass]="{'green': row.estatus_covid.id == 3, 'red': row.estatus_covid.id == 4, 'orange': row.estatus_covid.id == 5}" (click)="actualizarEstatus(row)"><mat-icon>loop</mat-icon></button>
                                     <button *ngIf="row.egreso_id == 1 && !row.estatus_covid" mat-stroked-button color="primary" style="margin: 0px 3px;"  (click)="actualizarEstatus(row)"><mat-icon>loop</mat-icon></button>
                                     <button *ngIf="row.egreso_id == 1" style="margin: 0px 3px;" mat-stroked-button color="danger" (click)="dar_salida(row)"><mat-icon>transfer_within_a_station</mat-icon></button>

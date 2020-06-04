@@ -30,14 +30,13 @@ class PersonaContactoController extends Controller
             $auth_user = auth()->user();
             $grupos_usuario = $auth_user->grupos;
             $grupos_folios = $auth_user->grupos->pluck('folio');
-
             $array = array();
             
             foreach ($grupos_folios as $key => $value) {
                 array_push($array, $value);
             }
             $lista_grupos = implode(",",$array);
-            //return response()->json(['data'=>implode(",",$array), "x"=>$grupos_folios],500);    
+            //return response()->json(['data'=>$auth_user],500);    
             
         $parametros = Input::all();
         $persona = PersonaIndice::with("contactos", "municipio", "localidad", "responsable", 'estatus_covid', 'derechohabiente', 'tipo_atencion', 'tipo_unidad', 'egreso_covid')->orderBy( "egreso_id", "asc","no_caso", "asc");    
@@ -50,7 +49,7 @@ class PersonaContactoController extends Controller
             });
         }
 
-        if($auth_user->is_superuser != 1)
+        if($auth_user->is_superuser != 1 && $auth_user->visor == 0)
         {
             $persona = $persona->whereRaw(" persona_indice.responsable_id in (select id from catalogo_responsables where folio in (".$lista_grupos."))");
         }

@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 export class IndiceService {
 
   //url_obtener_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_concentrados                        = `${environment.base_url}/concentrado-casos-covid`;
   url_obtener_catalogos = `${environment.base_url}/catalogos-covid`;
   url_obtener_localidad = `${environment.base_url}/obtener-localidad`;
   url_persona_indice = `${environment.base_url}/persona-indice`;
@@ -98,5 +99,15 @@ export class IndiceService {
         return response;
       }
     ));
+  }
+
+  getConcentrados(payload):Observable<any> {
+    return this.http.get<any>(this.url_concentrados,{params: payload}).pipe(
+      map( response => {
+        console.log("valor",response);
+        return response;
+
+      })
+    );
   }
 }

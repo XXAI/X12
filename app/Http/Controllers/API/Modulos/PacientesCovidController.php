@@ -541,10 +541,6 @@ class PacientesCovidController extends Controller
 
 
     public function getConcentradoCasos(){
-
-
-
-
         try{
 
             $parametros = Input::all();
@@ -556,26 +552,20 @@ class PacientesCovidController extends Controller
                 ->where('permission_user.permission_id', '=', 'fa7QWns1FDzcIZjC44OAsHtswKYhOsPN')
                 ->first();
 
-                if($permiso || $loggedUser->is_superuser=='1' )
+            if($permiso || $loggedUser->is_superuser=='1' )
             {
-
-                    $casos = PersonaIndice::select('persona_indice.*')
+                $casos = PersonaIndice::select('persona_indice.*')
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
-                    ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
-                    ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                    ->leftjoin('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
+                    ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc','persona_indice.no_caso','asc') ;
-
-
             }
-
             else
             {
-
                 $grupo = DB::table('grupos_estrategicos_usuarios')
                 ->leftJoin('users', 'id', '=', 'grupos_estrategicos_usuarios.user_id')
                 ->where('grupos_estrategicos_usuarios.user_id', '=', $loggedUser->id)
                 ->first();
-
                 if($grupo)
                 {
 
@@ -588,8 +578,8 @@ class PacientesCovidController extends Controller
 
                     $casos = PersonaIndice::select('persona_indice.*')
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
-                    ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
-                    ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
+                    ->leftjoin('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
+                    ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     ->where('GE.id','=',$grupo->grupo_estrategico_id)
                     ->orderBy('persona_indice.responsable_id', 'asc','persona_indice.no_caso', 'asc') ;
 
@@ -607,8 +597,6 @@ class PacientesCovidController extends Controller
 
 
             }
-
-
 
             if(isset($parametros['query']) && $parametros['query']){
                 $casos = $casos->where(function($query)use($parametros){
@@ -665,6 +653,35 @@ class PacientesCovidController extends Controller
                 $casos = $casos->get();
             }
 
+            foreach ($casos as $key => $value) {
+                $fecha_actual = Carbon::today();
+                if($casos[$key]->fecha_inicio_sintoma != null)
+                {
+                    $array_fecha = explode("-", $casos[$key]->fecha_inicio_sintoma);
+                    $fecha_inicio_sintomas = Carbon::now();
+                    $fecha_inicio_sintomas->year = $array_fecha[0];
+                    $fecha_inicio_sintomas->month = $array_fecha[1];
+                    $fecha_inicio_sintomas->day = $array_fecha[2];
+                    $casos[$key]->dias_evolucion = $fecha_actual->diffInDays($fecha_inicio_sintomas);
+                }else{
+                    $casos[$key]->dias_evolucion = "-";
+                }
+
+                if($casos[$key]->fecha_ingreso_hospital != null)
+                {
+                    $array_fecha = explode("-", $casos[$key]->fecha_ingreso_hospital);
+                    $fecha_ingreso_hospital = Carbon::now();
+                    $fecha_ingreso_hospital->year = $array_fecha[0];
+                    $fecha_ingreso_hospital->month = $array_fecha[1];
+                    $fecha_ingreso_hospital->day = $array_fecha[2];
+                    $casos[$key]->dias_hospitalizacion = $fecha_actual->diffInDays($fecha_ingreso_hospital);
+                }else{
+                    $casos[$key]->dias_hospitalizacion = "-";
+                }
+                
+                
+            }
+            
             return response()->json(['data'=>$casos],HttpResponse::HTTP_OK);
 
         }catch(\Exception $e){

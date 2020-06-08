@@ -161,6 +161,10 @@
         <mat-hint>Ejemplo: Se tuvo contacto en el trabajo</mat-hint>
         <mat-error *ngIf="infoIndiceForm.get('observaciones').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
+    <div fxFlex.gt-sm="100" fxFlex.lt-sm="100" style="padding:1em 0;">
+        <mat-checkbox formControlName="no_localizable">No localizable</mat-checkbox>
+        <mat-divider style="margin-top:1em;"></mat-divider>
+    </div>
     
     
     <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >

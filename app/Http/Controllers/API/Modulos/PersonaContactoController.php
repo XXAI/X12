@@ -15,6 +15,8 @@ use DB;
 
 use App\Models\PersonaIndice;
 use App\Models\PersonaContacto;
+use App\Models\Localidad;
+
 use Carbon\Carbon;
 
 class PersonaContactoController extends Controller
@@ -249,6 +251,7 @@ class PersonaContactoController extends Controller
             $persona->longitud = $datos_persona['longitud'];
             $persona->observaciones = $datos_persona['observaciones'];
             $persona->no_caso = $datos_persona['no_caso'];
+            $persona->no_localizable = $datos_persona['no_localizable'];
             $persona->save();
             
 

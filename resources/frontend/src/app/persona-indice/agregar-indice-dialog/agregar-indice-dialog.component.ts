@@ -45,6 +45,7 @@ export interface IndiceData {
   fecha_alta_probable?: string;
   estatus_covid_id?: string;
   responsable?: string;
+  no_localizable?:string
 }
 
 @Component({
@@ -118,7 +119,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
       fecha_inicio_sintoma:[''],
       fecha_confirmacion:[''],
       fecha_alta_probable:[''],
-      estatus_covid_id:['',Validators.required]
+      estatus_covid_id:['',Validators.required],
+      no_localizable:[false]
      
      
     });
@@ -181,6 +183,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
       this.infoIndiceForm.controls['fecha_alta_probable'].setValue(this.data.fecha_alta_probable);
       this.infoIndiceForm.controls['estatus_covid_id'].setValue(this.data.estatus_covid_id);
       
+      
       if(this.data.telefono_casa)
       {
         this.infoIndiceForm.controls['telefono_contacto'].setValue(this.data.telefono_casa);
@@ -202,6 +205,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
       this.infoIndiceForm.controls['colonia'].setValue(this.data.colonia);
       this.infoIndiceForm.controls['referencia'].setValue(this.data.referencia);
       this.infoIndiceForm.controls['observaciones'].setValue(this.data.observaciones);
+
+      this.infoIndiceForm.controls['no_localizable'].setValue(this.data.no_localizable);
     }
     
   }
@@ -318,7 +323,7 @@ export class AgregarIndiceDialogComponent implements OnInit {
 
   enviarDatos(){
     let contactData = JSON.parse(JSON.stringify(this.infoIndiceForm.value));
-    
+    console.log(contactData);
     if(contactData.municipio_id){
       contactData.municipio_id = contactData.municipio_id.id;
     }

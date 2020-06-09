@@ -47,7 +47,7 @@ export class ListaIndicesComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['sexo', 'dias', 'no_caso','persona','derechohabiente','responsable','tipo_atencion','municipio_localidad','actions'];
+  displayedColumns: string[] = ['sexo', 'dias', 'no_caso','persona','derechohabiente','responsable','tipo_atencion','municipio_localidad', 'egreso','actions'];
   dataSource: any = [];
 
   ngOnInit() {
@@ -271,7 +271,7 @@ export class ListaIndicesComponent implements OnInit {
     dialogRef.afterClosed().subscribe(valid => {
       if(valid.estatus)
       {
-        this.indiceService.actualizarEstatus(valid.id, valid.resultado).subscribe(
+        this.indiceService.actualizarEstatus(valid).subscribe(
           response => {
             if(response.error) {
               let errorMessage = response.error.message;

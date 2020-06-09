@@ -93,8 +93,8 @@ export class IndiceService {
     ));
   }
   
-  actualizarEstatus(id:any, estatus:number) {
-    return this.http.put<any>(this.url_estatus+"/"+id,{estatus_id: estatus}).pipe(
+  actualizarEstatus(obj:any) {
+    return this.http.put<any>(this.url_estatus+"/"+obj.id,{estatus_id: obj.estatus_covid_id, tipo_atencion_id: obj.tipo_atencion_id, tipo_unidad_id: obj.tipo_unidad_id}).pipe(
       map( (response) => {
         return response;
       }

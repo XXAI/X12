@@ -28,6 +28,7 @@ export interface PersonaIndiceData {
   egreso_id?: number;
   egreso_covid?: any;
   derechohabiente?: any;
+  tipo_atencion_id
 }
 
 @Component({
@@ -39,7 +40,10 @@ export class ActualizacionDialogComponent implements OnInit {
 
   catalogos: any = {};
   estatusForm: FormGroup;
+  estatus_paciente:boolean = true;
   catalogo_estatus :any = [];
+  catalogo_unidad :any = [];
+  catalogo_tipo_atencion :any = [];
   estatus:any;
   catalogo_sexo:any = ['','MASCULINO', 'FEMENINO'];
   constructor(public dialog: MatDialog, private indiceService: IndiceService,  private formBuilder: FormBuilder, private router: Router, 
@@ -49,6 +53,8 @@ export class ActualizacionDialogComponent implements OnInit {
   ngOnInit() {
     this.estatusForm = this.formBuilder.group({    
       estatus_covid_id:['',Validators.required],
+      tipo_atencion_id:['',Validators.required],
+      tipo_unidad_id:['',Validators.required],
      
     });
     this.IniciarCatalogos(null);
@@ -64,17 +70,35 @@ export class ActualizacionDialogComponent implements OnInit {
         this.catalogos = respuesta;
 
         this.catalogo_estatus = respuesta.estatusCovid;
-        console.log(this.data.estatus_covid);
-        this.estatusForm.controls['estatus_covid_id'].setValue(parseInt(this.data.estatus_covid.id));
+        this.catalogo_tipo_atencion = respuesta.tipo_atencion;
+        this.catalogo_unidad = respuesta.tipo_unidad;
+        this.estatusForm.patchValue(this.data);
+        this.verificarAtencion(this.data.tipo_atencion_id);
       
     });
   }
 
   actualizar()
   {
-    console.log();
-    let resultado:any = { estatus: true, resultado:this.estatusForm.value.estatus_covid_id, id:this.data.id};
+    console.log(this.estatusForm.value);
+    let resultado:any = this.estatusForm.value;
+    resultado.estatus = true;
+    resultado.id = this.data.id;
+    //let resultado:any = { estatus: true, resultado:this.estatusForm.value.estatus_covid_id, id:this.data.id};
     this.dialogRef.close(resultado);
+  }
+
+  verificarAtencion(valor_atencion)
+  {
+    //console.log(valor_atencion);
+    if(valor_atencion == 3)
+    {
+      this.estatusForm.controls['estatus_covid_id'].setValue(6);
+      this.estatusForm.controls['tipo_unidad_id'].setValue(3);
+      this.estatus_paciente = false;
+    }else{
+      this.estatus_paciente = true;
+    }
   }
 
 }

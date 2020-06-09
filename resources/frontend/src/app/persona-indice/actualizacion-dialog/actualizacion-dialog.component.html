@@ -21,6 +21,28 @@
         <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between" [formGroup]="estatusForm">
             
             <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
+                <mat-label>Tipo de Atención</mat-label>
+                <mat-select formControlName="tipo_atencion_id" #atencion (valueChange)="verificarAtencion(atencion.value)">
+                    <mat-option *ngFor="let item of catalogo_tipo_atencion" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
+                    
+                </mat-select>
+                <mat-error *ngIf="estatusForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" *ngIf="estatus_paciente" >
+                <mat-label>Unidad</mat-label>
+                <mat-select formControlName="tipo_unidad_id">
+                    <mat-option *ngFor="let item of catalogo_unidad" [value]="item.id">
+                        {{item.descripcion}}
+                    </mat-option>
+                    
+                </mat-select>
+                <mat-error *ngIf="estatusForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100"  *ngIf="estatus_paciente">
                 <mat-label>Estatus</mat-label>
                 <mat-select formControlName="estatus_covid_id" >
                     <mat-option *ngFor="let item of catalogo_estatus" [value]="item.id">

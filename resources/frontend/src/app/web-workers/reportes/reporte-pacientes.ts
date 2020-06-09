@@ -86,13 +86,13 @@ export class ReportePacientes {
               },
               tabla_datos_alta:
               {
-                fillColor:"#197a15",
-                color: "white",
+                fillColor:"#d1ffd4",
+                color: "black",
                 fontSize: 10
               },
               tabla_datos_defuncion:
               {
-                fillColor:"#000000",
+                fillColor:"#858885",
                 color: "white",
                 fontSize: 10
               }
@@ -146,6 +146,8 @@ export class ReportePacientes {
         for(let i = 0; i < reportData.items.length; i++){
           let style_row = 'tabla_datos';
           let paciente = reportData.items[i];
+          let cadena = "CADENA ACTIVA";
+
           if(paciente.fecha_alta_probable==null || paciente.fecha_alta_probable=="")
           {
             fecha_modificada="no asignada";
@@ -190,7 +192,11 @@ export class ReportePacientes {
             tipo_atencion=paciente.tipo_atencion.descripcion;
           }
 
-          
+          if(paciente.fecha_alta_cadena != null)
+          {
+            cadena = "CADENA CONCLUIDA";
+          }
+
           if(paciente.egreso_id == 1)
           {
             if(paciente.estatus_covid==null||paciente.estatus_covid=="")
@@ -239,7 +245,7 @@ export class ReportePacientes {
             //{ text:fecha, style: style_row},
             { text: fecha_modificada, style: style_row},
             { text: tipo_atencion , style: style_row},
-            { text: status , style: style_row},
+            { text: status+"\n"+cadena , style: style_row},
             { text: unidad , style: style_row},
             { text: distrito,   style: style_row},
             { text: dias_hospitalizacion,   style: style_row},

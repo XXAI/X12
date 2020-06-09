@@ -75,21 +75,21 @@ table {
 
 .green
 {
-    background-color: green !important;
+    background-color: rgba(121,255,159,0.2) !important;
     color: white;
     font-weight: bold;
 }
 
 .orange
 {
-    background-color: orange !important;
+    background-color: rgba(255,235,121,0.8)  !important;
     color: white;
     font-weight: bold;
 }
 
 .red
 {
-    background-color: red !important;
+    background-color: rgba(255,124,121,0.8) !important;
     color: white;
     font-weight: bold;
 }
@@ -171,4 +171,18 @@ table {
   
   .my-stepper .my-step-error, .my-stepper .my-step-error .my-step-label, .my-stepper .my-step-error mat-icon{
   color: #f44336 !important;
+  }
+
+  .activo
+  {
+    color: blue;
+  }
+
+  .alta{
+    color:green !important;
+  }
+
+  .defuncion
+  {
+    color: black !important;
   }

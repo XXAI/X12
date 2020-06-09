@@ -471,6 +471,8 @@ class PacientesCovidController extends Controller
         try {
 
             $object->estatus_covid_id                  = $inputs['estatus_id'];
+            $object->tipo_unidad_id                  = $inputs['tipo_unidad_id'];
+            $object->tipo_atencion_id                  = $inputs['tipo_atencion_id'];
             $object->save();
 
             DB::commit();
@@ -645,6 +647,13 @@ class PacientesCovidController extends Controller
             }
 
             $casos = $casos->where("egreso_id", "=", 1);
+                            //->WhereNull("fecha_alta_cadena");
+
+
+            $casos = $casos->orWhere(function($query)use($parametros){
+                return $query->WhereNull("fecha_alta_cadena")
+                            ->where("egreso_id", "!=", 1);
+            });
             if(isset($parametros['page'])){
                 $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
 

@@ -64,7 +64,7 @@ export class RegistroDiarioComponent implements OnInit {
     //
   }
 
-  verRegistros(){
+  verRegistros(unidad:any){
     //
   }
 }

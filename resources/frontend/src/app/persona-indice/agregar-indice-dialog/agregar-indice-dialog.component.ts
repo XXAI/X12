@@ -48,6 +48,10 @@ export interface IndiceData {
   no_localizable?:string,
   fecha_ingreso_hospital?:string,
   total_dias_hospitalizacion?:string,
+  contactos_intradomiciliarios_sinto?:number,
+  contactos_intradomiciliarios_asinto?:number,
+  contactos_extradomiciliarios_sinto?:number,
+  contactos_extradomiciliarios_asinto?:number,
 }
 
 @Component({
@@ -124,7 +128,12 @@ export class AgregarIndiceDialogComponent implements OnInit {
       estatus_covid_id:['',Validators.required],
       no_localizable:[false],
       fecha_ingreso_hospital:[''],
-      total_dias_hospitalizacion:['']
+      total_dias_hospitalizacion:[''],
+
+      contactos_intradomiciliarios_sinto:[''],
+      contactos_intradomiciliarios_asinto:[''],
+      contactos_extradomiciliarios_sinto:[''],
+      contactos_extradomiciliarios_asinto:[''],
     });
 
     this.fechaEjemplo = Date();
@@ -187,6 +196,11 @@ export class AgregarIndiceDialogComponent implements OnInit {
       
       this.infoIndiceForm.controls['fecha_ingreso_hospital'].setValue(this.data.fecha_ingreso_hospital);
       this.infoIndiceForm.controls['total_dias_hospitalizacion'].setValue(this.data.total_dias_hospitalizacion);
+
+      this.infoIndiceForm.controls['contactos_intradomiciliarios_sinto'].setValue(this.data.contactos_intradomiciliarios_sinto);
+      this.infoIndiceForm.controls['contactos_intradomiciliarios_asinto'].setValue(this.data.contactos_intradomiciliarios_asinto);
+      this.infoIndiceForm.controls['contactos_extradomiciliarios_sinto'].setValue(this.data.contactos_extradomiciliarios_sinto);
+      this.infoIndiceForm.controls['contactos_extradomiciliarios_asinto'].setValue(this.data.contactos_extradomiciliarios_asinto);
       
       if(this.data.telefono_casa)
       {

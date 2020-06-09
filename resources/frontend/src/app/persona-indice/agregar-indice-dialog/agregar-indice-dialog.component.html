@@ -109,7 +109,7 @@
         <!--<mat-error *ngIf="infoIndiceForm.get('localidad_id').hasError('required')">Este campo es obligatorio</mat-error>-->
     </mat-form-field>
 
-    <mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" >
+    <!--mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" >
         <mat-label>Calle</mat-label>
         <input matInput formControlName="calle" >
         <mat-error *ngIf="infoIndiceForm.get('calle').hasError('required')">Este campo es obligatorio</mat-error>
@@ -139,7 +139,8 @@
         <mat-label>Referencia</mat-label>
         <textarea matInput formControlName="referencia"></textarea>
         <mat-hint>Ejemplo: Entre calle 1 y calle 2, a lado de una ferretería</mat-hint>
-    </mat-form-field>
+    </mat-form-field-->
+
     <!--mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
         <mat-label>Latitud</mat-label>
         <input matInput formControlName="latitud" [readonly]="true">
@@ -150,6 +151,8 @@
         <input matInput formControlName="longitud" [readonly]="true">
         <mat-error *ngIf="infoIndiceForm.get('longitud').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field-->
+    <div fxFlex.gt-sm="60" fxFlex.lt-sm="100" ></div>
+
     <div fxFlex.gt-sm="20" fxFlex.lt-sm="50" style="padding:1em 1em;">
         <button mat-raised-button color="primary" (click)="localizarPersona()"><mat-icon>not_listed_location</mat-icon> Localizar</button>
     </div>
@@ -157,13 +160,6 @@
     <div fxFlex.gt-sm="20" fxFlex.lt-sm="50" style="padding:1em 0;">
         <mat-checkbox formControlName="no_localizable">No localizable</mat-checkbox>
     </div>
-
-    <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
-        <mat-label>Observaciones</mat-label>
-        <textarea matInput formControlName="observaciones"></textarea>
-        <mat-hint>Ejemplo: Se tuvo contacto en el trabajo</mat-hint>
-        <mat-error *ngIf="infoIndiceForm.get('observaciones').hasError('required')">Este campo es obligatorio</mat-error>
-    </mat-form-field>
 
     <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
         <mat-label>Fecha inicio Sintomas (aaaa-mm-dd)</mat-label>
@@ -200,7 +196,6 @@
     </mat-form-field>
 
     <mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" *ngIf="catalogos['responsables']">
-
         <mat-label>Responsable</mat-label>
         <input type="text" aria-label="responsable" matInput formControlName="responsable_id" [matAutocomplete]="responsableAutocomplete" >
         <mat-autocomplete #responsableAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
@@ -210,7 +205,6 @@
         </mat-autocomplete>
         <mat-hint *ngIf="!infoIndiceForm.get('responsable_id').value">Selecciona un Responsable de la lista</mat-hint>
         <mat-hint align="end" *ngIf="infoIndiceForm.get('responsable_id').value">[{{infoIndiceForm.get('responsable_id').value.id}}]</mat-hint>
-       
     </mat-form-field>
 
     <mat-form-field fxFlex.gt-sm="40" fxFlex.lt-sm="100" >
@@ -264,6 +258,37 @@
             </mat-option>
         </mat-select>
         <mat-error *ngIf="infoIndiceForm.get('estatus_covid_id').hasError('required')">Este campo es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="50" >
+        <mat-label>Contactos Intradomiciliarios</mat-label>
+        <input matInput formControlName="contactos_intradomiciliarios_sinto" >
+        <mat-hint align="end">Sintomaticos</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="50" >
+        <mat-label>Contactos Intradomiciliarios</mat-label>
+        <input matInput formControlName="contactos_intradomiciliarios_asinto" >
+        <mat-hint align="end">Asintomaticos</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="50" >
+        <mat-label>Contactos Extradomiciliarios</mat-label>
+        <input matInput formControlName="contactos_extradomiciliarios_sinto" >
+        <mat-hint align="end">Sintomaticos</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="50" >
+        <mat-label>Contactos Extradomiciliarios</mat-label>
+        <input matInput formControlName="contactos_extradomiciliarios_asinto" >
+        <mat-hint align="end">Asintomaticos</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
+        <mat-label>Observaciones</mat-label>
+        <textarea matInput formControlName="observaciones"></textarea>
+        <mat-hint>Ejemplo: Se tuvo contacto en el trabajo</mat-hint>
+        <mat-error *ngIf="infoIndiceForm.get('observaciones').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
 
   </div>

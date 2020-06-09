@@ -135,12 +135,12 @@
         <input matInput formControlName="colonia">
         <mat-error *ngIf="infoIndiceForm.get('colonia').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
-    <mat-form-field fxFlex.gt-sm="50" fxFlex.lt-sm="100" >
+    <mat-form-field fxFlex.gt-sm="60" fxFlex.lt-sm="100" >
         <mat-label>Referencia</mat-label>
         <textarea matInput formControlName="referencia"></textarea>
         <mat-hint>Ejemplo: Entre calle 1 y calle 2, a lado de una ferretería</mat-hint>
     </mat-form-field>
-    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
+    <!--mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
         <mat-label>Latitud</mat-label>
         <input matInput formControlName="latitud" [readonly]="true">
         <mat-error *ngIf="infoIndiceForm.get('latitud').hasError('required')">Este campo es obligatorio</mat-error>
@@ -149,10 +149,13 @@
         <mat-label>Longitud</mat-label>
         <input matInput formControlName="longitud" [readonly]="true">
         <mat-error *ngIf="infoIndiceForm.get('longitud').hasError('required')">Este campo es obligatorio</mat-error>
-    </mat-form-field>
-    
-    <div  fxFlex.gt-sm="10" fxFlex.lt-sm="100" >
+    </mat-form-field-->
+    <div fxFlex.gt-sm="20" fxFlex.lt-sm="50" style="padding:1em 1em;">
         <button mat-raised-button color="primary" (click)="localizarPersona()"><mat-icon>not_listed_location</mat-icon> Localizar</button>
+    </div>
+
+    <div fxFlex.gt-sm="20" fxFlex.lt-sm="50" style="padding:1em 0;">
+        <mat-checkbox formControlName="no_localizable">No localizable</mat-checkbox>
     </div>
 
     <mat-form-field fxFlex.gt-sm="100" fxFlex.lt-sm="100" >
@@ -161,12 +164,7 @@
         <mat-hint>Ejemplo: Se tuvo contacto en el trabajo</mat-hint>
         <mat-error *ngIf="infoIndiceForm.get('observaciones').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
-    <div fxFlex.gt-sm="100" fxFlex.lt-sm="100" style="padding:1em 0;">
-        <mat-checkbox formControlName="no_localizable">No localizable</mat-checkbox>
-        <mat-divider style="margin-top:1em;"></mat-divider>
-    </div>
-    
-    
+
     <mat-form-field fxFlex.gt-sm="33" fxFlex.lt-sm="100" >
         <mat-label>Fecha inicio Sintomas (aaaa-mm-dd)</mat-label>
         <input matInput mascaraFecha formControlName="fecha_inicio_sintoma">
@@ -224,7 +222,8 @@
         </mat-select>
         <mat-error *ngIf="infoIndiceForm.get('tipo_unidad_id').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
-    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
+
+    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
         <mat-label>Tipo de Atención</mat-label>
         <mat-select formControlName="tipo_atencion_id" >
             <mat-option *ngFor="let item of catalogo_atencion" [value]="item.id">
@@ -233,8 +232,21 @@
         </mat-select>
         <mat-error *ngIf="infoIndiceForm.get('tipo_atencion_id').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
-    
-    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
+
+    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="50" >
+        <mat-label>Fecha Hospitalización (aaaa-mm-dd)</mat-label>
+        <input matInput mascaraFecha formControlName="fecha_ingreso_hospital">
+        <mat-hint>Ejemplo: 1985-08-15</mat-hint>
+        <mat-error *ngIf="infoIndiceForm.get('fecha_ingreso_hospital').hasError('required')">Este campo es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="50" >
+        <mat-label>Dias Hospitalización</mat-label>
+        <input matInput formControlName="total_dias_hospitalizacion" >
+        <mat-error *ngIf="infoIndiceForm.get('total_dias_hospitalizacion').hasError('required')">Este campo es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
         <mat-label>Derechohabiencia</mat-label>
         <mat-select formControlName="derechohabiente_id" >
             <mat-option *ngFor="let item of catalogo_derechohabiencias" [value]="item.id">
@@ -243,7 +255,8 @@
         </mat-select>
         <mat-error *ngIf="infoIndiceForm.get('derechohabiente_id').hasError('required')">Este campo es obligatorio</mat-error>
     </mat-form-field>
-    <mat-form-field fxFlex.gt-sm="25" fxFlex.lt-sm="100" >
+    
+    <mat-form-field fxFlex.gt-sm="20" fxFlex.lt-sm="100" >
         <mat-label>Estatus</mat-label>
         <mat-select formControlName="estatus_covid_id" >
             <mat-option *ngFor="let item of catalogo_estatus" [value]="item.id">
@@ -256,6 +269,6 @@
   </div>
   <div fxLayout="row">
         <div fxFlex></div>
+        <button mat-button (click)="close()">Cancelar</button>
         <button mat-raised-button color="primary" (click)="enviarDatos()" [disabled]="!infoIndiceForm.valid"><mat-icon>send</mat-icon> Enviar</button>
-        
   </div>

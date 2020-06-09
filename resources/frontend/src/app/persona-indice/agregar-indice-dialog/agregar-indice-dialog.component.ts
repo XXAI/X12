@@ -45,7 +45,9 @@ export interface IndiceData {
   fecha_alta_probable?: string;
   estatus_covid_id?: string;
   responsable?: string;
-  no_localizable?:string
+  no_localizable?:string,
+  fecha_ingreso_hospital?:string,
+  total_dias_hospitalizacion?:string,
 }
 
 @Component({
@@ -120,9 +122,9 @@ export class AgregarIndiceDialogComponent implements OnInit {
       fecha_confirmacion:[''],
       fecha_alta_probable:[''],
       estatus_covid_id:['',Validators.required],
-      no_localizable:[false]
-     
-     
+      no_localizable:[false],
+      fecha_ingreso_hospital:[''],
+      total_dias_hospitalizacion:['']
     });
 
     this.fechaEjemplo = Date();
@@ -183,6 +185,8 @@ export class AgregarIndiceDialogComponent implements OnInit {
       this.infoIndiceForm.controls['fecha_alta_probable'].setValue(this.data.fecha_alta_probable);
       this.infoIndiceForm.controls['estatus_covid_id'].setValue(this.data.estatus_covid_id);
       
+      this.infoIndiceForm.controls['fecha_ingreso_hospital'].setValue(this.data.fecha_ingreso_hospital);
+      this.infoIndiceForm.controls['total_dias_hospitalizacion'].setValue(this.data.total_dias_hospitalizacion);
       
       if(this.data.telefono_casa)
       {
@@ -358,6 +362,10 @@ export class AgregarIndiceDialogComponent implements OnInit {
       });
     }
     
+  }
+
+  close(){
+    this.dialogRef.close();
   }
 
   localizarPersona()

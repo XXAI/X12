@@ -47,6 +47,12 @@ export class SalidaDialogComponent implements OnInit {
     this.dialogRef.close(resultado);
   }
 
+  alta_medica_cadena()
+  {
+    let resultado:any = { estatus: true, resultado:3, id:this.data.id};
+    this.dialogRef.close(resultado);
+  }
+
   defuncion()
   {
     let resultado:any = { estatus: true, resultado:2, id:this.data.id};

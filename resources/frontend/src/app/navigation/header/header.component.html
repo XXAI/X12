@@ -4,7 +4,7 @@
     </button-->
     <!--img src="{{(selectedApp)?selectedApp.icon:'assets/logo-white.svg'}}" alt="" style="height: 60%; width:auto;" fxHide.xs="true"-->
     <button mat-icon-button [routerLink]="'/apps'" fxHide.xs="true" *ngIf="selectedApp">
-      <mat-icon aria-label="Home">chevron_left</mat-icon>
+      <mat-icon aria-label="Home">apps</mat-icon>
     </button>
     <button mat-icon-button [routerLink]="(selectedApp)?selectedApp.route:'/apps'" fxHide.xs="true">
       <img src="{{(selectedApp)?selectedApp.icon:'assets/logo-white.svg'}}" alt="" style="height: 40px; width:auto;">

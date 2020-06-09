@@ -47,6 +47,7 @@ import { AvancesActividadesModule } from './avances-actividades/avances-activida
 import { CatalogosModule } from './catalogos/catalogos.module';
 import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategicos.module';
 import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
+import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.module';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
     ConcentradosModule,
     CatalogosModule,
     ArchivosGruposModule,
+    RedNegativaIragModule,
     WildcardRoutingModule,
   ],
   providers: [

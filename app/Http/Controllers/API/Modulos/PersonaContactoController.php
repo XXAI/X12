@@ -234,6 +234,8 @@ class PersonaContactoController extends Controller
             $persona->fecha_alta_21        = $fecha->format('Y-m-d');
             $persona->fecha_alta_probable        = $datos_persona['fecha_alta_probable'];
             
+            $persona->fecha_ingreso_hospital        = $datos_persona['fecha_ingreso_hospital'];
+            $persona->total_dias_hospitalizacion    = $datos_persona['total_dias_hospitalizacion'];
 
             $persona->email = $datos_persona['email'];
             $persona->estado_id = $datos_persona['estado_id'];

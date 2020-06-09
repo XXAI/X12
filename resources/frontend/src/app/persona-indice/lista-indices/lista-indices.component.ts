@@ -295,15 +295,21 @@ export class ListaIndicesComponent implements OnInit {
     });
   }
 
-  confirmAlta(id:string = ''){
+  confirmAlta(id:string = '',cadena:boolean = false){
     const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
       width: '500px',
-      data: {dialogTitle:'Salida de Paciente',dialogMessage:'Esta seguro de dar salida por alta al paciente?',btnColor:'warn',btnText:'Dar de Alta'}
+      data: {dialogTitle:'Salida de Paciente',dialogMessage:'Esta seguro de dar salida por alta al paciente?',btnColor:'primary',btnText:'Dar de Alta'}
     });
+
+    let tipo_movimiento = 2;
+
+    if(cadena){
+      tipo_movimiento = 4;
+    }
 
     dialogRef.afterClosed().subscribe(reponse => {
       if(reponse){
-        this.indiceService.registroSalida(id, 2).subscribe(
+        this.indiceService.registroSalida(id, tipo_movimiento).subscribe(
           response => {
             if(response.error) {
               let errorMessage = response.error.message;
@@ -378,6 +384,9 @@ export class ListaIndicesComponent implements OnInit {
         }else if(valid.resultado == 2)
         {
           this.confirmDefuncion(valid.id);
+        }else if(valid.resultado == 3)
+        {
+          this.confirmAlta(valid.id,true);
         }
       }
     });

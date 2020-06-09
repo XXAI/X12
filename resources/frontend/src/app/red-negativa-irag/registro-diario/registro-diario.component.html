@@ -1,0 +1,89 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex fxLayout="row" fxLayoutGap="10px">
+        <section fxFlex="30" fxLayout="row">
+            <mat-card fxFlex="100" fxLayout="column">
+                <div fxFlex fxLayout="column">
+                    <section fxFlex="none">
+                        <div fxLayout="column">
+                            <div fxFlex fxLayout="row wrap">
+                                <mat-form-field fxFill appearance="outline">
+                                    <mat-label>Buscar</mat-label>
+                                    <input matInput [(ngModel)]="filterQuery" (keyup.escape)="cleanSearch()" (keyup.enter)="mostrarUnidades()" placeholder="Filtro">
+                                    <button matSuffix *ngIf="filterQuery" mat-icon-button (click)="cleanSearch()" [attr.aria-label]="'Clean Query'" [attr.aria-pressed]="'cleanQuery'">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                    <mat-hint>
+                                        <mat-radio-group [(ngModel)]="filterOptions" aria-label="Select an option">
+                                            <mat-radio-button color="primary" value="*">Todos</mat-radio-button>
+                                            <mat-radio-button value="HOSP">Hospital</mat-radio-button>
+                                            <mat-radio-button value="CS">Casa Salud</mat-radio-button>
+                                        </mat-radio-group>
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                            <button fxFlex mat-raised-button color="accent" (click)="mostrarUnidades()">
+                                <mat-icon>search</mat-icon> Filtrar
+                            </button>
+                        </div>
+                    </section>
+                    <mat-divider [inset]="true"></mat-divider>
+                    <section fxFlex style="overflow: hidden;">
+                        <cdk-virtual-scroll-viewport itemSize="289" style="overflow: auto; height: 100%;">
+                            <div *cdkVirtualFor="let unidad of listadoUnidades;">
+                                <div class="lista-items" [ngClass]="{'selected': unidad.id==idUnidadSeleccionada}">
+                                    <div class="lista-items-etiqueta" [ngClass]="{'medicamento-bg-color': unidad.tipo_unidad=='HOSP','mat-curacion-bg-color': unidad.tipo_unidad=='CS'}">
+                                        <div class="lista-items-etiqueta-icono"><img src="{{unidad.icono}}" alt="Icon"></div>
+                                        <div class="lista-items-etiqueta-texto">{{unidad.clave}}</div>
+                                    </div>
+                                    <div class="lista-items-contenido">
+                                        <div class="lista-items-cabecera">
+                                            <div class="lista-items-cabecera-titulo">{{unidad.nombre}}</div>
+                                            <div class="lista-items-cabecera-subtitulo">{{unidad.info}}</div>
+                                        </div>
+                                        <div class="lista-items-texto">
+                                            {{unidad.descripcion}}
+                                        </div>
+                                    </div>
+                                    <div class="lista-items-acciones" fxLayout="row">
+                                        <div fxFlex style="padding: 8px 0px;">
+                                            Registros: 0
+                                        </div>
+                                        <button fxFlex="none" mat-flat-button (click)="verRegistros(unidad)">
+                                            <mat-icon>chevron_right</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <mat-divider [inset]="true"></mat-divider>
+                            </div>
+                        </cdk-virtual-scroll-viewport>
+                    </section>
+                </div>
+                <mat-divider [inset]="true"></mat-divider>
+                <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
+                    <div fxFlex></div>
+                    <div fxFlex="none">
+                        <mat-hint>Unidades: {{listadoUnidades.length | number}}</mat-hint>
+                    </div>
+                </div>
+            </mat-card>
+        </section>
+        
+        <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
+            <div fxFlex="none" fxLayout="row">
+                <div fxFlex>
+                    busqueda rapida
+                </div>
+                <div fxFlex="none">
+                    filtros
+                </div>
+            </div>
+            <mat-divider [inset]="true"></mat-divider>
+            <div fxFlex style="overflow: auto; background-color: whitesmoke;">
+                listado registros
+            </div>
+            <div fxFlex="none">
+                paginador?
+            </div>
+        </mat-card>
+    </section>
+</section>

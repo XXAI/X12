@@ -23,7 +23,8 @@ export const APPS:App [] = [
     { name:'Archivos Grupos',       route: "archivos-grupos",             icon: "assets/icons/archivos-grupos.svg",       permission:"kjBw52kYMsDiR0xdKiOWuWJg4WtJGZTv" },
     { name:'Estrategias',           route: "estrategias",                 icon: "assets/icons/estrategias.svg",           permission:"SIwbml7PkAOaBFcOxiOWuWJg4WtJGZTv" },
     { name:'Avances Actividades',   route: "avances-actividades",         icon: "assets/icons/avances-actividades.svg",   permission:"41vhF3i5Dzfo0D62cGqxTcqe571wSxkk" },
-    { name:'Herramientas Dev',      route: "dev-tools",  icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true,
+    { name:'Red Negativa IRAG',     route: "red-negativa-registro-diario",icon: "assets/icons/registro-diario.svg",       permission:"pxP2aMnsp1Vxwf3RjZGhmPk8KrdpZglj" },
+    { name:'Herramientas Dev',      route: "dev-tools",                   icon: "assets/icons/toolbox.svg", isHub:true, hideHome:true,
       children:[
         {name:'Reportes MySQL',     route:'dev-tools/mysql-reportes',     icon:'insert_drive_file',                       permission:"6ARHQGj1N8YPkr02DY04K1Zy7HjIdDcj"},
         {name:'Variables Globales', route:'dev-tools/variables-globales', icon:'settings',                                permission:"QOiVxSyoMmmRq1OmMS8MOhsmEqi8bJEl"}

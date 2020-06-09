@@ -237,6 +237,12 @@ class PersonaContactoController extends Controller
             $persona->fecha_ingreso_hospital        = $datos_persona['fecha_ingreso_hospital'];
             $persona->total_dias_hospitalizacion    = $datos_persona['total_dias_hospitalizacion'];
 
+            
+            $persona->contactos_intradomiciliarios_sinto    =   $datos_persona['contactos_intradomiciliarios_sinto'];
+            $persona->contactos_intradomiciliarios_asinto   =   $datos_persona['contactos_intradomiciliarios_asinto'];
+            $persona->contactos_extradomiciliarios_sinto    =   $datos_persona['contactos_extradomiciliarios_sinto'];
+            $persona->contactos_extradomiciliarios_asinto   =   $datos_persona['contactos_extradomiciliarios_asinto'];
+
             $persona->email = $datos_persona['email'];
             $persona->estado_id = $datos_persona['estado_id'];
             $persona->municipio_id = $datos_persona['municipio_id'];

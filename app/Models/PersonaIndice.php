@@ -9,7 +9,7 @@ class PersonaIndice extends Model
 {
     use SoftDeletes;
     protected $table = 'persona_indice';
-    protected $fillable = ['id', 'dispositivo_id', 'egreso_id','nombre','apellido_paterno','apellido_materno','alias', 'edad', 'sexo', 'estatus_covid_id', 'fecha_alta_14', 'fecha_alta_21' , 'fecha_nacimiento','email','telefono_casa','telefono_celular','estado_id','municipio_id','municipio','localidad_id','localidad','colonia','calle','no_exterior','no_interior','referencia','latitud','longitud','categorias', 'no_caso', 'codigo_postal', 'observaciones', 'fecha_alta_probable', 'fecha_confirmacion', 'fecha_inicio_sintoma', 'tipo_transmision_id', 'derechohabiente_id', 'tipo_atencion_id', 'tipo_unidad_id', 'responsable_id','no_localizable','fecha_ingreso_hospital','total_dias_hospitalizacion'];
+    protected $fillable = ['id', 'dispositivo_id', 'egreso_id','nombre','apellido_paterno','apellido_materno','alias', 'edad', 'sexo', 'estatus_covid_id', 'fecha_alta_14', 'fecha_alta_21' , 'fecha_nacimiento','email','telefono_casa','telefono_celular','estado_id','municipio_id','municipio','localidad_id','localidad','colonia','calle','no_exterior','no_interior','referencia','latitud','longitud','categorias', 'no_caso', 'codigo_postal', 'observaciones', 'fecha_alta_probable', 'fecha_confirmacion', 'fecha_inicio_sintoma', 'tipo_transmision_id', 'derechohabiente_id', 'tipo_atencion_id', 'tipo_unidad_id', 'responsable_id','no_localizable','fecha_ingreso_hospital','total_dias_hospitalizacion','contactos_intradomiciliarios_sinto','contactos_intradomiciliarios_asinto','contactos_extradomiciliarios_sinto','contactos_extradomiciliarios_asinto'];
 
     public function contactos(){
         return $this->hasMany('App\Models\PersonaContacto','persona_indice_id');

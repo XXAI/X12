@@ -644,7 +644,7 @@ class PacientesCovidController extends Controller
 
             }
 
-
+            $casos = $casos->where("egreso_id", "=", 1);
             if(isset($parametros['page'])){
                 $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
 

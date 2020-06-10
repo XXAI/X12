@@ -547,13 +547,13 @@ class PacientesCovidController extends Controller
 
             $parametros = Input::all();
             $loggedUser = auth()->userOrFail();
-
+            
             $permiso = DB::table('permissions')
                 ->leftJoin('permission_user', 'permissions.id', '=', 'permission_user.permission_id')
                 ->where('permission_user.user_id', '=', $loggedUser->id)
                 ->where('permission_user.permission_id', '=', 'fa7QWns1FDzcIZjC44OAsHtswKYhOsPN')
                 ->first();
-
+                
             if($permiso || $loggedUser->is_superuser=='1' )
             {
                 $casos = PersonaIndice::select('persona_indice.*')
@@ -564,10 +564,12 @@ class PacientesCovidController extends Controller
             }
             else
             {
+                
                 $grupo = DB::table('grupos_estrategicos_usuarios')
                 ->leftJoin('users', 'id', '=', 'grupos_estrategicos_usuarios.user_id')
                 ->where('grupos_estrategicos_usuarios.user_id', '=', $loggedUser->id)
                 ->first();
+                
                 if($grupo)
                 {
 
@@ -584,7 +586,7 @@ class PacientesCovidController extends Controller
                     ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     ->where('GE.id','=',$grupo->grupo_estrategico_id)
                     ->orderBy('persona_indice.responsable_id', 'asc','persona_indice.no_caso', 'asc') ;
-
+                    
                 }
                 else{
 
@@ -645,15 +647,9 @@ class PacientesCovidController extends Controller
 
 
             }
-
-            $casos = $casos->where("egreso_id", "=", 1);
-                            //->WhereNull("fecha_alta_cadena");
-
-
-            $casos = $casos->orWhere(function($query)use($parametros){
-                return $query->WhereNull("fecha_alta_cadena")
-                            ->where("egreso_id", "!=", 1);
-            });
+            
+            $casos = $casos->WhereRaw("( fecha_alta_cadena is null or egreso_id=1)");
+            
             if(isset($parametros['page'])){
                 $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
 

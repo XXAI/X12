@@ -47,7 +47,7 @@ export class ListaIndicesComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  displayedColumns: string[] = ['sexo', 'dias', 'no_caso','persona','alta_probable','unidad','tipo_atencion','municipio_localidad', 'egreso','actions'];
+  displayedColumns: string[] = ['sexo', 'intra', 'extra', 'no_caso','persona','unidad','tipo_atencion','municipio_localidad','alta_probable', 'egreso','actions'];
   dataSource: any = [];
 
   ngOnInit() {

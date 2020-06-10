@@ -73,6 +73,14 @@ table {
   margin: 0 10px;
 }
 
+.simbologia{
+  padding: 10px; 
+  color: black !important;
+  font-weight: normal !important; 
+  border: 1px solid #CFCFCF;
+  margin: 0px 5px;
+
+}
 .green
 {
     background-color: rgba(121,255,159,0.2) !important;
@@ -94,6 +102,18 @@ table {
     font-weight: bold;
 }
 
+.simbologia_red
+{
+  color: rgba(255,124,121,0.8) !important;
+}
+.simbologia_green
+{
+  color: rgba(121,255,159,0.2) !important;
+}
+.simbologia_orange
+{
+  color: rgba(255,235,121,0.8)  !important;
+}
 .men
 {
   color: mediumblue;

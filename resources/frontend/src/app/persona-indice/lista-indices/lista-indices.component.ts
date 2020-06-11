@@ -41,7 +41,7 @@ export class ListaIndicesComponent implements OnInit {
   reportTitle:string;
 
   edicionRapidaActiva:boolean;
-  catalogosEdicionRapida:any[];
+  catalogosEdicionRapida:any;
   totalCambiosTabla:number;
   controlCambiosTabla:any;
 

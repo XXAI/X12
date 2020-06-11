@@ -568,8 +568,12 @@ class PacientesCovidController extends Controller
                 $grupo = DB::table('grupos_estrategicos_usuarios')
                 ->leftJoin('users', 'id', '=', 'grupos_estrategicos_usuarios.user_id')
                 ->where('grupos_estrategicos_usuarios.user_id', '=', $loggedUser->id)
-                ->first();
-                
+                ->get();
+                $arreglo_grupos = array();
+                foreach ($grupo as $key => $value) {
+                    $arreglo_grupos[] = $value->grupo_estrategico_id;
+                }
+                //return response()->json(['data'=>$grupo],500);
                 if($grupo)
                 {
 
@@ -584,7 +588,8 @@ class PacientesCovidController extends Controller
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
                     ->leftjoin('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->where('GE.id','=',$grupo->grupo_estrategico_id)
+                    //->where('GE.id','=',$grupo->grupo_estrategico_id)
+                    ->whereIn('GE.id',$arreglo_grupos)
                     ->orderBy('persona_indice.responsable_id', 'asc','persona_indice.no_caso', 'asc') ;
                     
                 }

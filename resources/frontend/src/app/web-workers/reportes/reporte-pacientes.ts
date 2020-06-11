@@ -98,38 +98,29 @@ export class ReportePacientes {
               }
             }
         };
-
+        
         let tabla_vacia = {
           table: {
-            headerRows:1,
+            headerRows:2,
             dontBreakRows: true,
-            keepWithHeaderRows: 1,
-            widths: [ 30,30, 30,30, 120, 110, 70,90, 90, 90,30,40, 40 ],
+            keepWithHeaderRows: 2,
+            widths: [ 30, 25,25, 120, 110, 70,90, 90, 90,30,40, 40,25,25 ],
             margin: [0,0,0,0],
-            body: [
-              [
-                {text: "Grupo", style: 'cabecera'},
-                {text: "Caso", style: 'cabecera'},
-                {text: "Edad", style: 'cabecera'},
-                {text: "Sexo", style: 'cabecera'},
-                {text: "Municipio", style: 'cabecera'},
-                {text: "Responsable", style: 'cabecera'},
-                {text: "Alta Pble.", style: 'cabecera'},
-                {text: "Tipo atención", style: 'cabecera'},
-                {text: "Estado", style: 'cabecera'},
-                {text: "Unidad de atención", style: 'cabecera'},
-                {text: "D.S.", style: 'cabecera'},
-                {text: "Días de Hosp.", style: 'cabecera'},
-                {text: "Días de Evol.", style: 'cabecera'}
-              ]
-            ]
+            body: []
           }
         };
         
+        if(reportData.items.length > 0 )
+        {
+          let obj = reportData.items[0];
+          let folio = obj.responsable.folio;
+          tabla_vacia.table.body = this.get_Header_Table(folio);
+        }
+
         datos.content.push(JSON.parse(JSON.stringify(tabla_vacia)));
 
         let indice_actual = datos.content.length-1;
-        
+
         let folio_actual = '';
         let caso_indice='';
         let page_break = false;
@@ -144,8 +135,10 @@ export class ReportePacientes {
         let dias_hospitalizacion;
         let dias_evolucion;
         for(let i = 0; i < reportData.items.length; i++){
+          
           let style_row = 'tabla_datos';
           let paciente = reportData.items[i];
+
           let cadena = "CADENA ACTIVA";
 
           if(paciente.fecha_alta_probable==null || paciente.fecha_alta_probable=="")
@@ -236,8 +229,8 @@ export class ReportePacientes {
           }
           
           datos.content[indice_actual].table.body.push([
-            { text: paciente.responsable.folio, style: style_row},
             { text: paciente.no_caso, style: style_row},
+            
             { text: paciente.edad , style: style_row},
             { text: paciente.sexo, style: style_row},
             { text: municipio , style: style_row},
@@ -249,11 +242,16 @@ export class ReportePacientes {
             { text: unidad , style: style_row},
             { text: distrito,   style: style_row},
             { text: dias_hospitalizacion,   style: style_row},
-            { text: dias_evolucion,   style: style_row}
+            { text: dias_evolucion,   style: style_row},
+            { text: paciente.contactos_intradomiciliarios_sinto, style: style_row},
+            { text: paciente.contactos_extradomiciliarios_sinto, style: style_row},
           ]);
 
           if(page_break){
             datos.content.push({ text:'', pageBreak:'after' });
+            let obj = reportData.items[i+1];
+            let folio = obj.responsable.folio;
+            tabla_vacia.table.body = this.get_Header_Table(folio);
             datos.content.push(JSON.parse(JSON.stringify(tabla_vacia)));
             indice_actual = datos.content.length-1;
             page_break = false;
@@ -261,5 +259,32 @@ export class ReportePacientes {
 
         }
         return datos;
+      }
+
+      get_Header_Table(folio)
+      {
+        let arreglo_datos = [];
+        
+        arreglo_datos.push([{text: "GRUPO "+folio, style: 'cabecera', colSpan:14},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+        arreglo_datos.push([
+          {text: "Caso", style: 'cabecera'},
+          
+          {text: "Edad", style: 'cabecera'},
+          {text: "Sexo", style: 'cabecera'},
+          {text: "Municipio", style: 'cabecera'},
+          {text: "Responsable", style: 'cabecera'},
+          {text: "Alta Pble.", style: 'cabecera'},
+          {text: "Tipo atención", style: 'cabecera'},
+          {text: "Estado", style: 'cabecera'},
+          {text: "Unidad de atención", style: 'cabecera'},
+          {text: "D.S.", style: 'cabecera'},
+          {text: "Días de Hosp.", style: 'cabecera'},
+          {text: "Días de Evol.", style: 'cabecera'},
+          {text: "Intra", style: 'cabecera'},
+          {text: "Extra", style: 'cabecera'},
+        ]);
+        
+        return arreglo_datos;
+        
       }
 }

@@ -296,8 +296,6 @@ class PacientesCovidController extends Controller
 
         DB::beginTransaction();
         try {
-
-
             $object->no_caso        = $inputs['no_caso'];
             $object->nombre         = $inputs['nombre'];
             $object->alias         = $inputs['alias'];
@@ -698,20 +696,6 @@ class PacientesCovidController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // $filtros = Input::all();
 
         // try{
@@ -731,4 +715,24 @@ class PacientesCovidController extends Controller
         //     return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         // }
     }
+
+    public function updateMasivo(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+
+            $parametros = Input::all();
+
+            foreach ($parametros as $paciente_id => $cambios) {
+                $paciente = PersonaIndice::find($paciente_id);
+                $paciente->update($cambios);
+            }
+
+            DB::commit();
+            return response()->json(['data'=>$parametros],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }    
 }

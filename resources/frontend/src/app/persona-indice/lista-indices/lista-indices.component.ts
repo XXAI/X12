@@ -39,7 +39,11 @@ export class ListaIndicesComponent implements OnInit {
   showMyStepper:boolean = false;
   stepperConfig:any = {};
   reportTitle:string;
-  
+
+  edicionRapidaActiva:boolean;
+  catalogosEdicionRapida:any[];
+  totalCambiosTabla:number;
+  controlCambiosTabla:any;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -51,7 +55,73 @@ export class ListaIndicesComponent implements OnInit {
   dataSource: any = [];
 
   ngOnInit() {
+    let catalogos = [
+      {nombre:'estatusCovid'},
+      {nombre:'tipo_atencion'},
+      {nombre:'tipo_unidad'}
+    ];
+
+    this.controlCambiosTabla = {};
+    this.totalCambiosTabla = 0;
+
+    this.indiceService.getCatalogos(catalogos).subscribe(
+      response =>{
+        console.log('catalogos');
+        console.log(response);
+        this.catalogosEdicionRapida = response.data;
+      }
+    )
+
+    this.edicionRapidaActiva = false;
     this.loadListadoCasos();
+  }
+
+  edicionRapida(){
+    this.displayedColumns = ['sexo', 'intra', 'extra', 'no_caso','persona','unidad','tipo_atencion','estatus'];
+    this.edicionRapidaActiva = true;
+  }
+
+  cancelarEdicionRapida(){
+    this.displayedColumns = ['sexo', 'intra', 'extra', 'no_caso','persona','unidad','tipo_atencion','municipio_localidad','alta_probable', 'egreso','actions'];
+    this.edicionRapidaActiva = false;
+    this.totalCambiosTabla = 0;
+    this.controlCambiosTabla = {};
+  }
+
+  cambiosTabla(event,campo,persona_id){
+    console.log(event);
+    if(!this.controlCambiosTabla[persona_id]){
+      this.controlCambiosTabla[persona_id] = {};
+      this.totalCambiosTabla++;
+    }
+    this.controlCambiosTabla[persona_id][campo] = event.value;
+  }
+
+  guardarCambiosTabla(){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data: {dialogTitle:'Guardar Cambios',dialogMessage:'Esta seguro de guardar los cambios seleccionados?',btnColor:'primary',btnText:'Guardar'}
+    });
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        this.indiceService.actualizaMasivo(this.controlCambiosTabla).subscribe(
+          response => {
+            console.log(response);
+            this.cancelarEdicionRapida();
+            this.loadListadoCasos();
+          }
+        );
+      }
+    });
+  }
+
+  obtenerValorTabla(campo,row){
+    if(this.controlCambiosTabla[row.id] && this.controlCambiosTabla[row.id][campo]){
+      return this.controlCambiosTabla[row.id][campo];
+    }else{
+      return row[campo];
+    }
   }
 
   loadListadoCasos(event?){

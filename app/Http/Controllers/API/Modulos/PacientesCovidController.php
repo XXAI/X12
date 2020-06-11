@@ -560,7 +560,7 @@ class PacientesCovidController extends Controller
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
                     ->leftjoin('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc','persona_indice.no_caso','asc') ;
+                    ->orderBy('persona_indice.responsable_id', 'asc') ;
             }
             else
             {
@@ -590,7 +590,7 @@ class PacientesCovidController extends Controller
                     ->leftjoin('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
                     //->where('GE.id','=',$grupo->grupo_estrategico_id)
                     ->whereIn('GE.id',$arreglo_grupos)
-                    ->orderBy('persona_indice.responsable_id', 'asc','persona_indice.no_caso', 'asc') ;
+                    ->orderBy('persona_indice.responsable_id', 'asc') ;
                     
                 }
                 else{
@@ -599,7 +599,7 @@ class PacientesCovidController extends Controller
                     ->with('tipo_atencion', 'tipo_unidad', 'responsable.grupo', 'municipio.distrito', 'estatus_covid','contactos')
                     ->join('catalogo_responsables as R', 'R.id', '=', 'persona_indice.responsable_id')
                     ->join('grupos_estrategicos as GE', 'GE.folio', '=', 'R.folio')
-                    ->orderBy('R.folio', 'asc','persona_indice.responsable_id', 'asc') ;
+                    ->orderBy('persona_indice.responsable_id', 'asc') ;
 
 
                 }

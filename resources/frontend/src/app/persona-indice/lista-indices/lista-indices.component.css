@@ -1,3 +1,7 @@
+:host ::ng-deep .cambio-tabla-selected .mat-select-value{
+  color:blue !important;
+}
+
 .data-container {
     position: relative;
     min-height: 200px;

@@ -19,6 +19,8 @@ use App\Models\CategoriaLlamada;
 use App\Models\Turno;
 use App\Models\Distrito;
 use App\Models\GrupoEstrategico;
+use App\Models\CasosCovid\TipoAtencion;
+use App\Models\CasosCovid\TipoUnidad;
 
 class CatalogosController extends Controller
 {
@@ -36,7 +38,9 @@ class CatalogosController extends Controller
                 'distritos' => Distrito::getModel(),
                 'grupos' => GrupoEstrategico::getModel(),
                 'grupos_estrategicos'=>GrupoEstrategico::getModel(),
-                'estatusCovid' => EstatusCovid::orderBy("descripcion")
+                'estatusCovid' => EstatusCovid::orderBy("descripcion"),
+                'tipo_atencion' => TipoAtencion::orderBy("descripcion"),
+                'tipo_unidad' => TipoUnidad::orderBy("descripcion"),
             ];
 
             $parametros = Input::all();

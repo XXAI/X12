@@ -16,6 +16,9 @@ export class IndiceService {
   url_persona_indice = `${environment.base_url}/persona-indice`;
   url_persona_contacto = `${environment.base_url}/indice-contacto`;
 
+  url_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_update_masivo = `${environment.base_url}/actualizar-masivo`;
+
   url_salida = `${environment.base_url}/pacientes-indice-salida`;
   url_estatus = `${environment.base_url}/pacientes-indice-estatus`;
 
@@ -47,6 +50,23 @@ export class IndiceService {
       })
     );
   }
+
+  getCatalogos(payload) {
+    return this.http.post<any>(this.url_catalogos,payload).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  actualizaMasivo(payload) {
+    return this.http.post<any>(this.url_update_masivo,payload).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
   obtenerLocalidad(payload) {
     return this.http.get<any>(this.url_obtener_localidad , {params:payload}).pipe(
       map( response => {

@@ -132,6 +132,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('catalogos-covid',                     'API\Modulos\PacientesCovidController@getCatalogos');
     Route::get('graficas-covid',                      'API\Modulos\PacientesCovidController@getGraficas');
     Route::get('concentrado-casos-covid',             'API\Modulos\PacientesCovidController@getConcentradoCasos');
+    Route::post('actualizar-masivo',                  'API\Modulos\PacientesCovidController@updateMasivo');
 
     /**
      * Catalogos

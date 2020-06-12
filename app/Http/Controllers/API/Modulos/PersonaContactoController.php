@@ -55,6 +55,22 @@ class PersonaContactoController extends Controller
         {
             $persona = $persona->whereRaw(" persona_indice.responsable_id in (select id from catalogo_responsables where folio in (".$lista_grupos."))");
         }
+
+        if(isset($parametros['active_filter']) && $parametros['active_filter']){
+            if(isset($parametros['no_caso']) && $parametros['no_caso']){
+                $persona = $persona->where('no_caso', '=', $parametros['no_caso']);
+            }
+            if(isset($parametros['municipios']) && $parametros['municipios']){
+                $persona = $persona->where('municipio_id',$parametros['municipios']);
+            }
+            if(isset($parametros['responsables']) && $parametros['responsables']){
+                $persona = $persona->where('responsable_id',$parametros['responsables']);
+            }
+            if(isset($parametros['grupo']) && $parametros['grupo']){
+                $persona = $persona->whereRaw(" persona_indice.responsable_id in (select id from catalogo_responsables where folio in (".$parametros['grupo']."))");
+            }
+        }
+
         if(isset($parametros['page'])){
             $persona = $persona->orderBy('persona_indice.created_at','DESC');
             $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;

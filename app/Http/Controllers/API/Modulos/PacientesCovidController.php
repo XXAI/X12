@@ -357,6 +357,26 @@ class PacientesCovidController extends Controller
     public function getCatalogos(){
         //$parametros = Input::all();
         //return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
+
+        $loggedUser = auth()->userOrFail();
+        
+        if($loggedUser->is_superuser == 1)
+        {
+            $grupo = DB::table('grupos_estrategicos_usuarios')
+            ->join("grupos_estrategicos", "grupos_estrategicos.id", "=", "grupos_estrategicos_usuarios.grupo_estrategico_id")
+            ->orderBy("grupos_estrategicos.descripcion")
+            ->select("grupos_estrategicos.*")
+            ->get();
+        }else{    
+            $grupo = DB::table('grupos_estrategicos_usuarios')
+            ->join("grupos_estrategicos", "grupos_estrategicos.id", "=", "grupos_estrategicos_usuarios.grupo_estrategico_id")
+            ->leftJoin('users', 'users.id', '=', 'grupos_estrategicos_usuarios.user_id')
+            ->where('grupos_estrategicos_usuarios.user_id', '=', $loggedUser->id)
+            ->select("grupos_estrategicos.*")
+            ->get();
+        }
+           
+
         try{
 
             $municipios                 = Municipio::orderBy('descripcion');
@@ -381,7 +401,8 @@ class PacientesCovidController extends Controller
                 'tipos_transmisiones'                    => $tipos_transmisiones->get(),
                 'tipo_unidad'                            => $tipo_unidad        ->get(),
                 'egresos'                                => $egresos            ->get(),
-                'caso'                                   => $maxNoCaso
+                'caso'                                   => $maxNoCaso,
+                'grupos'                                 => $grupo
 
             ];
 

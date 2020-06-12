@@ -19,6 +19,8 @@ export class IndiceService {
   url_salida = `${environment.base_url}/pacientes-indice-salida`;
   url_estatus = `${environment.base_url}/pacientes-indice-estatus`;
 
+  url_filter_catalogs                     = `${environment.base_url}/catalogos-covid`;
+
   constructor(private http: HttpClient) { }
 
   
@@ -107,6 +109,15 @@ export class IndiceService {
         console.log("valor",response);
         return response;
 
+      })
+    );
+  }
+
+  getFilterCatalogs():Observable<any>{
+    return this.http.get<any>(this.url_filter_catalogs).pipe(
+      map(response => {
+        console.log("valor",response);
+        return response;
       })
     );
   }

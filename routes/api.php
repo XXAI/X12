@@ -122,7 +122,9 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('personas-contagios',       'API\Modulos\IndiceContactoController@mapaGeneral');
     Route::apiResource('persona-indice',   'API\Modulos\PersonaContactoController');
     Route::apiResource('indice-contacto',   'API\Modulos\IndiceContactoController');
-
+    Route::put('finalizar-cadena/{id}',   'API\Modulos\PersonaContactoController@finalizarCadena');
+    Route::put('finalizar-grupo/{id}',   'API\Modulos\PersonaContactoController@finalizarGrupo');
+    
 
     Route::apiResource('pacientes-covid',             'API\Modulos\PacientesCovidController');
     Route::put('pacientes-covid-salida/{id}',         'API\Modulos\PacientesCovidController@actualizarEgreso');

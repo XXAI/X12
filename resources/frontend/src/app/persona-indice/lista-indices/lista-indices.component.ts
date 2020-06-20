@@ -64,6 +64,7 @@ export class ListaIndicesComponent implements OnInit {
   catalogosEdicionRapida:any;
   totalCambiosTabla:number;
   controlCambiosTabla:any;
+  permiso_grupo:number = 0;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -233,6 +234,40 @@ export class ListaIndicesComponent implements OnInit {
       }
     });
   }
+  
+  finalizar_cadena(registro){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data: {dialogTitle:'Finalizar Cadena',dialogMessage:'Esta seguro de finalizar la cadena de contagios?',btnColor:'primary',btnText:'Guardar'}
+    });
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        this.indiceService.finalizarCadena(registro.id).subscribe(
+          response => {
+            this.loadListadoCasos();
+          }
+        );
+      }
+    });
+  }
+  
+  finalizar_grupo(registro){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data: {dialogTitle:'Dar de alta del grupo',dialogMessage:'Esta seguro de dar de alta del grupo?',btnColor:'primary',btnText:'Guardar'}
+    });
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        this.indiceService.finalizarGrupo(registro.id).subscribe(
+          response => {
+            this.loadListadoCasos();
+          }
+        );
+      }
+    });
+  }
 
   obtenerValorTabla(campo,row){
     if(this.controlCambiosTabla[row.id] && this.controlCambiosTabla[row.id][campo]){
@@ -302,11 +337,14 @@ export class ListaIndicesComponent implements OnInit {
 
     this.indiceService.getListadoIndices(params).subscribe(
       response => {
-        
+        console.log("mario");
+        console.log(response);
+      
         if(response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
+            this.permiso_grupo = response.permiso_grupo;
             this.dataSource = response.data.data;
             console.log(response.data.total+"--");
             this.resultsLength = response.data.total;

@@ -29,6 +29,21 @@ class PersonaContactoController extends Controller
     public function index()
     {
         try{
+            $permiso_grupo = 0;
+            $loggedUser = auth()->userOrFail();
+
+             //permiso para ver el permiso de dar de alta de grupo GGr30gk5rz2qr7mYEgLqY7Dj8QhM23o4
+            $permiso = DB::table('permissions')
+            ->leftJoin('permission_user', 'permissions.id', '=', 'permission_user.permission_id')
+            ->where('permission_user.user_id', '=', $loggedUser->id)
+            ->where('permission_user.permission_id', '=', 'GGr30gk5rz2qr7mYEgLqY7Dj8QhM23o4')
+            ->first();
+
+            if($permiso || $loggedUser->is_superuser=='1' )
+            {
+                $permiso_grupo = 1;
+            }
+
             $auth_user = auth()->user();
             $grupos_usuario = $auth_user->grupos;
             $grupos_folios = $auth_user->grupos->pluck('folio');
@@ -94,7 +109,7 @@ class PersonaContactoController extends Controller
             $persona = $persona->get();
         }
                     
-            return response()->json(['data'=>$persona],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$persona, 'permiso_grupo' => $permiso_grupo],HttpResponse::HTTP_OK);
             
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
@@ -282,6 +297,43 @@ class PersonaContactoController extends Controller
             DB::commit();
 
             return response()->json(['data'=>$result],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    public function finalizarCadena(Request $request, $id)
+    {
+        try{
+            DB::beginTransaction();
+
+            $persona = PersonaIndice::find($id);
+
+            $persona->fecha_alta_cadena = Carbon::now();
+            $persona->save();
+            DB::commit();
+
+            return response()->json(['data'=>$persona],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function finalizarGrupo(Request $request, $id)
+    {
+        try{
+            DB::beginTransaction();
+
+            $persona = PersonaIndice::find($id);
+
+            $persona->fecha_alta_cadena = Carbon::now();
+            $persona->fecha_alta_grupo = Carbon::now();
+            $persona->egreso_id = 2;
+            $persona->save();
+            DB::commit();
+
+            return response()->json(['data'=>$persona],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

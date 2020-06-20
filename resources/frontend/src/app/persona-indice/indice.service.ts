@@ -21,6 +21,8 @@ export class IndiceService {
 
   url_salida = `${environment.base_url}/pacientes-indice-salida`;
   url_estatus = `${environment.base_url}/pacientes-indice-estatus`;
+  url_cadena = `${environment.base_url}/finalizar-cadena`;
+  url_grupo = `${environment.base_url}/finalizar-grupo`;
 
   url_filter_catalogs                     = `${environment.base_url}/catalogos-covid`;
 
@@ -140,5 +142,23 @@ export class IndiceService {
         return response;
       })
     );
+  }
+
+  finalizarCadena(id)
+  {
+    return this.http.put<any>(this.url_cadena+"/"+id,{}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+  
+  finalizarGrupo(id)
+  {
+    return this.http.put<any>(this.url_grupo+"/"+id,{}).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
   }
 }

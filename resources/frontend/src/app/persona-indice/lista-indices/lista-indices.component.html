@@ -132,8 +132,8 @@
                         </ng-container>
                     </div>
                 </div>
-                <div fxLayout="row">
-                    <mat-card>
+                <div fxLayout.gt-sm="row raw" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
+                    <mat-card  fxFlex.xs="40%" fxFlex="50%">
                         <mat-card-subtitle>Código de colores Estatus General</mat-card-subtitle>
                         <mat-card-content>
                             <mat-icon aria-hidden="false" class='activo' aria-label="Example home icon">stop_circle</mat-icon> Activo
@@ -142,13 +142,13 @@
                         </mat-card-content>
                         
                     </mat-card>
-                    <mat-card>
+                    <mat-card  fxFlex.xs="40%" fxFlex="50%">
                         <mat-card-subtitle>Código de colores Estatus Hospitalario</mat-card-subtitle>
                         <mat-card-content>
                             <span class="green simbologia">Estable</span>
                             <span class="orange simbologia">Grave</span>
                             <span class="red simbologia">Grave Intubado</span>
-                            <span class="simbologia">Ambulatorio ó Sin Estatus</span>
+                            <span class="simbologia">Sin Estatus</span>
                         </mat-card-content>
                         
                     </mat-card>
@@ -188,12 +188,9 @@
                                     <div *ngIf="!row.responsable">
                                      / Sin Responsable
                                     </div> 
-                                    <!--<div *ngIf="row.tipo_unidad && row.tipo_atencion_id == 4">
-                                        / {{ row.tipo_unidad.descripcion}}
-                                    </div>
-                                    <div *ngIf="!row.tipo_unidad">
-                                     / Sin Unidad
-                                    </div>--> 
+                                    <div *ngIf="!row.fecha_alta_cadena" style="color: red;">
+                                     / Cadena Activa
+                                    </div> 
                                 </td>
                             </ng-container>
                     
@@ -299,6 +296,14 @@
                                         <button mat-menu-item color="primary" routerLink="/listado-contacto/{{row.id}}">
                                             <mat-icon>folder_shared</mat-icon> 
                                             <span>{{row.contactos.length}} Contactos</span>
+                                        </button>
+                                        <button mat-menu-item color="primary" *ngIf="!row.fecha_alta_cadena"  (click)="finalizar_cadena(row)">
+                                            <mat-icon>link_off</mat-icon> 
+                                            <span>Finalizar Cadena</span>
+                                        </button>
+                                        <button mat-menu-item color="primary" *ngIf="permiso_grupo == 1"  (click)="finalizar_grupo(row)">
+                                            <mat-icon>link_off</mat-icon> 
+                                            <span>Alta Grupo</span>
                                         </button>
                                     </mat-menu>
                                 </td>

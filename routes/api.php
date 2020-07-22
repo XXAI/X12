@@ -140,6 +140,9 @@ Route::group(['middleware'=>'auth'],function($router){
      * Catalogos
      */
 
+     //Vigilancia Clinica
+     Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
+
      //responsables
 
 

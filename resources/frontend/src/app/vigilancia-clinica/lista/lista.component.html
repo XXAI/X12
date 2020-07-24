@@ -1,0 +1,172 @@
+<section class="profile" style="padding-top: 10px;">
+  <div fxLayout="row" fxLayoutAlign="space-evenly center">
+      <section fxFlex="95" fxLayout="column" fxLayoutAlign="center">
+          <div class="data-loading-shade" *ngIf="isLoading">
+              <mat-spinner></mat-spinner>
+          </div>
+          <mat-card fxFlex.xs="100%" fxFlex="90%">
+              <div fxLayout="row" fxLayout.xs="column">
+                  <div fxFlex fxLayout="row wrap">
+                      <mat-form-field fxFill appearance="outline">
+                          <mat-label>Buscar</mat-label>
+                          <input matInput [(ngModel)]="searchQuery" (keyup.escape)="cleanSearch()" (keyup.enter)="applyFilter()" placeholder="Buscar" />
+                          <button matSuffix *ngIf="searchQuery" mat-icon-button (click)="cleanSearch()" [attr.aria-label]="'Clean Query'" [attr.aria-pressed]="'cleanQuery'">
+                              <mat-icon>close</mat-icon>
+                          </button>
+                      </mat-form-field>
+                  </div>
+                  <div fxFlex="none" fxFlex.xs="100">
+                      <div fxFlex></div>
+                      <section class="search-button">
+                          <button mat-raised-button color="accent" (click)="applyFilter()"><mat-icon>search</mat-icon> Buscar</button>
+                      </section>
+                  </div>
+              </div>
+          </mat-card>
+
+          <br />
+
+          <mat-card fxFlex.xs="100%" fxFlex="90%">
+              <div fxLayout="row">
+                  <div fxFlex></div>
+                  <div fxFlex="none">
+                      <button mat-raised-button color="info" routerLink="/vigilancia-clinica/nuevo"><mat-icon>add_circle</mat-icon> Agregar Paciente</button>
+                  </div>
+              </div>
+
+              <div class="data-container">
+                  <div class="data-table-container">
+                      <table mat-table [dataSource]="dataSource" class="data-table" multiTemplateDataRows matSort>
+                          <!-- <ng-container matColumnDef="edicion">
+                              <th mat-header-cell *matHeaderCellDef style="width: 20px;">
+                                  <mat-icon>edit</mat-icon>
+                              </th>
+                              <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                  <button *ngIf="row.egreso_id == 1" mat-stroked-button color="primary" routerLink="/vigilancia-clinica/editar/{{ row.id }}">
+                                      <mat-icon>edit</mat-icon>
+                                  </button>
+                              </td>
+                          </ng-container> -->
+
+                          <ng-container matColumnDef="clinica">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                              Clinica/Unidad
+                            </th>
+                            <td mat-cell *matCellDef="let row">{{ row.clinica_covid.nombre_unidad }}</td>
+                          </ng-container>
+
+                          <ng-container matColumnDef="no_caso">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                  No. Caso
+                              </th>
+                              <td mat-cell *matCellDef="let row">{{ row.no_caso }}</td>
+                          </ng-container>
+
+                          <ng-container matColumnDef="paciente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                Nombre
+                            </th>
+                            <td mat-cell *matCellDef="let row">{{ row.nombre_paciente }}</td>
+                          </ng-container>
+
+                          <ng-container matColumnDef="municipio">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">
+                                  Municipio
+                              </th>
+                              <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                  {{ row.municipio.descripcion }}
+                              </td>
+                          </ng-container>
+
+                          <ng-container matColumnDef="sexo">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">
+                                  Sexo
+                              </th>
+                              <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                  {{ row.sexo }}
+                              </td>
+                          </ng-container>
+
+                          <ng-container matColumnDef="edad">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">
+                                  Edad
+                              </th>
+                              <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                  {{ row.edad }}
+                              </td>
+                          </ng-container>
+
+                          <!-- <ng-container matColumnDef="responsable">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">
+                                  Condición
+                              </th>
+                              <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                  <span *ngIf="row.estatus_covid">{{ row.estatus_covid.descripcion }}</span>
+                                  <span *ngIf="!row.estatus_covid">SIN ESTATUS</span>
+                              </td>
+                          </ng-container>
+                          <ng-container matColumnDef="estatus">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true">
+                                  Responsable
+                              </th>
+                              <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                  <span *ngIf="row.responsable">{{ row.responsable.descripcion }}</span>
+                                  <span *ngIf="!row.responsable">SIN RESPONSABLE</span>
+                              </td>
+                          </ng-container> -->
+
+                          <ng-container matColumnDef="actions">
+                              <th mat-header-cell *matHeaderCellDef style="width: 150px;">Acciones</th>
+                              <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                    <button mat-stroked-button color="primary" routerLink="/vigilancia-clinica/editar/{{ row.id }}">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                              </td>
+                              <!-- <td mat-cell *matCellDef="let row; let i = index" width="1">
+                                  <button
+                                      *ngIf="row.egreso_id == 1 && row.estatus_covid"
+                                      mat-stroked-button
+                                      color="primary"
+                                      style="margin: 0px 3px;"
+                                      [ngClass]="{ green: row.estatus_covid.id == 3, red: row.estatus_covid.id == 4, orange: row.estatus_covid.id == 5}"
+                                      (click)="actualizarEstatus(row)">
+                                      <mat-icon>loop</mat-icon>
+                                  </button>
+                                  <button *ngIf="row.egreso_id == 1 && !row.estatus_covid" mat-stroked-button color="primary" style="margin: 0px 3px;" (click)="actualizarEstatus(row)">
+                                      <mat-icon>loop</mat-icon>
+                                  </button>
+                                  <button  *ngIf="row.egreso_id == 1" mat-stroked-button color="primary" (click)="confirmAlta(row.id)"><mat-icon>how_to_reg</mat-icon></button>
+                                  <button *ngIf="row.egreso_id == 1" style="margin: 0px 3px;" mat-stroked-button color="danger" (click)="dar_salida(row)">
+                                      <mat-icon>transfer_within_a_station</mat-icon>
+                                  </button>
+                                  <button *ngIf="row.egreso_id != 1" style="margin: 0px 3px;" mat-stroked-button color="primary" (click)="ver_paciente(row)">
+                                      <mat-icon>visibility</mat-icon>
+                                  </button>
+                              </td> -->
+                          </ng-container>
+
+                          <ng-container matColumnDef="noResultsFound">
+                              <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                  No se encontraron registros
+                              </td>
+                          </ng-container>
+
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                          <tr mat-row [ngClass]="{ 'selected-item': i == selectedItemIndex }" *matRowDef="let row; let i = index; columns: displayedColumns"></tr>
+
+                          <tr
+                              mat-footer-row
+                              *matFooterRowDef="['noResultsFound']"
+                              class="not-results-found"
+                              [ngClass]="{
+                hide: !(dataSource != null && dataSource.length == 0)
+              }"
+                          ></tr>
+                      </table>
+                  </div>
+                  <mat-paginator #paginator [pageSize]="pageSize" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons (page)="pageEvent = cargarLista($event)"></mat-paginator>
+              </div>
+          </mat-card>
+      </section>
+  </div>
+</section>

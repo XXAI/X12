@@ -1,0 +1,308 @@
+<div [formGroup]="vigilanciaCLinicaForm">
+  <div class="form-container" fxFlex>
+    <div class="form-loading-shade" *ngIf="isLoading">
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </div>
+    <div class="form-loading-shade" *ngIf="!isLoading && !paciente">No se encontraron los datos del Paciente</div>
+
+    <mat-card fxFlex.xs="100%" fxFlex="400">
+
+
+      <h2 ><span *ngIf="paciente.id">Editar</span> <span *ngIf="!paciente.id">Nuevo</span> Registro de Paciente</h2>
+      <mat-card-content>
+        <br />
+
+        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+          <mat-form-field appearance="outline"  *ngIf="!catalogos['clinicas_covid']">
+            <mat-label>Clinica/Unidad Medica:</mat-label>
+            <input matInput formControlName="clinica">
+            <mat-hint>Escribe el nombre del Municipio</mat-hint> 
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline" *ngIf="catalogos['clinicas_covid']">
+              <mat-label>Clinica/Unidad Medica:</mat-label>
+              <input type="text" aria-label="clinica_id" matInput formControlName="clinica_id" [matAutocomplete]="clinicaAutocomplete" >
+              <mat-autocomplete #clinicaAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('nombre_unidad')" [panelWidth]="'auto'">
+                  <mat-option *ngFor="let item of filteredCatalogs['clinicasCovid'] | async" [value]="item">
+                      {{item.nombre_unidad}}
+                  </mat-option>
+              </mat-autocomplete>
+              <mat-hint *ngIf="!vigilanciaCLinicaForm.get('clinica_id').value">Selecciona un Municipio de la lista</mat-hint>
+              <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
+          </mat-form-field>
+
+
+        </div>
+
+        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+            <mat-form-field appearance="outline" fxFlex>
+              <mat-label>Nombre Completo: </mat-label>
+              <input matInput class="uppercase" id="nombre" formControlName="nombre_paciente" placeholder="Nombre Completo"/>
+              <mat-error *ngIf=" vigilanciaCLinicaForm.get('nombre_paciente').invalid && (vigilanciaCLinicaForm.get('nombre_paciente').dirty || vigilanciaCLinicaForm.get('nombre_paciente').touched)">
+                <span *ngIf="vigilanciaCLinicaForm.get('nombre_paciente').errors.required">El campo es obligatorio</span>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex>
+              <mat-label>Edad: </mat-label>
+              <input matInput (keypress)="numberOnly($event)" formControlName="edad" placeholder="Edad">
+              <mat-error *ngIf="vigilanciaCLinicaForm.get('edad').invalid && (vigilanciaCLinicaForm.get('edad').dirty || vigilanciaCLinicaForm.get('edad').touched)">
+                  <span *ngIf="vigilanciaCLinicaForm.get('edad').errors.required">Campo obligatorio, solo acepta números</span>
+              </mat-error>
+            </mat-form-field>
+
+          <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Sexo: </mat-label>
+            <mat-select formControlName="sexo">
+                <mat-option value="M">MASCULINO</mat-option>
+                <mat-option value="F">FEMENINO</mat-option>
+            </mat-select>
+            <mat-error *ngIf="vigilanciaCLinicaForm.get('sexo').invalid && (vigilanciaCLinicaForm.get('sexo').dirty || vigilanciaCLinicaForm.get('sexo').touched)">
+                <span *ngIf="vigilanciaCLinicaForm.get('sexo').errors.required">Seleccione el Sexo</span>
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+
+        <mat-form-field appearance="outline"  *ngIf="!catalogos['municipios']">
+          <mat-label>Municipio</mat-label>
+          <input matInput formControlName="municipio">
+          <mat-hint>Escribe el nombre del Municipio</mat-hint> 
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="catalogos['municipios']">
+            <mat-label>Municipio</mat-label>
+            <input type="text" aria-label="municipio" matInput formControlName="municipio_id" [matAutocomplete]="municipioAutocomplete" >
+            <mat-autocomplete #municipioAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+                <mat-option *ngFor="let item of filteredCatalogs['municipios'] | async" [value]="item">
+                    {{item.descripcion}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!vigilanciaCLinicaForm.get('municipio_id').value">Selecciona un Municipio de la lista</mat-hint>
+            <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
+        </mat-form-field>
+
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline" fxFlex>
+
+          <mat-label>Fecha de Inicio: </mat-label>
+          <input matInput [max]="maxDate" [matDatepicker]="picker1" formControlName="fecha_inicio" placeholder="Fecha de Inicio" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+  
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('fecha_inicio').invalid && (vigilanciaCLinicaForm.get('fecha_inicio').dirty || vigilanciaCLinicaForm.get('fecha_inicio').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('fecha_inicio').errors.required">El campo es obligatorio</span>
+          </mat-error>
+  
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+
+          <mat-label>Fecha de Ingreso: </mat-label>
+          <input matInput [max]="maxDate" [matDatepicker]="picker2" formControlName="fecha_ingreso" placeholder="Fecha de Ingreso" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+  
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('fecha_ingreso').invalid && (vigilanciaCLinicaForm.get('fecha_ingreso').dirty || vigilanciaCLinicaForm.get('fecha_ingreso').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('fecha_ingreso').errors.required">El campo es obligatorio</span>
+          </mat-error>
+  
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+
+          <mat-label>Fecha de Intubación: </mat-label>
+          <input matInput [max]="maxDate" [matDatepicker]="picker3" formControlName="fecha_intubado" placeholder="Fecha de Ingreso" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+  
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('fecha_intubado').invalid && (vigilanciaCLinicaForm.get('fecha_intubado').dirty || vigilanciaCLinicaForm.get('fecha_intubado').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('fecha_intubado').errors.required">El campo es obligatorio</span>
+          </mat-error>
+  
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Folio PCR: </mat-label>
+          <input matInput class="uppercase" id="folio_pcr" formControlName="folio_pcr" placeholder="Folio PCR*"/>
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('folio_pcr').invalid && (vigilanciaCLinicaForm.get('folio_pcr').dirty || vigilanciaCLinicaForm.get('folio_pcr').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('folio_pcr').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>N° Caso: </mat-label>
+          <input matInput id="no_caso" formControlName="no_caso" placeholder="N° Caso" (keypress)="numberOnly($event)"/>
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('no_caso').invalid && (vigilanciaCLinicaForm.get('no_caso').dirty || vigilanciaCLinicaForm.get('no_caso').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('no_caso').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Diagnostico: </mat-label>
+            <textarea matInput class="uppercase" id="diagnostico" formControlName="diagnostico" placeholder="Diagnostico" ></textarea>
+            <mat-error *ngIf="vigilanciaCLinicaForm.get('diagnostico').invalid && (vigilanciaCLinicaForm.get('diagnostico').dirty || vigilanciaCLinicaForm.get('diagnostico').touched)">
+                <span *ngIf="vigilanciaCLinicaForm.get('diagnostico').errors.required">Campo Obligatorio</span>
+            </mat-error>
+        </mat-form-field>
+        
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" >
+
+        <mat-radio-group  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="intubado" aria-label="Select an option">
+          <label><strong>¿Intubado?</strong></label>
+          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
+          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
+        </mat-radio-group>
+
+
+        <mat-form-field appearance="outline"  *ngIf="!catalogos['estatus_paciente_covid']">
+          <mat-label>Estatus del Paciente:</mat-label>
+          <input matInput formControlName="estatus_paciente">
+          <mat-hint>Escribe el nombre del Estatus</mat-hint> 
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="catalogos['estatus_paciente_covid']">
+            <mat-label>Estatus del Paciente: </mat-label>
+            <input type="text" aria-label="Estatus" matInput formControlName="estatus_paciente_id" [matAutocomplete]="estatusPacienteAutocomplete" >
+            <mat-autocomplete #estatusPacienteAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+                <mat-option *ngFor="let item of filteredCatalogs['estatusPacienteCovid'] | async" [value]="item">
+                    {{item.descripcion}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!vigilanciaCLinicaForm.get('estatus_paciente_id').value">Selecciona un estatus de la lista</mat-hint>
+            <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
+        </mat-form-field>
+
+        <mat-form-field appearance="outline"  *ngIf="!catalogos['egresos_covid']">
+          <mat-label>Tipo de Egreso/Alta</mat-label>
+          <input matInput formControlName="estatus_egreso">
+          <mat-hint>Escribe el nombre del Municipio</mat-hint> 
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="catalogos['egresos_covid']">
+            <mat-label>Tipo de Egreso/Alta: </mat-label>
+            <input type="text" aria-label="estatus_egreso_id" matInput formControlName="estatus_egreso_id" [matAutocomplete]="estatusEgresoAutocomplete" >
+            <mat-autocomplete #estatusEgresoAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+                <mat-option *ngFor="let item of filteredCatalogs['estatusEgresoCovid'] | async" [value]="item">
+                    {{item.descripcion}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!vigilanciaCLinicaForm.get('estatus_egreso_id').value">Selecciona un Alta/Egreso de la lista</mat-hint>
+            <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
+        </mat-form-field>
+
+      </div>
+
+      <!-- <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" ></div> -->
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" >
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Servicio N° Cama: </mat-label>
+          <input matInput id="servicio_cama" formControlName="servicio_cama" placeholder="Servicio N° Cama"/>
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('servicio_cama').invalid && (vigilanciaCLinicaForm.get('servicio_cama').dirty || vigilanciaCLinicaForm.get('servicio_cama').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('servicio_cama').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>PC02/FI02: </mat-label>
+          <input matInput id="pco_fipco" formControlName="pco_fipco" placeholder="PC02/FI02"/>
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('pco_fipco').invalid && (vigilanciaCLinicaForm.get('pco_fipco').dirty || vigilanciaCLinicaForm.get('pco_fipco').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('pco_fipco').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Saturación 02: </mat-label>
+          <input matInput id="saturado_02" formControlName="saturado_02" placeholder="PC02/FI02"/>
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('saturado_02').invalid && (vigilanciaCLinicaForm.get('saturado_02').dirty || vigilanciaCLinicaForm.get('saturado_02').touched)">
+            <span *ngIf="vigilanciaCLinicaForm.get('saturado_02').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+        
+      </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Observaciones: </mat-label>
+            <textarea matInput class="uppercase" id="observaciones" formControlName="observaciones" placeholder="Observaciones" ></textarea>
+            <mat-error *ngIf="vigilanciaCLinicaForm.get('observaciones').invalid && (vigilanciaCLinicaForm.get('observaciones').dirty || vigilanciaCLinicaForm.get('observaciones').touched)">
+                <span *ngIf="vigilanciaCLinicaForm.get('observaciones').errors.required">Campo Obligatorio</span>
+            </mat-error>
+        </mat-form-field>
+        
+      </div>
+
+
+
+        
+
+
+
+        <!-- <mat-form-field appearance="outline" fxFlex>
+          <mat-label>¿Se intubo?: </mat-label>
+          <mat-select formControlName="intubado">
+              <mat-option [value]="1">SI</mat-option>
+              <mat-option [value]="0">NO</mat-option>
+          </mat-select>
+          <mat-error *ngIf="vigilanciaCLinicaForm.get('intubado').invalid && (vigilanciaCLinicaForm.get('intubado').dirty || vigilanciaCLinicaForm.get('intubado').touched)">
+              <span *ngIf="vigilanciaCLinicaForm.get('intubado').errors.required">Seleccione una Opción</span>
+          </mat-error>
+        </mat-form-field> -->
+
+
+      
+
+
+
+
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+    <br />
+    <div>
+      <span fxFlex></span>
+      <button mat-button routerLink="/vigilancia-clinica">
+        <mat-icon>format_list_numbered</mat-icon> Regresar
+      </button>
+      <button
+        mat-raised-button
+        (click)="enviarDatos()"
+        color="primary"
+        [disabled]="!vigilanciaCLinicaForm.valid || isLoading"
+      >
+        <mat-icon>save</mat-icon> Guardar
+      </button>
+    </div>
+  </div>
+</div>

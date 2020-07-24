@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { LocationStrategy, HashLocationStrategy} from '@angular/common';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
@@ -48,6 +48,7 @@ import { CatalogosModule } from './catalogos/catalogos.module';
 import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategicos.module';
 import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
 import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.module';
+import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica.module';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.mod
     CatalogosModule,
     ArchivosGruposModule,
     RedNegativaIragModule,
+    VigilanciaClinicaModule,
     WildcardRoutingModule,
   ],
   providers: [

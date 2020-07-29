@@ -134,16 +134,22 @@ export const APPS: App[] = [
   },
   {
     name: "Reportes",
-    route: "casos-concentrados",
+    route: "concentrados",
     icon: "assets/icons/estadisticas.svg",
     isHub: true,
     hideHome: true,
     children: [
       {
         name: "Concentrado de datos",
-        route: "casos-concentrados",
+        route: "concentrados/casos-concentrados",
         icon: "picture_as_pdf",
         permission: "Z52PdlZk2XCCbIPS28NO3M17WzZMF0lI",
+      },
+      {
+        name: "Vigilancia Clinica",
+        route: "concentrados/vigilancia-clinica",
+        icon: "insert_drive_file",
+        permission: "5LPMrjGUSaEQkkzM0w1RUUWC25z7ePvH",
       },
     ],
   },

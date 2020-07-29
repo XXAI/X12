@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use \DB, \Response, \Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use App\Models\VigilanciaClinica\Vigilancia;
+use App\Models\VigilanciaClinica\CatalogoClinicaCovid;
 
 use App\Helpers\HttpStatusCodes;
 
@@ -92,9 +94,10 @@ class VigilanciaClinicaController extends Controller
             'servicio_cama' => ['required'],
             'pco_fipco' => ['required'],
             'saturado_02' => ['required'],
-            // 'ventilador' => ['required'],
-            // 'monitor' => ['required'],
-            // 'bomba_infusion' => ['required'],
+            'ventilador' => ['required'],
+            'monitor' => ['required'],
+            'bomba_infusion' => ['required'],
+            'no_bombas' => ['required'],
 
         ];
         $messages = [
@@ -131,8 +134,11 @@ class VigilanciaClinicaController extends Controller
             $data['ventilador']             = $request['ventilador'];
             $data['monitor']                = $request['monitor'];
             $data['bomba_infusion']         = $request['bomba_infusion'];
+            $data['no_bombas']              = $request['no_bombas'];
 
             $object = Vigilancia::create($data);
+            // $clinica = CatalogoClinicaCovid::find($data['clinica_id']);
+            // dd($clinica);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -140,6 +146,16 @@ class VigilanciaClinicaController extends Controller
         }
 
         return $object;
+    }
+
+    public function show($id)
+    {
+        try {
+            $paciente = Vigilancia::with("municipio", "estatus_paciente", "clinica_covid", "estatus_egreso")->find($id);
+            return response()->json(['data' => $paciente], HttpResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 
     /**
@@ -184,6 +200,7 @@ class VigilanciaClinicaController extends Controller
             $object->ventilador             = $parametros['ventilador'];
             $object->monitor                = $parametros['monitor'];
             $object->bomba_infusion         = $parametros['bomba_infusion'];
+            $object->no_bombas              = $parametros['no_bombas'];
             $object->save();
 
 
@@ -208,6 +225,66 @@ class VigilanciaClinicaController extends Controller
             $object->delete();
 
             return response()->json(['data' => 'Registro eliminado'], HttpResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function getEquipamiento()
+    {
+
+        $parametros = Input::all();
+
+        // try {
+        //     $camas = Vigilancia::select('vigilancia_clinica.clinica_id', DB::raw('COUNT(vigilancia_clinica.clinica_id) as camas_ocupadas'))->with('clinica_covid')
+        //         ->where('estatus_egreso_id', '=', 1)
+        //         ->groupBy('vigilancia_clinica.clinica_id')
+        //         ->groupBy('vigilancia_clinica.clinica_id')->get();
+
+
+
+        //     // $clinica = $camas[0]->camas_ocupadas;
+        //     // $val = CatalogoClinicaCovid::all();
+
+
+        //     // $diff = $val[0]->camas_hospitalizacion - $clinica;
+        //     //->with('clinica_covid')
+
+
+        //     // $graficas_covid = [
+
+        //     //     'camas'                 => $camas,
+        //     // ];
+        //     return response()->json(['data' => $camas], HttpResponse::HTTP_OK);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        // }
+
+
+        try {
+
+            $camas = Vigilancia::select('vigilancia_clinica.clinica_id', DB::raw('COUNT(vigilancia_clinica.clinica_id) as camas_ocupadas'))->with('clinica_covid')
+                ->where('estatus_egreso_id', '=', 1)
+                ->groupBy('vigilancia_clinica.clinica_id')
+                ->groupBy('vigilancia_clinica.clinica_id');
+
+            if (isset($parametros['query']) && $parametros['query']) {
+                $camas = $camas->where(function ($query) use ($parametros) {
+                    return $query->where('nombre_paciente', 'LIKE', '%' . $parametros['query'] . '%')
+                        ->orWhere('sexo', 'LIKE', '%' . $parametros['query'] . '%')
+                        ->orWhere('edad', 'LIKE', '%' . $parametros['query'] . '%')
+                        ->orWhere('no_caso', 'LIKE', '%' . $parametros['query'] . '%');
+                });
+            }
+            if (isset($parametros['page'])) {
+                $resultadosPorPagina = isset($parametros["per_page"]) ? $parametros["per_page"] : 20;
+
+                $pacientes = $camas->paginate($resultadosPorPagina);
+            } else {
+                $pacientes = $camas->get();
+            }
+
+            return response()->json(['data' => $pacientes], HttpResponse::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }

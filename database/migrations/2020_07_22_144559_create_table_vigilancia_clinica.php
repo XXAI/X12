@@ -30,12 +30,13 @@ class CreateTableVigilanciaClinica extends Migration
             $table->bigInteger('estatus_egreso_id')->unsigned();
             $table->smallInteger('intubado')->unsigned()->nullable();
             $table->string('servicio_cama', 200)->nullable();
-            $table->decimal('pco_fipco', 15,2)->nullable();
-            $table->decimal('saturado_02', 15,2)->nullable();
+            $table->decimal('pco_fipco', 15, 2)->nullable();
+            $table->decimal('saturado_02', 15, 2)->nullable();
             $table->text('observaciones')->nullable();
             $table->smallInteger('ventilador')->unsigned()->default(0);
             $table->smallInteger('monitor')->unsigned()->default(0);
             $table->smallInteger('bomba_infusion')->unsigned()->default(0);
+            $table->smallInteger('no_bombas')->unsigned();
             $table->softDeletes();
             $table->timestamps();
 

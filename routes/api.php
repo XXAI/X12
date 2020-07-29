@@ -13,6 +13,7 @@ use Illuminate\Http\Response as HttpResponse;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -47,12 +48,12 @@ Route::get('informacion-covid',             'API\Modulos\ConsultaMapaController@
 Route::get('casos-dias',                    'API\Modulos\ConsultaMapaController@informacionCasosAcumulado');
 Route::get('casos-republica',               'API\Modulos\ConsultaMapaController@informacionCasosRepublica');
 
-Route::group(['middleware'=>'auth'],function($router){
+Route::group(['middleware' => 'auth'], function ($router) {
     Route::apiResource('user',          'API\Admin\UserController');
     Route::apiResource('permission',    'API\Admin\PermissionController');
     Route::apiResource('role',          'API\Admin\RoleController');
-    Route::apiResource('profile',       'API\ProfileController')->only([ 'show', 'update']);
-    
+    Route::apiResource('profile',       'API\ProfileController')->only(['show', 'update']);
+
     //Modulos del Sistema
     /**
      *  Modulo de Reportes
@@ -80,7 +81,7 @@ Route::group(['middleware'=>'auth'],function($router){
      */
     Route::apiResource('call-center-llamadas',      'API\Modulos\CallCenterLLamadasController');
     Route::get('busqueda-formularios-llenos',       'API\Modulos\LlenadoFormularioController@buscarFormularioLleno');
-    
+
     /**
      * Modulo de Archivos Grupos
      */
@@ -116,7 +117,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('listado-contingencias-formularios', 'API\Modulos\CasosContingenciasController@listadoContingenciasFormularios');
     Route::get('listado-casos-contingencia/{id}',   'API\Modulos\CasosContingenciasController@listadoCasosContingencia');
     Route::get('obtener-datos-caso/{id}',           'API\Modulos\CasosContingenciasController@verCaso');
-    
+
     Route::post('guardar-estatus-caso/{id}',        'API\Modulos\CasosContingenciasController@guardarNuevoEstatus');
 
     Route::get('personas-contagios',       'API\Modulos\IndiceContactoController@mapaGeneral');
@@ -124,7 +125,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('indice-contacto',   'API\Modulos\IndiceContactoController');
     Route::put('finalizar-cadena/{id}',   'API\Modulos\PersonaContactoController@finalizarCadena');
     Route::put('finalizar-grupo/{id}',   'API\Modulos\PersonaContactoController@finalizarGrupo');
-    
+
 
     Route::apiResource('pacientes-covid',             'API\Modulos\PacientesCovidController');
     Route::put('pacientes-covid-salida/{id}',         'API\Modulos\PacientesCovidController@actualizarEgreso');
@@ -140,27 +141,27 @@ Route::group(['middleware'=>'auth'],function($router){
      * Catalogos
      */
 
-     //Vigilancia Clinica
-     Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
+    //Vigilancia Clinica
+    Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
+    Route::get('equipamiento',                           'API\Modulos\VigilanciaClinicaController@getEquipamiento');
 
-     //responsables
+    //responsables
 
 
-     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
-
+    Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {
     $avatars_path = public_path() . config('ng-client.path') . '/assets/avatars';
-    $image_files = glob( $avatars_path . '/*', GLOB_MARK );
+    $image_files = glob($avatars_path . '/*', GLOB_MARK);
 
     $root_path = public_path() . config('ng-client.path');
 
-    $clean_path = function($value)use($root_path) {
-        return str_replace($root_path,'',$value);
+    $clean_path = function ($value) use ($root_path) {
+        return str_replace($root_path, '', $value);
     };
-    
+
     $avatars = array_map($clean_path, $image_files);
 
-    return response()->json(['images'=>$avatars], HttpResponse::HTTP_OK);
+    return response()->json(['images' => $avatars], HttpResponse::HTTP_OK);
 });

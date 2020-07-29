@@ -1,24 +1,22 @@
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VisorConcentradosComponent } from './visor-concentrados/visor-concentrados.component';
-import { ConcentradosRoutingModule } from './concentrados-routing.module';
 
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { SharedModule } from '../shared/shared.module';
+import { ConcentradosRoutingModule } from './concentrados-routing.module';
+import { VisorConcentradosModule } from './visor-concentrados/visor-concentrados.module';
+import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica.module';
+import { ConcentradosComponent } from './concentrados.component';
+
 @NgModule({
-  declarations:
-  [VisorConcentradosComponent],
+  declarations: [ConcentradosComponent],
   imports: [
     CommonModule,
-    ConcentradosRoutingModule,
-    
-    FlexLayoutModule,
-    SharedModule
-
-
-  ],providers:[
-    
+    ConcentradosRoutingModule
+  ],
+  exports: [
+    VisorConcentradosModule,
+    VigilanciaClinicaModule
   ]
-
 })
 export class ConcentradosModule { }
+

@@ -28,6 +28,7 @@ export class FormularioComponent implements OnInit {
   fechaActual: any = '';
   paciente: any = {};
   paciente_id: number = 0;
+  intubado: boolean = false;
 
   constructor(public dialog: MatDialog,
     private vigilanciaClinicaService: VigilanciaClinicaService,
@@ -63,7 +64,9 @@ export class FormularioComponent implements OnInit {
       observaciones: ['', Validators.required],
       ventilador: [0],
       monitor: [0],
-      bomba_infusion: [0],
+      bomba_infusion: ['', Validators.required],
+      //no_bombas: [0, Validators.required]
+      no_bombas: [0, [Validators.required, Validators.pattern('[0-4]*')]]
 
     });
 
@@ -140,8 +143,8 @@ export class FormularioComponent implements OnInit {
   public cargarDatos() {
     this.vigilanciaClinicaService.obtenerCaso(this.paciente_id).subscribe(
       response => {
+        this.isLoading = false;
 
-        console.log(response);
         let datos = response.data;
 
         var municipio = datos.municipio;
@@ -156,6 +159,13 @@ export class FormularioComponent implements OnInit {
           clinica_covid
 
         }
+        if (datos.estatus_paciente.id == 4) {
+          this.intubado = true;
+        } else {
+          this.intubado = false;
+        }
+
+        this.IniciarCatalogos(datos_autocomplet);
 
         this.vigilanciaCLinicaForm.controls['nombre_paciente'].setValue(datos.nombre_paciente);
         //this.vigilanciaCLinicaForm.controls['municipio_id'].setValue(datos.municipio_id);
@@ -169,16 +179,17 @@ export class FormularioComponent implements OnInit {
         this.vigilanciaCLinicaForm.controls['diagnostico'].setValue(datos.diagnostico);
         //this.vigilanciaCLinicaForm.controls['estatus_paciente_id'].setValue(datos.estatus_paciente_id);
         //this.vigilanciaCLinicaForm.controls['estatus_egreso_id'].setValue(datos.estatus_egreso_id);
+
         this.vigilanciaCLinicaForm.controls['intubado'].setValue(datos.intubado);
+
         this.vigilanciaCLinicaForm.controls['servicio_cama'].setValue(datos.servicio_cama);
         this.vigilanciaCLinicaForm.controls['pco_fipco'].setValue(datos.pco_fipco);
         this.vigilanciaCLinicaForm.controls['saturado_02'].setValue(datos.saturado_02);
         this.vigilanciaCLinicaForm.controls['observaciones'].setValue(datos.observaciones);
         this.vigilanciaCLinicaForm.controls['ventilador'].setValue(datos.ventilador);
-        this.vigilanciaCLinicaForm.controls['monitor'].setValue(datos.ventilador);
-        this.vigilanciaCLinicaForm.controls['bomba_infusion'].setValue(datos.ventilador);
-        console.log(datos);
-        this.IniciarCatalogos(datos_autocomplet);
+        this.vigilanciaCLinicaForm.controls['monitor'].setValue(datos.monitor);
+        this.vigilanciaCLinicaForm.controls['bomba_infusion'].setValue(datos.bomba_infusion);
+        this.vigilanciaCLinicaForm.controls['no_bombas'].setValue(datos.no_bombas);
       });
   }
 
@@ -213,6 +224,29 @@ export class FormularioComponent implements OnInit {
 
   displayFn(value: any, valueLabel: string) {
     return value ? value[valueLabel] : value;
+  }
+
+  opcionIntubado(e) {
+
+    let id = e.option.value.id;
+
+    if (id == 4) {
+
+      this.intubado = true;
+      this.vigilanciaCLinicaForm.get('intubado').setValue(1);
+      this.vigilanciaCLinicaForm.get('bomba_infusion').setValue(1);
+      this.vigilanciaCLinicaForm.get('no_bombas').setValue(1);
+
+
+    } else {
+
+      this.intubado = false;
+      this.vigilanciaCLinicaForm.get('intubado').setValue('');
+      this.vigilanciaCLinicaForm.get('bomba_infusion').setValue('');
+      this.vigilanciaCLinicaForm.get('no_bombas').setValue(0);
+
+    }
+
   }
 
   enviarDatos() {

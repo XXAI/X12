@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { VisorConcentradosComponent } from './visor-concentrados/visor-concentrados.component';
 import { AuthGuard } from '../auth/auth.guard';
+import { ConcentradosComponent } from './concentrados.component';
+
 const routes: Routes = [
-  { path: 'casos-concentrados', component: VisorConcentradosComponent },
+  { path: 'concentrados', component: ConcentradosComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

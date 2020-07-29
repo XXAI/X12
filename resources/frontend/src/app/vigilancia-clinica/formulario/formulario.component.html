@@ -170,13 +170,6 @@
 
       <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" >
 
-        <mat-radio-group  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="intubado" aria-label="Select an option">
-          <label><strong>¿Intubado?</strong></label>
-          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
-          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
-        </mat-radio-group>
-
-
         <mat-form-field appearance="outline"  *ngIf="!catalogos['estatus_paciente_covid']">
           <mat-label>Estatus del Paciente:</mat-label>
           <input matInput formControlName="estatus_paciente">
@@ -185,8 +178,8 @@
 
         <mat-form-field appearance="outline" *ngIf="catalogos['estatus_paciente_covid']">
             <mat-label>Estatus del Paciente: </mat-label>
-            <input type="text" aria-label="Estatus" matInput formControlName="estatus_paciente_id" [matAutocomplete]="estatusPacienteAutocomplete" >
-            <mat-autocomplete #estatusPacienteAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
+            <input type="text" aria-label="Estatus" matInput formControlName="estatus_paciente_id" [matAutocomplete]="estatusPacienteAutocomplete">
+            <mat-autocomplete #estatusPacienteAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="opcionIntubado($event)">
                 <mat-option *ngFor="let item of filteredCatalogs['estatusPacienteCovid'] | async" [value]="item">
                     {{item.descripcion}}
                 </mat-option>
@@ -194,6 +187,13 @@
             <mat-hint *ngIf="!vigilanciaCLinicaForm.get('estatus_paciente_id').value">Selecciona un estatus de la lista</mat-hint>
             <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
         </mat-form-field>
+
+        <mat-radio-group *ngIf="!intubado"  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="intubado" aria-label="Select an option">
+          <label><strong>¿Intubado?</strong></label>
+          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
+          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
+        </mat-radio-group>
+        
 
         <mat-form-field appearance="outline"  *ngIf="!catalogos['egresos_covid']">
           <mat-label>Tipo de Egreso/Alta</mat-label>
@@ -211,6 +211,38 @@
             </mat-autocomplete>
             <mat-hint *ngIf="!vigilanciaCLinicaForm.get('estatus_egreso_id').value">Selecciona un Alta/Egreso de la lista</mat-hint>
             <!-- <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint> -->
+        </mat-form-field>
+
+      </div>
+      
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" >
+        
+        <mat-radio-group fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="ventilador" >
+          <label><strong>¿Tiene Ventilador?</strong></label>
+          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
+          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
+        </mat-radio-group>
+
+        <mat-radio-group fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="monitor" >
+          <label><strong>¿Tiene Monitor?</strong></label>
+          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
+          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
+        </mat-radio-group>
+
+        <mat-radio-group fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="4px" fxLayout.xs ="row" fxLayout.sm ="row" formControlName="bomba_infusion" >
+          <label><strong>¿Tiene Bomba de Infusion?</strong></label>
+          <mat-radio-button class="formulario-radio-button" [value]="1">SI</mat-radio-button>
+          <mat-radio-button class="formulario-radio-button" [value]="0">NO</mat-radio-button>
+        </mat-radio-group>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>¿Cuantas Bombas de Infusion tiene?: </mat-label>
+          <input matInput type="text" id="no_bombas" formControlName="no_bombas" placeholder="Número de Bombas de Infusion" (keypress)="numberOnly($event)" />
+          <mat-error *ngIf=" vigilanciaCLinicaForm.get('no_bombas').invalid && (vigilanciaCLinicaForm.get('no_bombas').dirty || vigilanciaCLinicaForm.get('no_bombas').touched) || vigilanciaCLinicaForm.get('no_bombas').hasError('pattern')">
+            <span *ngIf="vigilanciaCLinicaForm.get('no_bombas').errors.required">El campo es obligatorio</span>
+            <span *ngIf="vigilanciaCLinicaForm.get('no_bombas').hasError('pattern')">El paciente solo puede tener hasta 4 Bombas de Infusion asignadas</span>
+          </mat-error>
         </mat-form-field>
 
       </div>

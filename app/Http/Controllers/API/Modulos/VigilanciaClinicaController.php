@@ -289,4 +289,35 @@ class VigilanciaClinicaController extends Controller
             return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+
+    public function getResumenCamas()
+    {
+        try {
+
+            $parametros = Input::all();
+
+            $reporte = CatalogoClinicaCovid::with('CamasOcupadas')
+            ->leftJoin('vigilancia_clinica', function($join)
+            {
+                $join->on('catalogo_clinica_covid.id', '=', 'vigilancia_clinica.clinica_id')
+                        ->where("vigilancia_clinica.estatus_egreso_id", "=", 1);
+            });
+
+            if (isset($parametros['query']) && $parametros['query']) {
+                $reporte = $reporte->where("catalogo_clinica_covid.id", "=", $parametros['clinica_id']);
+            }
+
+            $reporte = $reporte->select("catalogo_clinica_covid.*",
+                    DB::RAW("sum(vigilancia_clinica.no_bombas) as bombas"),
+                    DB::RAW("sum(vigilancia_clinica.ventilador) as ventilador"),
+                    DB::RAW("sum(vigilancia_clinica.monitor) as monitor"),
+                    DB::RAW("count(vigilancia_clinica.intubado) as camas")
+                    )
+            ->get();
+            
+            return response()->json(['data' => $reporte], HttpResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 }

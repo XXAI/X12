@@ -17,4 +17,10 @@ class CatalogoClinicaCovid extends Model
         'monitor',
         'bomba_infusion',
     ];
+ 
+
+    public function CamasOcupadas(){
+        return $this->hasMany('App\Models\VigilanciaClinica\Vigilancia','clinica_id','id')
+                        ->where("estatus_egreso_id", "=", 1);
+    }
 }

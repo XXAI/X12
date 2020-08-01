@@ -19,7 +19,7 @@ class CatalogoClinicaCovid extends Model
     ];
  
 
-    public function CamasOcupadas(){
+    public function pacientes(){
         return $this->hasMany('App\Models\VigilanciaClinica\Vigilancia','clinica_id','id')
                         ->where("estatus_egreso_id", "=", 1);
     }

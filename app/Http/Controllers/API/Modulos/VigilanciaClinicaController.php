@@ -296,24 +296,22 @@ class VigilanciaClinicaController extends Controller
 
             $parametros = Input::all();
 
-            $reporte = CatalogoClinicaCovid::with('CamasOcupadas')
-            ->leftJoin('vigilancia_clinica', function($join)
-            {
-                $join->on('catalogo_clinica_covid.id', '=', 'vigilancia_clinica.clinica_id')
-                        ->where("vigilancia_clinica.estatus_egreso_id", "=", 1);
-            });
-
+            $reporte = CatalogoClinicaCovid::with('pacientes');
+            
+            $reporte = $reporte->select("catalogo_clinica_covid.*",
+                                        DB::RAW("(select count(*) from vigilancia_clinica where clinica_id=catalogo_clinica_covid.id) as camas_ocupadas"),
+                                        DB::RAW("(select if(sum(vigilancia_clinica.no_bombas) is null, 0, sum(vigilancia_clinica.no_bombas)) from vigilancia_clinica where estatus_egreso_id=1 and clinica_id=catalogo_clinica_covid.id) as bombas_ocupadas"),
+                                        DB::RAW("(select if(sum(vigilancia_clinica.ventilador) is null, 0, sum(vigilancia_clinica.ventilador)) from vigilancia_clinica where estatus_egreso_id=1 and clinica_id=catalogo_clinica_covid.id) as ventiladores_ocupados"),
+                                        DB::RAW("(select if(sum(vigilancia_clinica.monitor) is null, 0, sum(vigilancia_clinica.monitor)) from vigilancia_clinica where estatus_egreso_id=1 and clinica_id=catalogo_clinica_covid.id) as bombas_ocupadas"),
+                                        DB::RAW("(select count(*) from vigilancia_clinica where estatus_egreso_id=2 and clinica_id=catalogo_clinica_covid.id) as alta"),
+                                        DB::RAW("(select count(*) from vigilancia_clinica where estatus_egreso_id=3 and clinica_id=catalogo_clinica_covid.id) as defunciones")
+                                    );
             if (isset($parametros['query']) && $parametros['query']) {
                 $reporte = $reporte->where("catalogo_clinica_covid.id", "=", $parametros['clinica_id']);
             }
 
-            $reporte = $reporte->select("catalogo_clinica_covid.*",
-                    DB::RAW("sum(vigilancia_clinica.no_bombas) as bombas"),
-                    DB::RAW("sum(vigilancia_clinica.ventilador) as ventilador"),
-                    DB::RAW("sum(vigilancia_clinica.monitor) as monitor"),
-                    DB::RAW("count(vigilancia_clinica.intubado) as camas")
-                    )
-            ->get();
+          
+            $reporte = $reporte->get();
             
             return response()->json(['data' => $reporte], HttpResponse::HTTP_OK);
         } catch (\Exception $e) {

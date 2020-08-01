@@ -47,7 +47,7 @@ Route::get('ubicacion-municipios',          'API\Modulos\ConsultaMapaController@
 Route::get('informacion-covid',             'API\Modulos\ConsultaMapaController@informacionCovid');
 Route::get('casos-dias',                    'API\Modulos\ConsultaMapaController@informacionCasosAcumulado');
 Route::get('casos-republica',               'API\Modulos\ConsultaMapaController@informacionCasosRepublica');
-
+Route::get('resumen_camas',                           'API\Modulos\VigilanciaClinicaController@getResumenCamas');
 
 
 Route::group(['middleware' => 'auth'], function ($router) {
@@ -146,7 +146,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     //Vigilancia Clinica
     Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
     Route::get('equipamiento',                           'API\Modulos\VigilanciaClinicaController@getEquipamiento');
-    Route::get('resumen_camas',                           'API\Modulos\VigilanciaClinicaController@getResumenCamas');
+    
     //responsables
 
 

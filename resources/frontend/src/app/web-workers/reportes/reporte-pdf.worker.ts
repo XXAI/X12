@@ -4,6 +4,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { ReportePersonalActivo } from './reporte-personal-activo';
 import { ReporteCasoConcentrados } from './reporte-casos-concentrados';
 import { ReportePacientes } from './reporte-pacientes';
+import { ReporteVigilanciaClinica } from './reporte-vigilancia-clinica';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -11,6 +12,7 @@ const reportes = {
   'empleados/personal-activo': new ReportePersonalActivo(),
   '/concentrado-datos': new ReporteCasoConcentrados(),
   '/reporte-pacientes': new ReportePacientes(),
+  '/vigilancia-clinica': new ReporteVigilanciaClinica(),
 };
 
 addEventListener('message', ({ data }) => {

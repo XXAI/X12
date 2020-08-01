@@ -85,7 +85,7 @@ export class CamasComponent implements OnInit {
 
   filterForm = this.fb.group({
 
-    'clinicas_covid': [undefined],
+    'clinica_id': [undefined],
 
   });
 
@@ -151,7 +151,7 @@ export class CamasComponent implements OnInit {
           // 'responsables': response.data.responsables,
           // 'tipo_atencion': response.data.tipo_atencion,
           // 'tipo_unidades': response.data.tipo_unidad,
-          'clinicas_covid': response.clinicas_covid
+          'clinica_id': response.clinicas_covid
 
         };
 
@@ -159,7 +159,7 @@ export class CamasComponent implements OnInit {
         // this.filteredCatalogs['responsables'] = this.filterForm.controls['responsables'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'responsables', 'descripcion')));
         // this.filteredCatalogs['tipo_atencion'] = this.filterForm.controls['tipo_atencion'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_atencion', 'descripcion')));
         // this.filteredCatalogs['tipo_unidades'] = this.filterForm.controls['tipo_unidades'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_unidades', 'descripcion')));
-        this.filteredCatalogs['clinicas_covid'] = this.filterForm.controls['clinicas_covid'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'clinicas_covid', 'nombre_unidad')));
+        this.filteredCatalogs['clinicas_covid'] = this.filterForm.controls['clinica_id'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'clinica_id', 'nombre_unidad')));
 
       },
       errorResponse => {
@@ -222,19 +222,20 @@ export class CamasComponent implements OnInit {
           tooltip: i.toUpperCase() + ': ',
           active: true
         };
-        if (i == 'tipo_atencion') {
-          item.tag = "Tipo de Atención: " + data[i].descripcion;
-        } else if (i == 'responsables') {
-          item.tag = "Responsable: " + data[i].descripcion;
-        } else if (i == 'municipios') {
-          item.tag = "Municipio: " + data[i].descripcion;
-        } else if (i == 'tipo_unidades') {
-          item.tag = "Unidad: " + data[i].descripcion;
-        } else if (i == 'estatus_covid') {
-          item.tag = "Estatus: " + data[i].descripcion;
-        } else if (i == 'no_caso') {
-          item.tag = "N° Caso: " + this.filterForm.value.no_caso;
-        }
+        if (i == 'clinica_id') {
+          item.tag = "Clínica: " + data[i].nombre_unidad;
+        } 
+        // else if (i == 'responsables') {
+        //   item.tag = "Responsable: " + data[i].descripcion;
+        // } else if (i == 'municipios') {
+        //   item.tag = "Municipio: " + data[i].descripcion;
+        // } else if (i == 'tipo_unidades') {
+        //   item.tag = "Unidad: " + data[i].descripcion;
+        // } else if (i == 'estatus_covid') {
+        //   item.tag = "Estatus: " + data[i].descripcion;
+        // } else if (i == 'no_caso') {
+        //   item.tag = "N° Caso: " + this.filterForm.value.no_caso;
+        // }
 
         this.filterChips.push(item);
       }
@@ -269,19 +270,21 @@ export class CamasComponent implements OnInit {
 
       if (filterFormValues[i]) {
 
-        if (i == 'municipios') {
+        if (i == 'clinica_id') {
           params[i] = filterFormValues[i].id;
-        } else if (i == 'responsables') {
-          params[i] = filterFormValues[i].id;
-        } else if (i == 'tipo_atencion') {
-          params[i] = filterFormValues[i].id;
-        } else if (i == 'tipo_unidades') {
-          params[i] = filterFormValues[i].id;
-        } else if (i == 'estatus_covid') {
-          params[i] = filterFormValues[i].id;
-        } else if (i == 'no_caso') {
-          params[i] = this.filterForm.value.no_caso;
+          console.log("NUEVAAA", params[i]);
         }
+        // else if (i == 'responsables') {
+        //   params[i] = filterFormValues[i].id;
+        // } else if (i == 'tipo_atencion') {
+        //   params[i] = filterFormValues[i].id;
+        // } else if (i == 'tipo_unidades') {
+        //   params[i] = filterFormValues[i].id;
+        // } else if (i == 'estatus_covid') {
+        //   params[i] = filterFormValues[i].id;
+        // } else if (i == 'no_caso') {
+        //   params[i] = this.filterForm.value.no_caso;
+        // }
 
         countFilter++;
 
@@ -383,19 +386,20 @@ export class CamasComponent implements OnInit {
 
       if (appStoredData['filter'][i]) {
 
-        if (i == 'no_caso') {
-          params[i] = this.filterForm.value.no_caso;
-        } else if (i == 'municipios') {
-          params[i] = appStoredData['filter'][i].id;
-        } else if (i == 'responsables') {
-          params[i] = appStoredData['filter'][i].id;
-        } else if (i == 'tipo_atencion') {
-          params[i] = appStoredData['filter'][i].id;
-        } else if (i == 'tipo_unidades') {
-          params[i] = appStoredData['filter'][i].id;
-        } else if (i == 'estatus_covid') {
-          params[i] = appStoredData['filter'][i].id;
+        if (i == 'clinica_id') {
+          params[i] = appStoredData['filter'][i].id
         }
+        // else if (i == 'municipios') {
+        //   params[i] = appStoredData['filter'][i].id;
+        // } else if (i == 'responsables') {
+        //   params[i] = appStoredData['filter'][i].id;
+        // } else if (i == 'tipo_atencion') {
+        //   params[i] = appStoredData['filter'][i].id;
+        // } else if (i == 'tipo_unidades') {
+        //   params[i] = appStoredData['filter'][i].id;
+        // } else if (i == 'estatus_covid') {
+        //   params[i] = appStoredData['filter'][i].id;
+        // }
         countFilter++;
       }
 
@@ -429,7 +433,7 @@ export class CamasComponent implements OnInit {
               this.stepperConfig.currentIndex = 2;
 
               console.log("deitaa", data);
-              FileSaver.saveAs(data.data, 'camas');
+              FileSaver.saveAs(data.data, 'Vigilancia-Clinica');
               reportWorker.terminate();
 
               this.stepperConfig.steps[2].status = 3;
@@ -453,7 +457,7 @@ export class CamasComponent implements OnInit {
             showSigns: this.reportIncludeSigns,
           };
           console.log("titulo", config);
-          reportWorker.postMessage({ data: { items: response.data, config: config }, reporte: '/concentrado-datos' });
+          reportWorker.postMessage({ data: { items: response.data, config: config }, reporte: '/vigilancia-clinica' });
         }
         this.isLoading = false;
       },
@@ -475,7 +479,7 @@ export class CamasComponent implements OnInit {
 
   toggleReportPanel() {
     this.reportIncludeSigns = false;
-    this.reportTitle = 'Listado de Pacientes';
+    this.reportTitle = 'Resumen Vigilancia Clinica';
 
     this.stepperConfig = {
       steps: [

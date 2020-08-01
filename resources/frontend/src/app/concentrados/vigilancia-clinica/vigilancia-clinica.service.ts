@@ -17,7 +17,6 @@ export class VigilanciaClinicaService {
   getResumen(payload): Observable<any> {
     return this.http.get<any>(this.url_resumen, { params: payload }).pipe(
       map(response => {
-        console.log("valor", response);
         return response;
 
       })

@@ -8,14 +8,14 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class VigilanciaClinicaService {
-  url_equipamiento = `${environment.base_url}/equipamiento`;
-  url_filter_catalogs = `${environment.base_url}/catalogos-covid`;
+  url_resumen         = `${environment.base_url}/resumen_camas`;
+  url_filter_catalogs = `${environment.base_url}/catalogos-resumen-clinicas`;
 
   constructor(private http: HttpClient) { }
 
 
-  getCamas(payload): Observable<any> {
-    return this.http.get<any>(this.url_equipamiento, { params: payload }).pipe(
+  getResumen(payload): Observable<any> {
+    return this.http.get<any>(this.url_resumen, { params: payload }).pipe(
       map(response => {
         console.log("valor", response);
         return response;
@@ -23,6 +23,7 @@ export class VigilanciaClinicaService {
       })
     );
   }
+
 
   getFilterCatalogs(): Observable<any> {
     return this.http.get<any>(this.url_filter_catalogs).pipe(

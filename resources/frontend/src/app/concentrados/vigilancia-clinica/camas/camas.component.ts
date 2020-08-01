@@ -75,22 +75,17 @@ export class CamasComponent implements OnInit {
   filteredCatalogs: any = {};
 
   catalogos: any = {
-    municipios: [],
-    responsables: [],
-    tipo_atencion: [],
-    tipo_unidades: [],
-    estatus_covid: []
+    // municipios: [],
+    // responsables: [],
+    // tipo_atencion: [],
+    // tipo_unidades: [],
+    clinicas_covid: []
 
   };
 
   filterForm = this.fb.group({
 
-    'no_caso': [undefined],
-    'municipios': [undefined],
-    'responsables': [undefined],
-    'tipo_atencion': [undefined],
-    'tipo_unidades': [undefined],
-    'estatus_covid': [undefined],
+    'clinicas_covid': [undefined],
 
   });
 
@@ -152,20 +147,19 @@ export class CamasComponent implements OnInit {
 
         this.filterCatalogs = {
 
-          'municipios': response.data.municipios,
-          'responsables': response.data.responsables,
-          'tipo_atencion': response.data.tipo_atencion,
-          'tipo_unidades': response.data.tipo_unidad,
-          'estatus_covid': response.data.estatusCovid
-
+          // 'municipios': response.data.municipios,
+          // 'responsables': response.data.responsables,
+          // 'tipo_atencion': response.data.tipo_atencion,
+          // 'tipo_unidades': response.data.tipo_unidad,
+          'clinicas_covid': response.clinicas_covid
 
         };
 
-        this.filteredCatalogs['municipios'] = this.filterForm.controls['municipios'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'municipios', 'descripcion')));
-        this.filteredCatalogs['responsables'] = this.filterForm.controls['responsables'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'responsables', 'descripcion')));
-        this.filteredCatalogs['tipo_atencion'] = this.filterForm.controls['tipo_atencion'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_atencion', 'descripcion')));
-        this.filteredCatalogs['tipo_unidades'] = this.filterForm.controls['tipo_unidades'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_unidades', 'descripcion')));
-        this.filteredCatalogs['estatus_covid'] = this.filterForm.controls['estatus_covid'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'estatus_covid', 'descripcion')));
+        // this.filteredCatalogs['municipios'] = this.filterForm.controls['municipios'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'municipios', 'descripcion')));
+        // this.filteredCatalogs['responsables'] = this.filterForm.controls['responsables'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'responsables', 'descripcion')));
+        // this.filteredCatalogs['tipo_atencion'] = this.filterForm.controls['tipo_atencion'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_atencion', 'descripcion')));
+        // this.filteredCatalogs['tipo_unidades'] = this.filterForm.controls['tipo_unidades'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_unidades', 'descripcion')));
+        this.filteredCatalogs['clinicas_covid'] = this.filterForm.controls['clinicas_covid'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'clinicas_covid', 'nombre_unidad')));
 
       },
       errorResponse => {
@@ -305,7 +299,7 @@ export class CamasComponent implements OnInit {
     this.sharedService.setDataToCurrentApp('searchQuery', this.searchQuery);
     this.sharedService.setDataToCurrentApp('filter', filterFormValues);
 
-    this.reportesService.getCamas(params).subscribe(
+    this.reportesService.getResumen(params).subscribe(
 
       response => {
         console.log("RESPONSE", response.data);
@@ -413,7 +407,7 @@ export class CamasComponent implements OnInit {
 
     this.stepperConfig.steps[0].status = 2;
 
-    this.reportesService.getCamas(params).subscribe(
+    this.reportesService.getResumen(params).subscribe(
       response => {
         console.log("zxczxc", response);
         if (response.error) {

@@ -230,66 +230,6 @@ class VigilanciaClinicaController extends Controller
         }
     }
 
-    public function getEquipamiento()
-    {
-
-        $parametros = Input::all();
-
-        // try {
-        //     $camas = Vigilancia::select('vigilancia_clinica.clinica_id', DB::raw('COUNT(vigilancia_clinica.clinica_id) as camas_ocupadas'))->with('clinica_covid')
-        //         ->where('estatus_egreso_id', '=', 1)
-        //         ->groupBy('vigilancia_clinica.clinica_id')
-        //         ->groupBy('vigilancia_clinica.clinica_id')->get();
-
-
-
-        //     // $clinica = $camas[0]->camas_ocupadas;
-        //     // $val = CatalogoClinicaCovid::all();
-
-
-        //     // $diff = $val[0]->camas_hospitalizacion - $clinica;
-        //     //->with('clinica_covid')
-
-
-        //     // $graficas_covid = [
-
-        //     //     'camas'                 => $camas,
-        //     // ];
-        //     return response()->json(['data' => $camas], HttpResponse::HTTP_OK);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
-        // }
-
-
-        try {
-
-            $camas = Vigilancia::select('vigilancia_clinica.clinica_id', DB::raw('COUNT(vigilancia_clinica.clinica_id) as camas_ocupadas'))->with('clinica_covid')
-                ->where('estatus_egreso_id', '=', 1)
-                ->groupBy('vigilancia_clinica.clinica_id')
-                ->groupBy('vigilancia_clinica.clinica_id');
-
-            if (isset($parametros['query']) && $parametros['query']) {
-                $camas = $camas->where(function ($query) use ($parametros) {
-                    return $query->where('nombre_paciente', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('sexo', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('edad', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('no_caso', 'LIKE', '%' . $parametros['query'] . '%');
-                });
-            }
-            if (isset($parametros['page'])) {
-                $resultadosPorPagina = isset($parametros["per_page"]) ? $parametros["per_page"] : 20;
-
-                $pacientes = $camas->paginate($resultadosPorPagina);
-            } else {
-                $pacientes = $camas->get();
-            }
-
-            return response()->json(['data' => $pacientes], HttpResponse::HTTP_OK);
-        } catch (\Exception $e) {
-            return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
-        }
-    }
-
     public function getResumenCamas()
     {
         try {
@@ -319,5 +259,26 @@ class VigilanciaClinicaController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => ['message' => $e->getMessage(), 'line' => $e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
+    }
+
+    public function getFilterCatalogsVc(){
+
+        try{
+
+            $clinicas_covid               = CatalogoClinicaCovid::orderBy('nombre_unidad');
+
+
+
+            $catalogos_filtros = [
+
+                'clinicas_covid'                     => $clinicas_covid->get(),
+                
+            ];
+
+            return response()->json($catalogos_filtros, HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+
     }
 }

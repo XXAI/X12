@@ -145,8 +145,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Vigilancia Clinica
     Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
-    Route::get('equipamiento',                           'API\Modulos\VigilanciaClinicaController@getEquipamiento');
-    Route::get('resumen_camas',                           'API\Modulos\VigilanciaClinicaController@getResumenCamas');
+    Route::get('resumen_camas',                          'API\Modulos\VigilanciaClinicaController@getResumenCamas');
+    Route::get('catalogos-resumen-clinicas',             'API\Modulos\VigilanciaClinicaController@getFilterCatalogsVc');
     //responsables
 
 

@@ -27,12 +27,47 @@ class VigilanciaClinicaController extends Controller
 
             if (isset($parametros['query']) && $parametros['query']) {
                 $pacientes = $pacientes->where(function ($query) use ($parametros) {
-                    return $query->where('nombre_paciente', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('sexo', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('edad', 'LIKE', '%' . $parametros['query'] . '%')
-                        ->orWhere('no_caso', 'LIKE', '%' . $parametros['query'] . '%');
+                    return $query->where('nombre_paciente', 'LIKE', '%' . $parametros['query'] . '%');
+                        // ->orWhere('sexo', 'LIKE', '%' . $parametros['query'] . '%')
+                        // ->orWhere('edad', 'LIKE', '%' . $parametros['query'] . '%')
+                        // ->orWhere('no_caso', 'LIKE', '%' . $parametros['query'] . '%');
                 });
             }
+
+            if(isset($parametros['active_filter']) && $parametros['active_filter']){
+
+                if(isset($parametros['no_caso']) && $parametros['no_caso']){
+
+                    $pacientes = $pacientes->where('no_caso',$parametros['no_caso']);
+
+                }
+
+                if(isset($parametros['clinica']) && $parametros['clinica']){
+
+                    $pacientes = $pacientes->where('clinica_id',$parametros['clinica']);
+
+                }
+
+                if(isset($parametros['municipio']) && $parametros['municipio']){
+
+                    $pacientes = $pacientes->where('municipio_id',$parametros['municipio']);
+
+                }
+
+                if(isset($parametros['estatus']) && $parametros['estatus']){
+
+                    $pacientes = $pacientes->where('estatus_paciente_id',$parametros['estatus']);
+
+                }
+
+                if(isset($parametros['egreso']) && $parametros['egreso']){
+
+                    $pacientes = $pacientes->where('estatus_egreso_id',$parametros['egreso']);
+
+                }
+
+            }
+
             if (isset($parametros['page'])) {
                 $resultadosPorPagina = isset($parametros["per_page"]) ? $parametros["per_page"] : 20;
 

@@ -77,10 +77,10 @@ export class ListaComponent implements OnInit {
 
   filterForm = this.fb.group({
 
-    'clinica_id':               [undefined],
-    'municipio_id':             [undefined],
-    'egreso_id':                [undefined],
-    'estatus_id':               [undefined],
+    'clinica':               [undefined],
+    'municipio':             [undefined],
+    'egreso':                [undefined],
+    'estatus':               [undefined],
     'no_caso':                  [undefined],
 
 
@@ -152,11 +152,6 @@ export class ListaComponent implements OnInit {
         this.catalogo_egresos        = respuesta.egresos_covid;
         this.catalogo_estatus        = respuesta.estatus_paciente_covid;
 
-
-        
-
-        console.log("qqqqqq", this.catalogos);
-
         // this.filterCatalogs = {
 
         //   'municipio_id':  response.municipios,
@@ -166,11 +161,11 @@ export class ListaComponent implements OnInit {
 
         // };
 
-        this.filteredCatalogs['municipios']     = this.filterForm.controls['municipio_id'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'municipios', 'descripcion')));
-        this.filteredCatalogs['estatus']        = this.filterForm.controls['estatus_id'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'estatus_paciente_covid', 'descripcion')));
-        this.filteredCatalogs['egresos']        = this.filterForm.controls['egreso_id'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'egresos_covid', 'descripcion')));
+        this.filteredCatalogs['municipios']     = this.filterForm.controls['municipio'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'municipios', 'descripcion')));
+        this.filteredCatalogs['estatus']        = this.filterForm.controls['estatus'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'estatus_paciente_covid', 'descripcion')));
+        this.filteredCatalogs['egresos']        = this.filterForm.controls['egreso'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'egresos_covid', 'descripcion')));
         // this.filteredCatalogs['tipo_unidades'] = this.filterForm.controls['tipo_unidades'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'tipo_unidades', 'descripcion')));
-        this.filteredCatalogs['clinicas_covid'] = this.filterForm.controls['clinica_id'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'clinicas_covid', 'nombre_unidad')));
+        this.filteredCatalogs['clinicas_covid'] = this.filterForm.controls['clinica'].valueChanges.pipe(startWith(''), map(value => this._filter(value, 'clinicas_covid', 'nombre_unidad')));
         
       },
       errorResponse => {
@@ -232,13 +227,13 @@ export class ListaComponent implements OnInit {
           tooltip: i.toUpperCase() + ': ',
           active: true
         };
-        if (i == 'clinica_id') {
+        if (i == 'clinica') {
           item.tag = "Clínica: " + data[i].nombre_unidad;
-        } else if (i == 'municipio_id') {
+        } else if (i == 'municipio') {
           item.tag = "Municipio: " + data[i].descripcion;
-        } else if (i == 'egreso_id') {
+        } else if (i == 'egreso') {
           item.tag = "Egreso: " + data[i].descripcion;
-        } else if (i == 'estatus_id') {
+        } else if (i == 'estatus') {
           item.tag = "Estatus: " + data[i].descripcion;
         } else if (i == 'no_caso') {
           item.tag = "N° Caso: " + this.filterForm.value.no_caso;
@@ -276,14 +271,14 @@ export class ListaComponent implements OnInit {
 
       if (filterFormValues[i]) {
 
-        if (i == 'clinica_id') {
+        if (i == 'clinica') {
           params[i] = filterFormValues[i].id;
-          console.log("NUEVAAA", params[i]);
-        } else if (i == 'municipio_id') {
+          //console.log("NUEVAAA", params[i]);
+        } else if (i == 'municipio') {
           params[i] = filterFormValues[i].id;
-        } else if (i == 'egreso_id') {
+        } else if (i == 'egreso') {
           params[i] = filterFormValues[i].id;
-        } else if (i == 'estatus_id') {
+        } else if (i == 'estatus') {
           params[i] = filterFormValues[i].id;
         } else if (i == 'no_caso') {
           params[i] = this.filterForm.value.no_caso;
@@ -308,7 +303,7 @@ export class ListaComponent implements OnInit {
     this.vigilanciaClinicaService.obtenerLista(params).subscribe(
 
       response => {
-        console.log("RESPONSE", response.data);
+        //console.log("RESPONSE", response.data);
         if (response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
@@ -532,20 +527,19 @@ export class ListaComponent implements OnInit {
 
       if (appStoredData['filter'][i]) {
 
-        if (i == 'clinica_id') {
+        if (i == 'clinica') {
           params[i] = appStoredData['filter'][i].id
         }
-        // else if (i == 'municipios') {
-        //   params[i] = appStoredData['filter'][i].id;
-        // } else if (i == 'responsables') {
-        //   params[i] = appStoredData['filter'][i].id;
-        // } else if (i == 'tipo_atencion') {
-        //   params[i] = appStoredData['filter'][i].id;
-        // } else if (i == 'tipo_unidades') {
-        //   params[i] = appStoredData['filter'][i].id;
-        // } else if (i == 'estatus_covid') {
-        //   params[i] = appStoredData['filter'][i].id;
-        // }
+        else if (i == 'municipio') {
+          params[i] = appStoredData['filter'][i].id;
+        } else if (i == 'egreso') {
+          params[i] = appStoredData['filter'][i].id;
+        } else if (i == 'estatus') {
+          params[i] = appStoredData['filter'][i].id;
+        } else if (i == 'no_caso') {
+          params[i] = this.filterForm.value.no_caso;
+        }
+
         countFilter++;
       }
 

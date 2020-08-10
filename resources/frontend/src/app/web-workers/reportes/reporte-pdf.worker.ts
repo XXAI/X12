@@ -5,6 +5,7 @@ import { ReportePersonalActivo } from './reporte-personal-activo';
 import { ReporteCasoConcentrados } from './reporte-casos-concentrados';
 import { ReportePacientes } from './reporte-pacientes';
 import { ReporteVigilanciaClinica } from './reporte-vigilancia-clinica';
+import { ReportePacientesVigilanciaClinica } from './reporte-pacientes-vigilancia-clinica';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -13,6 +14,7 @@ const reportes = {
   '/concentrado-datos': new ReporteCasoConcentrados(),
   '/reporte-pacientes': new ReportePacientes(),
   '/vigilancia-clinica': new ReporteVigilanciaClinica(),
+  '/pacientes-vigilancia-clinica': new ReportePacientesVigilanciaClinica(),
 };
 
 addEventListener('message', ({ data }) => {

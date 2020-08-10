@@ -37,39 +37,39 @@
                     <!-- Filtro Clinica -->
                     <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['clinicas_covid']">
                         <mat-label>Clínica: </mat-label>
-                        <input matInput formControlName="clinica_id" />
+                        <input matInput formControlName="clinica" />
                         <mat-hint>Escribe el nombre de la Clínica</mat-hint>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['clinicas_covid']">
                         <mat-label>Clínica: </mat-label>
-                        <input type="text" aria-label="responsable" matInput formControlName="clinica_id" [matAutocomplete]="clinicaCovidAutocomplete" />
+                        <input type="text" aria-label="responsable" matInput formControlName="clinica" [matAutocomplete]="clinicaCovidAutocomplete" />
                         <mat-autocomplete #clinicaCovidAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('nombre_unidad')" [panelWidth]="'auto'">
                             <mat-option *ngFor="let item of filteredCatalogs['clinicas_covid'] | async" [value]="item">
                                 {{item.nombre_unidad}}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-hint *ngIf="!filterForm.get('clinica_id').value">Selecciona una Clínica de la lista </mat-hint>
-                        <mat-hint align="end" *ngIf="filterForm.get('clinica_id').value">[Descripción: {{filterForm.get('clinica_id').value.nombre_unidad}}]</mat-hint>
+                        <mat-hint *ngIf="!filterForm.get('clinica').value">Selecciona una Clínica de la lista </mat-hint>
+                        <mat-hint align="end" *ngIf="filterForm.get('clinica').value">[Descripción: {{filterForm.get('clinica').value.nombre_unidad}}]</mat-hint>
                     </mat-form-field>
 
                     <!-- Filtro Municipio -->
-                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['municipios']">
                         <mat-label>Municipio: </mat-label>
-                        <input matInput formControlName="municipio_id" />
+                        <input matInput formControlName="municipio" />
                         <mat-hint>Escribe el nombre de la Clínica</mat-hint>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['municipios']">
                         <mat-label>Municipio: </mat-label>
-                        <input type="text" aria-label="responsable" matInput formControlName="municipio_id" [matAutocomplete]="municipioAutocomplete" />
+                        <input type="text" aria-label="responsable" matInput formControlName="municipio" [matAutocomplete]="municipioAutocomplete" />
                         <mat-autocomplete #municipioAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
                             <mat-option *ngFor="let item of filteredCatalogs['municipios'] | async" [value]="item">
                                 {{item.descripcion}}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-hint *ngIf="!filterForm.get('municipio_id').value">Selecciona un Municipio de la lista </mat-hint>
-                        <mat-hint align="end" *ngIf="filterForm.get('municipio_id').value">[Descripción: {{filterForm.get('municipio_id').value.descripcion}}]</mat-hint>
+                        <mat-hint *ngIf="!filterForm.get('municipio').value">Selecciona un Municipio de la lista </mat-hint>
+                        <mat-hint align="end" *ngIf="filterForm.get('municipio').value">[Descripción: {{filterForm.get('municipio').value.descripcion}}]</mat-hint>
                     </mat-form-field>
 
                 </div>
@@ -77,41 +77,41 @@
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
 
                     <!-- Filtro Estatus -->
-                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['estatus_paciente_covid']">
                         <mat-label>Estatus: </mat-label>
-                        <input matInput formControlName="estatus_id" />
+                        <input matInput formControlName="estatus" />
                         <mat-hint>Escribe el nombre del Estatus</mat-hint>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['estatus_paciente_covid']">
                         <mat-label>Estatus: </mat-label>
-                        <input type="text" aria-label="responsable" matInput formControlName="estatus_id" [matAutocomplete]="estatusAutocomplete" />
+                        <input type="text" aria-label="responsable" matInput formControlName="estatus" [matAutocomplete]="estatusAutocomplete" />
                         <mat-autocomplete #estatusAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
                             <mat-option *ngFor="let item of filteredCatalogs['estatus'] | async" [value]="item">
                                 {{item.descripcion}}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-hint *ngIf="!filterForm.get('estatus_id').value">Selecciona un Estatus de la lista </mat-hint>
-                        <mat-hint align="end" *ngIf="filterForm.get('estatus_id').value">[Descripción: {{filterForm.get('estatus_id').value.descripcion}}]</mat-hint>
+                        <mat-hint *ngIf="!filterForm.get('estatus').value">Selecciona un Estatus de la lista </mat-hint>
+                        <mat-hint align="end" *ngIf="filterForm.get('estatus').value">[Descripción: {{filterForm.get('estatus').value.descripcion}}]</mat-hint>
                     </mat-form-field>
 
                     <!-- Filtro Egresos -->
-                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="!catalogos['egresos_covid']">
                         <mat-label>Egreso: </mat-label>
-                        <input matInput formControlName="egreso_id" />
+                        <input matInput formControlName="egreso" />
                         <mat-hint>Escribe el nombre del Egreso</mat-hint>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['clinicas_covid']">
+                    <mat-form-field appearance="outline" fxFlex *ngIf="catalogos['egresos_covid']">
                         <mat-label>Egreso: </mat-label>
-                        <input type="text" aria-label="responsable" matInput formControlName="egreso_id" [matAutocomplete]="egresosAutocomplete" />
+                        <input type="text" aria-label="responsable" matInput formControlName="egreso" [matAutocomplete]="egresosAutocomplete" />
                         <mat-autocomplete #egresosAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
                             <mat-option *ngFor="let item of filteredCatalogs['egresos'] | async" [value]="item">
                                 {{item.descripcion}}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-hint *ngIf="!filterForm.get('egreso_id').value">Selecciona un Egreso de la lista </mat-hint>
-                        <mat-hint align="end" *ngIf="filterForm.get('egreso_id').value">[Descripción: {{filterForm.get('egreso_id').value.descripcion}}]</mat-hint>
+                        <mat-hint *ngIf="!filterForm.get('egreso').value">Selecciona un Egreso de la lista </mat-hint>
+                        <mat-hint align="end" *ngIf="filterForm.get('egreso').value">[Descripción: {{filterForm.get('egreso').value.descripcion}}]</mat-hint>
                     </mat-form-field>
 
 

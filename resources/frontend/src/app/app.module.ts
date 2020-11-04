@@ -36,6 +36,7 @@ import { GoogleChartsModule } from 'angular-google-charts';
 import { PublicModule } from './public/public.module';
 import { FormulariosModule } from './formularios/formularios.module';
 import { ContingenciasModule } from './contingencias/contingencias.module';
+import { BrigadasModule } from './brigadas/brigadas.module';
 import { MapaModule } from './mapa/mapa.module';
 import { CallCenterModule } from './call-center/call-center.module';
 import { PersonaIndiceModule } from './persona-indice/persona-indice.module';
@@ -75,6 +76,7 @@ import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica
     PublicModule,
     FormulariosModule,
     ContingenciasModule,
+    BrigadasModule,
     CallCenterModule,
     AppRoutingModule,
     PersonaIndiceModule,

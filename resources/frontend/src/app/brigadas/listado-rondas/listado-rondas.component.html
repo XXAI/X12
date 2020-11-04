@@ -1,0 +1,55 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <div class="data-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div>
+    <section fxFlex="none" fxLayout="row" >
+        <mat-card fxFlex>
+            Rondas: Grupo #
+        </mat-card>
+    </section>
+    <section fxFlex style="overflow: auto;">
+        <mat-grid-list cols="4" rowHeight="1:1">
+            <!--div style="width: 100%; height: 100%; align-items: center; justify-content: center; display:flex; background-color: lightpink; border-radius: 50%; font-size: larger;">
+                {{ronda.no}}
+            </div-->
+            <!--mat-grid-tile *ngFor="let ronda of rondas">
+                <mat-card style="width: 70%; height: 70%;">
+                    <div fxLayout="column" style="height: 100%; width: 100%;">
+                        <div fxFlex>
+                            <div class="circle">
+                                <div class="circle__inner">
+                                  <div class="circle__wrapper">
+                                    <div class="circle__content">{{ronda.no}}</div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div fxFlex="none">Feha Inicio: 45</div>
+                        <div fxFlex="none">Feha Fin: 45</div>
+                        <div fxFlex="none">Total Dias: {{ronda.total_dias}}</div>
+                    </div>
+                </mat-card>
+            </mat-grid-tile-->
+            <mat-grid-tile *ngFor="let ronda of rondas">
+                <div style="height: 100%; width: 100%; padding: 10px;">
+                    <div class="circle">
+                        <div class="circle__inner">
+                        <div class="circle__wrapper">
+                            <div class="circle__content">
+                                <div fxLayout="column" style="height: 100%; width: 100%;">
+                                    <div fxFlex></div>
+                                    <div fxFlex class="round_number">
+                                        {{ronda.no}}
+                                    </div>
+                                    <div fxFlex="none">Feha Inicio: 45</div>
+                                    <div fxFlex="none">Feha Fin: 45</div>
+                                    <div fxFlex="none">Total Dias: {{ronda.total_dias}}</div>
+                                    <div fxFlex></div>
+                                </div>                                
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </section>
+</section>

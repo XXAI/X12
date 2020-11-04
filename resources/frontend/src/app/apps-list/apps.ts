@@ -153,7 +153,12 @@ export const APPS: App[] = [
       },
     ],
   },
-
+  {
+    name: "Brigadas",
+    route: "listado-rondas",
+    icon: "assets/icons/brigadas.svg",
+    //permission: "xxzE7Hpa6HYIRBih3tyCMKd80Z3Nk92L",
+  },
   {
     name: "Catalogos",
     route: "catalogos",

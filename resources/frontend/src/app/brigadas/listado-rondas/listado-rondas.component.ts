@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-listado-rondas',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListadoRondasComponent implements OnInit {
 
-  constructor() { }
+  constructor(private route: Router) { }
 
   rondas:any[];
 
@@ -18,10 +19,16 @@ export class ListadoRondasComponent implements OnInit {
       let ronda = {
         no: index,
         total_dias: Math.floor(Math.random() * (30 - 1 + 1) + 1),
+        fecha_inicio: new Date(),
+        fecha_fin: new Date(),
         activa: (index == 9),
       }
       this.rondas.push(ronda);
     }
+  }
+
+  editarRonda(){
+    this.route.navigateByUrl('/listado-rondas/ronda');
   }
 
 }

@@ -3,9 +3,11 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from '../auth/auth.guard';
 
 import { ListadoRondasComponent } from './listado-rondas/listado-rondas.component';
+import { RondaComponent } from './ronda/ronda.component';
 
 const routes: Routes = [
   { path: 'listado-rondas', component: ListadoRondasComponent, canActivate: [AuthGuard] },
+  { path: 'listado-rondas/ronda', component: RondaComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

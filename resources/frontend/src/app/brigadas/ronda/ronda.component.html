@@ -1,0 +1,102 @@
+<div class="data-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div>
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex fxLayout="row" fxLayoutGap="10px">
+        <section fxFlex="30" fxLayout="row">
+            <mat-card fxFlex="100" fxLayout="column">
+                <div fxFlex fxLayout="column"> <!-- Panel principal del pedido -->
+                    <button fxFlex="none" mat-raised-button color="primary"><mat-icon>cancel_presentation</mat-icon> Terminar Ronda</button>
+                    <div fxFlex="none" fxLayout="column">
+                        <div fxFlex class="estatus-pedido">
+                            Estatus
+                        </div>
+                    </div>
+                    <div fxFlex="none" fxLayout="column" *ngIf="unidadMedicaEntrega" style="padding: 5px 0px;">
+                        <div fxFlex class="label-unidad-entrega">
+                            Entregar en:
+                        </div>
+                        <div fxFlex class="unidad-entrega">
+                            Lugar
+                        </div>
+                    </div>
+                    <div fxFlex></div>
+                    <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
+                        <button fxFlex mat-stroked-button [routerLink]="'/listado-rondas'">
+                            <mat-icon>arrow_back</mat-icon> Regresar
+                        </button>
+                    </div>
+                </div>
+            </mat-card>
+        </section>
+        <section fxFlex fxLayout="row">
+            <mat-card fxFlex="100" fxLayout="column">
+                <div fxFlex="none" fxLayout="row">
+                    <div fxFlex class="small-search-input">
+                        <mat-form-field appearance="outline">
+                            <input matInput [(ngModel)]="filtroInsumos" (keyup.enter)="aplicarFiltroInsumos()" placeholder="Filtrar">
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex="none">
+                        <mat-button-toggle-group [(ngModel)]="filtroTipoInsumos" appearance="legacy" aria-label="Filtro Tipo Insumo" class="filtro-tipo-insumo" (change)="aplicarFiltroInsumos()">
+                            <mat-button-toggle [checked]="true" value="*">Insumos:</mat-button-toggle>
+                            <mat-button-toggle class="medicamento-color" value="MED">MED:</mat-button-toggle>
+                            <mat-button-toggle class="mat-curacion-color" value="MTC">MTC:</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                </div>
+                <mat-divider [inset]="true"></mat-divider>
+                <div fxFlex style="overflow: auto;">
+                    <table #dataTable mat-table [dataSource]="listaRegistros" class="data-table" matSort>
+                        
+                        <ng-container matColumnDef="clave">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header width="1"> Clave </th>
+                            <td mat-cell *matCellDef="let row" style="white-space: nowrap; padding:0px 5px;">{{row.clave}}</td>
+                        </ng-container>
+                        
+                        <ng-container matColumnDef="nombre" >
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true"> Nombre </th>
+                            <td mat-cell *matCellDef="let row" fxHide.xs="true"> {{row.nombre_generico}} </td>
+                        </ng-container>
+                        
+                        <ng-container matColumnDef="cantidad" >
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true" style="white-space: nowrap;"> Cantidad </th>
+                            <td mat-cell *matCellDef="let row" fxHide.xs="true" width="1" style="white-space: nowrap; text-align: center;"> {{row.cantidad | number:'1.0-0'}} </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="monto" >
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.xs="true" width="1" style="white-space: nowrap;"> Monto </th>
+                            <td mat-cell *matCellDef="let row" fxHide.xs="true" style="white-space: nowrap;">$ {{row.monto | number:'1.2-2'}} </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell width="1" *matHeaderCellDef>Acciones</th>
+                            <td mat-cell *matCellDef="let row; let i = index" width="1" style="white-space: nowrap;">
+                                <button mat-icon-button (click)="agregarInsumo(row)"><mat-icon>edit</mat-icon></button>
+                                <button mat-icon-button (click)="quitarInsumo(row)" color="warn"><mat-icon>delete</mat-icon></button>
+                            </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="noResultsFound">
+                            <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                No se encontraron insumos 
+                            </td>
+                        </ng-container>
+                        
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row [ngClass]="{'selected-item': row.id==idInsumoSeleccionado}" *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+    
+                        <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':listaRegistros.length==0}"></tr>
+                    </table>
+                </div>
+                <div fxFlex="none" fxLayout="row">
+                    <div fxFlex="none" style="padding-top: 10px;">
+                        <button mat-raised-button (click)="limpiarFiltroInsumos()" *ngIf="filtroAplicado"><mat-icon>clear</mat-icon> Limpiar Filtro</button>
+                    </div>
+                    <!-- Puede haber algo -->
+                    <div fxFlex>
+                        <mat-paginator #insumosPaginator [pageSize]="pageSize" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[9, 18, 27, 36]" showFirstLastButtons (page)="pageEvent = cargarPaginaInsumos($event)"></mat-paginator>
+                    </div>
+                </div>
+            </mat-card>
+        </section>
+    </section>
+</section>

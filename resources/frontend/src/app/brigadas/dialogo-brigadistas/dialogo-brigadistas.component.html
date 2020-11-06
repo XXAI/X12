@@ -1,0 +1,28 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            <h3>Total Brigadistas</h3>
+        </div>
+    </section>
+    <section fxFlex>
+        <div fxLayout="column" style="height: 100%;">
+            <div fxFlex="none" style="padding:5px 0;">
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between">
+                    <mat-form-field fxFlex>
+                        <mat-label>Total Brigadistas</mat-label>
+                        <input matInput [(ngModel)]="totalBrigadistas" required>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="crearRonda()" [disabled]="(totalBrigadistas <= 0) || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

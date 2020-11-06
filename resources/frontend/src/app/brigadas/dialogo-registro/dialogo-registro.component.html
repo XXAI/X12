@@ -1,0 +1,57 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            <h3>Nueva Ronda</h3>
+        </div>
+    </section>
+    <section fxFlex>
+        <div fxLayout="column" style="height: 100%;" [formGroup]="formRegistro">
+            <div fxFlex="none" style="padding:5px 0;">
+                <div fxFlex fxLayout="row">
+                <!--
+                    casas_visitadas
+                    casas_ausentes
+                    casas_renuentes
+                    casos_sospechosos_identificados
+
+                    porcentaje_transmision
+                    tratamientos_otorgados_brigadeo
+                    tratamientos_otorgados_casos_positivos
+                -->
+                    <mat-form-field fxFlex>
+                        <mat-label>Fecha de Registro (aaaa-mm-dd)</mat-label>
+                        <input matInput mascaraFecha formControlName="fecha_registro" required>
+                        <mat-hint>Ejemplo: 2020-01-30</mat-hint>
+                        <mat-error *ngIf="formRegistro.get('fecha_registro').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex>
+                        <mat-label>Cabeceras Recorridas</mat-label>
+                        <input matInput formControlName="cabeceras_recorridas" required>
+                        <mat-error *ngIf="formRegistro.get('cabeceras_recorridas').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex>
+                        <mat-label>Colonias Visitadas</mat-label>
+                        <input matInput formControlName="colonias_visitadas" required>
+                        <mat-error *ngIf="formRegistro.get('colonias_visitadas').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex>
+                        <mat-label>Poblacion Beneficiada</mat-label>
+                        <input matInput formControlName="poblacion_beneficiada" required>
+                        <mat-error *ngIf="formRegistro.get('poblacion_beneficiada').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="crearRonda()" [disabled]="!formRegistro.valid || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

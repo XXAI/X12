@@ -38,9 +38,9 @@ export class RondaComponent implements OnInit {
 
   nuevoRegistro(){
     let configDialog = {
-      width: '80%',
+      width: '85%',
       maxHeight: '90vh',
-      height: '250px',
+      height: '450px',
       data:{id: 0},
       panelClass: 'no-padding-dialog'
     };

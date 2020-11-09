@@ -113,6 +113,12 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('listado-avances',                   'API\Modulos\AvancesActividadesController@listadoAvances');
 
     /**
+     * Brigadas - Rondas
+     */
+    Route::apiResource('rondas',       'API\Modulos\RondasController');
+
+
+    /**
      * Modulo de Casos por Contingencias
      */
     Route::get('listado-contingencias',             'API\Modulos\CasosContingenciasController@listadoContingencias');

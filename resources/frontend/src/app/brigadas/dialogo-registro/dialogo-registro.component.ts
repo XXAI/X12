@@ -28,17 +28,17 @@ export class DialogoRegistroComponent implements OnInit {
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
 
     this.formRegistro = this.formBuilder.group({
-      fecha_registro:[''],
-      cabeceras_recorridas:[''],
-      colonias_visitadas:[''],
-      poblacion_beneficiada:[''],
-      casas_visitadas:[''],
-      casas_ausentes:[''],
-      casas_renuentes:[''],
-      casos_sospechosos_identificados:[''],
-      porcentaje_transmision:[''],
-      tratamientos_otorgados_brigadeo:[''],
-      tratamientos_otorgados_casos_positivos:[''],
+      fecha_registro:[fecha_hoy,Validators.required],
+      cabeceras_recorridas:['',Validators.required],
+      colonias_visitadas:['',Validators.required],
+      poblacion_beneficiada:['',Validators.required],
+      casas_visitadas:['',Validators.required],
+      casas_ausentes:['',Validators.required],
+      casas_renuentes:['',Validators.required],
+      casos_sospechosos_identificados:['',Validators.required],
+      porcentaje_transmision:['',Validators.required],
+      tratamientos_otorgados_brigadeo:['',Validators.required],
+      tratamientos_otorgados_casos_positivos:['',Validators.required],
       id:['']
     });
   }

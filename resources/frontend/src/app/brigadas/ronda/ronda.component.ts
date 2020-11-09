@@ -57,7 +57,7 @@ export class RondaComponent implements OnInit {
   }
 
   cargarPagina(event){
-    //
+    return event;
   }
 
   aplicarFiltro(){

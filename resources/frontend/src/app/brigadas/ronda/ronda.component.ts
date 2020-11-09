@@ -56,7 +56,7 @@ export class RondaComponent implements OnInit {
     });
   }
 
-  cargarPagina(){
+  cargarPagina(event){
     //
   }
 

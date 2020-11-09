@@ -18,6 +18,7 @@ export class DialogoBrigadistasComponent implements OnInit {
   ) { }
 
   totalBrigadistas:number;
+  isLoading:boolean;
 
   ngOnInit() {
     this.totalBrigadistas = this.data.totalBrigadistas;

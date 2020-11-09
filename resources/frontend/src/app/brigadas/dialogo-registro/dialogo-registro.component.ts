@@ -22,6 +22,7 @@ export class DialogoRegistroComponent implements OnInit {
   ) { }
 
   formRegistro:FormGroup;
+  isLoading:boolean;
 
   ngOnInit() {
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');

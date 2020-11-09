@@ -16,6 +16,8 @@ export class ListadoRondasComponent implements OnInit {
   rondas:any[];
   brigada:any;
 
+  isLoading:boolean;
+
   ngOnInit() {
     this.rondas = [];
 

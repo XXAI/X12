@@ -22,6 +22,7 @@ export class DialogoNuevaRondaComponent implements OnInit {
   ) { }
 
   formRonda:FormGroup;
+  isLoading:boolean;
 
   ngOnInit() {
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');

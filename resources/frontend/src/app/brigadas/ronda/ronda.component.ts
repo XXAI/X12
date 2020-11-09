@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { DialogoRegistroComponent } from '../dialogo-registro/dialogo-registro.component';
 
 @Component({
@@ -14,6 +15,15 @@ export class RondaComponent implements OnInit {
   listaRegistros:any[];
   displayedColumns: string[] = ['fecha_registro','casas_visitadas','casas_ausentes','casas_renuentes','actions'];
   datosRonda:any;
+  idRegistroSeleccionado:number;
+  isLoading:boolean;
+  filtroAplicado:boolean;
+  filtroQuery:string;
+
+  pageEvent: PageEvent;
+  resultsLength: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 20;
 
   ngOnInit() {
     this.datosRonda = {
@@ -44,6 +54,18 @@ export class RondaComponent implements OnInit {
         console.log('Cancelar');
       }
     });
+  }
+
+  cargarPagina(){
+    //
+  }
+
+  aplicarFiltro(){
+    //
+  }
+
+  limpiarFiltro(){
+    //
   }
 
 }

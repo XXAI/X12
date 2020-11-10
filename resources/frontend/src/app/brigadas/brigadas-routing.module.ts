@@ -7,7 +7,7 @@ import { RondaComponent } from './ronda/ronda.component';
 
 const routes: Routes = [
   { path: 'listado-rondas', component: ListadoRondasComponent, canActivate: [AuthGuard] },
-  { path: 'listado-rondas/ronda', component: RondaComponent, canActivate: [AuthGuard] },
+  { path: 'listado-rondas/ronda/:id', component: RondaComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

@@ -21,10 +21,19 @@ export class ListadoRondasComponent implements OnInit {
   brigada:any;
 
   isLoading:boolean;
+
   rondaActiva:number;
+  rondaMax:number;
 
   ngOnInit() {
+    this.cargarBrigadas();
+  }
+
+  cargarBrigadas(){
+    this.rondaMax = 0;
     this.rondaActiva = 0;
+    this.isLoading = true;
+
     this.brigadasService.getListadoRondas({}).subscribe(
       response =>{
         if(response.error) {
@@ -34,13 +43,6 @@ export class ListadoRondasComponent implements OnInit {
           this.brigadas = response.data;
           this.brigada = response.data[0];
           this.checarRondaActiva();
-          /*if(response.data.total > 0){
-            response.data.data.forEach(registro => {
-              let dateString = registro.fecha_llamada+'T'+registro.hora_llamada;
-              let newDate = new Date(dateString);
-              registro.fecha_hora_llamada = newDate;
-            });
-          }*/
         }
         this.isLoading = false;
       },
@@ -53,31 +55,6 @@ export class ListadoRondasComponent implements OnInit {
         this.isLoading = false;
       }
     );
-
-    this.rondas = [];
-
-    /*this.brigada = {
-      total_brigadistas: Math.floor(Math.random() * (100 - 20 + 1) + 20),
-      grupo_estrategico:{
-        folio: Math.floor(Math.random() * (28 - 18 + 1) + 18),
-      },
-      distrito:{
-        clave: Math.floor(Math.random() * (10 - 1 + 1) + 1),
-      }
-    };*/
-
-    let totalRondas = Math.floor(Math.random() * (9 - 1 + 1) + 1);
-
-    for (let index = totalRondas; index > 0; index--) {
-      let ronda = {
-        no: index,
-        total_dias: Math.floor(Math.random() * (30 - 1 + 1) + 1),
-        fecha_inicio: new Date(),
-        fecha_fin: new Date(),
-        activa: (index == totalRondas),
-      }
-      this.rondas.push(ronda);
-    }
   }
 
   cambioBrigada(){
@@ -86,18 +63,22 @@ export class ListadoRondasComponent implements OnInit {
 
   checarRondaActiva(){
     this.rondaActiva = 0;
+    this.rondaMax = 0;
     if(this.brigada){
       for (let i in this.brigada.rondas) {
         let ronda = this.brigada.rondas[i];
         if(!ronda.fecha_fin){
           this.rondaActiva = ronda.no_ronda;
         }
+        if(ronda.no_ronda > this.rondaMax){
+          this.rondaMax = ronda.no_ronda;
+        }
       }
     }
   }
 
-  editarRonda(){
-    this.route.navigateByUrl('/listado-rondas/ronda');
+  editarRonda(id:number){
+    this.route.navigateByUrl('/listado-rondas/ronda/'+id);
   }
 
   nuevaRonda(){
@@ -105,15 +86,16 @@ export class ListadoRondasComponent implements OnInit {
       width: '450px',
       maxHeight: '90vh',
       height: '250px',
-      data:{id: 0},
+      data:{ultimaRonda: this.rondaMax, idBrigada: this.brigada.id},
       panelClass: 'no-padding-dialog'
     };
 
     const dialogRef = this.dialog.open(DialogoNuevaRondaComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        console.log('Creado');
+    dialogRef.afterClosed().subscribe(ronda => {
+      if(ronda){
+        this.brigada.rondas.unshift(ronda);
+        this.checarRondaActiva();
       }else{
         console.log('Cancelar');
       }
@@ -125,7 +107,7 @@ export class ListadoRondasComponent implements OnInit {
       width: '450px',
       maxHeight: '90vh',
       height: '250px',
-      data:{totalBrigadistas: this.brigada.total_brigadistas},
+      data:{totalBrigadistas: this.brigada.total_brigadistas, idBrigada:this.brigada.id},
       panelClass: 'no-padding-dialog'
     };
 

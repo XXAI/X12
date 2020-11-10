@@ -23,6 +23,12 @@
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-form-field>
+            <div fxFlex="5"></div>
+            <div fxFlex="none">
+                <button mat-fab (click)="cargarBrigadas()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+            </div>
         </mat-card>
     </section>
     <section fxFlex style="overflow: auto;">
@@ -52,7 +58,7 @@
             </mat-grid-tile>
             <mat-grid-tile *ngFor="let ronda of brigada.rondas">
                 <div style="height: 100%; width: 100%; padding: 10px;">
-                    <div class="circle" [ngClass]="{'activo':rondaActiva == ronda.no_ronda}" (click)="editarRonda()">
+                    <div class="circle" [ngClass]="{'activo':rondaActiva == ronda.no_ronda}" (click)="editarRonda(ronda.id)">
                         <div class="circle__inner">
                         <div class="circle__wrapper">
                             <div class="circle__content">
@@ -62,8 +68,8 @@
                                         {{ronda.no_ronda}}
                                     </div>
                                     <div fxFlex="none">Inicio: {{ronda.fecha_inicio | date:'dd/MM/yyyy'}}</div>
-                                    <div fxFlex="none">Fin: {{ronda.fecha_fin | date:'dd/MM/yyyy'}}</div>
-                                    <div fxFlex="none">Total Dias: {{ronda.total_dias}}</div>
+                                    <div fxFlex="none" *ngIf="ronda.fecha_fin">Fin: {{ronda.fecha_fin | date:'dd/MM/yyyy'}}</div>
+                                    <div fxFlex="none">Total Dias: {{((ronda.total_dias)?ronda.total_dias:0) | number:'1.0-0'}}</div>
                                     <div fxFlex></div>
                                 </div>                                
                             </div>

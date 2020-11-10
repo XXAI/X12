@@ -9,7 +9,7 @@ class Ronda extends Model
 {
     use SoftDeletes;
     protected $table = 'rondas';
-    protected $fillable = ['id','brigada_od','no_ronda','fecha_inicio','fecha_fin'];
+    protected $fillable = ['id','brigada_id','no_ronda','fecha_inicio','fecha_fin'];
 
     public function registros(){
         return $this->hasMany('App\Models\RondaRegistro','ronda_id');

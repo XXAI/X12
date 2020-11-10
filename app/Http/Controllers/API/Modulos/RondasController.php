@@ -31,7 +31,7 @@ class RondasController extends Controller
             $parametros = Input::all();
             
             $brigadas = Brigada::with(['grupoEstrategico','distrito','rondas'=>function($rondas){
-                $rondas->orderBy('fecha_inicio','desc');
+                $rondas->select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->orderBy('fecha_inicio','desc');
             }])->get();
             
             //Filtros, busquedas, ordenamiento
@@ -56,6 +56,28 @@ class RondasController extends Controller
         }
     }
 
+    public function actualizarBrigadistas(Request $request, $id){
+        try{
+            //$auth_user = auth()->user();
+            $parametros = Input::all();
+
+            $brigada = Brigada::find($id);
+            
+            if(!$brigada){
+                throw new \Exception("No existe el registro");
+            }
+
+            if(isset($parametros['total_brigadistas']) && $parametros['total_brigadistas'] > 0){
+                $brigada->total_brigadistas = $parametros['total_brigadistas'];
+                $brigada->save();
+            }
+            
+            return response()->json(['data'=>$brigada],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -70,10 +92,12 @@ class RondasController extends Controller
             ];
     
             $reglas = [
-                'nombre' => 'required',                
+                'brigada_id' => 'required',
+                'fecha_inicio' => 'required',
+                'no_ronda' => 'required',
             ];
 
-            $auth_user = auth()->user();
+            //$auth_user = auth()->user();
             $parametros = Input::all();
 
             $v = Validator::make($parametros, $reglas, $mensajes);
@@ -82,9 +106,9 @@ class RondasController extends Controller
                 return response()->json( $v->errors(), 409);
             }
 
-            $estrategia = Estrategia::create($parametros);
+            $ronda = Ronda::create($parametros);
 
-            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }
@@ -99,10 +123,31 @@ class RondasController extends Controller
     public function show($id)
     {
         try{
-            $estrategia = Estrategia::find($id);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros')->find($id);
             
+            return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
+        }
+    }
+
+    public function finalizarRonda(Request $request, $id){
+        try{
+            //$auth_user = auth()->user();
+            $parametros = Input::all();
+
+            $ronda = Ronda::find($id);
             
-            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
+            if(!$ronda){
+                throw new \Exception("No existe el registro");
+            }
+
+            if(isset($parametros['fecha_fin']) && $parametros['fecha_fin']){
+                $ronda->fecha_fin = $parametros['fecha_fin'];
+                $ronda->save();
+            }
+            
+            return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }

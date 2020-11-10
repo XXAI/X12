@@ -13,7 +13,7 @@
                             <mat-label>Fecha Inicio</mat-label>
                             <input matInput [ngModel]="datosRonda.fecha_inicio" readonly>
                         </mat-form-field>
-                        <mat-form-field fxFlex appearance="standard">
+                        <mat-form-field fxFlex appearance="standard" *ngIf="datosRonda.fecha_fin">
                             <mat-label>Fecha Fin</mat-label>
                             <input matInput [ngModel]="datosRonda.fecha_fin" readonly>
                         </mat-form-field>
@@ -23,10 +23,7 @@
                         </mat-form-field>
                     </div>
                     <div fxFlex></div>
-                    <button fxFlex mat-raised-button color="accent"><mat-icon>cancel_presentation</mat-icon> Terminar Ronda</button>
-                    <!--button fxFlex fxFill mat-fab color="accent" aria-label="Example icon button with a delete icon">
-                        <mat-icon>cancel_presentation</mat-icon><br>Terminar Ronda
-                    </button-->
+                    <button *ngIf="!rondaFinalizada" fxFlex mat-raised-button (click)="finalizarRonda()" color="accent"><mat-icon>cancel_presentation</mat-icon><br> Finalizar Ronda</button>
                     <div fxFlex></div>
                     <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
                         <button fxFlex mat-stroked-button [routerLink]="'/listado-rondas'">
@@ -45,7 +42,7 @@
                         </mat-form-field>
                     </div>
                     <div fxFlex="none">
-                        <button mat-flat-button [color]="'primary'" (click)="nuevoRegistro()" ><mat-icon>add_circle</mat-icon> Nuevo Registro</button>
+                        <button *ngIf="!rondaFinalizada"  mat-flat-button [color]="'primary'" (click)="nuevoRegistro()" ><mat-icon>add_circle</mat-icon> Nuevo Registro</button>
                     </div>
                 </div>
                 <mat-divider [inset]="true"></mat-divider>

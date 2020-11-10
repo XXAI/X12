@@ -115,7 +115,9 @@ Route::group(['middleware' => 'auth'], function ($router) {
     /**
      * Brigadas - Rondas
      */
-    Route::apiResource('rondas',       'API\Modulos\RondasController');
+    Route::apiResource('rondas',            'API\Modulos\RondasController');
+    Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
+    Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
 
 
     /**

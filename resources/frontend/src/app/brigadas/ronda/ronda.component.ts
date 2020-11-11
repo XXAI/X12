@@ -75,7 +75,7 @@ export class RondaComponent implements OnInit {
       width: '85%',
       maxHeight: '90vh',
       height: '450px',
-      data:{id: 0},
+      data:{idDistrito: this.datosRonda.brigada.distrito_id},
       panelClass: 'no-padding-dialog'
     };
 

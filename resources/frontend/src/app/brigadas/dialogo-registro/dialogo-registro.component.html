@@ -16,58 +16,65 @@
                     </mat-form-field>
                     <div fxFlex></div>
                 </div>
-                <div fxFlex fxLayout="row">
-                    <mat-form-field fxFlex>
-                        <mat-label>Cabeceras Recorridas</mat-label>
-                        <input matInput type="number" formControlName="cabeceras_recorridas" required>
-                        <mat-error *ngIf="formRegistro.get('cabeceras_recorridas').hasError('required')">Este campo es obligatorio</mat-error>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="40">
+                        <mat-label>Cabecera Recorrida</mat-label>
+                        <input type="text" placeholder="Seleccionar Municipio" aria-label="Cabecera" matInput formControlName="cabecera_recorrida" [matAutocomplete]="municipiosAutocomplete" (blur)="checkAutocompleteMunicipio()">
+                        <mat-autocomplete #municipiosAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="municipioSeleccionado($event)">
+                            <mat-option *ngFor="let item of municipiosFiltrados | async" [value]="item">
+                                {{item.descripcion}}
+                            </mat-option>
+                        </mat-autocomplete>
+                        <mat-hint *ngIf="!formRegistro.get('cabecera_recorrida').value">Selecciona un municipio de la lista</mat-hint>
+                        <mat-hint align="end" *ngIf="formRegistro.get('cabecera_recorrida').value">[{{formRegistro.get('cabecera_recorrida').value.clave}}]</mat-hint>
+                        <mat-error *ngIf="formRegistro.get('cabecera_recorrida').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex>
-                        <mat-label>Colonias Visitadas</mat-label>
-                        <input matInput type="number" formControlName="colonias_visitadas" required>
-                        <mat-error *ngIf="formRegistro.get('colonias_visitadas').hasError('required')">Este campo es obligatorio</mat-error>
+                    <mat-form-field fxFlex="59">
+
+                        <mat-label>Colonia Visitada</mat-label>
+                        <input matInput type="text" formControlName="colonia_visitada" required>
+                        <mat-error *ngIf="formRegistro.get('colonia_visitada').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="24" appearance="fill">
+                        <mat-label>Casas Visitadas</mat-label>
+                        <input matInput type="number" formControlName="casas_visitadas" required>
+                        <mat-error *ngIf="formRegistro.get('casas_visitadas').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="24" appearance="fill">
+                        <mat-label>Casas Ausentes</mat-label>
+                        <input matInput type="number" formControlName="casas_ausentes" required>
+                        <mat-error *ngIf="formRegistro.get('casas_ausentes').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="24" appearance="fill">
+                        <mat-label>Casas Renuentes</mat-label>
+                        <input matInput type="number" formControlName="casas_renuentes" required>
+                        <mat-error *ngIf="formRegistro.get('casas_renuentes').hasError('required')">Este campo es obligatorio</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="25" appearance="outline">
                         <mat-label>Poblacion Beneficiada</mat-label>
                         <input matInput type="number" formControlName="poblacion_beneficiada" required>
                         <mat-error *ngIf="formRegistro.get('poblacion_beneficiada').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                 </div>
-                <div fxFlex fxLayout="row">
-                    <div fxFlex></div>
-                    <mat-form-field fxFlex="none" appearance="fill">
-                        <mat-label>Casas Visitadas</mat-label>
-                        <input matInput type="number" formControlName="casas_visitadas" required>
-                        <mat-error *ngIf="formRegistro.get('casas_visitadas').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="none" appearance="fill">
-                        <mat-label>Casas Ausentes</mat-label>
-                        <input matInput type="number" formControlName="casas_ausentes" required>
-                        <mat-error *ngIf="formRegistro.get('casas_ausentes').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="none" appearance="fill">
-                        <mat-label>Casas Renuentes</mat-label>
-                        <input matInput type="number" formControlName="casas_renuentes" required>
-                        <mat-error *ngIf="formRegistro.get('casas_renuentes').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
-                </div>
-                <div fxFlex fxLayout="row">
-                    <mat-form-field fxFlex>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="22">
                         <mat-label>Casos Sospechosos</mat-label>
                         <input matInput type="number" formControlName="casos_sospechosos_identificados" required>
                         <mat-error *ngIf="formRegistro.get('casos_sospechosos_identificados').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex>
+                    <mat-form-field fxFlex="25">
                         <mat-label>Porcentaje de Transmision</mat-label>
                         <input matInput formControlName="porcentaje_transmision" required>
                         <mat-error *ngIf="formRegistro.get('porcentaje_transmision').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex>
+                    <mat-form-field fxFlex="25">
                         <mat-label>Tratamientos en Brigadeo</mat-label>
                         <input matInput type="number" formControlName="tratamientos_otorgados_brigadeo" required>
                         <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_brigadeo').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex>
+                    <mat-form-field fxFlex="25">
                         <mat-label>Tratamientos Casos Positivos</mat-label>
                         <input matInput type="number" formControlName="tratamientos_otorgados_casos_positivos" required>
                         <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_casos_positivos').hasError('required')">Este campo es obligatorio</mat-error>

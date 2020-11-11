@@ -123,7 +123,7 @@ class RondasController extends Controller
     public function show($id)
     {
         try{
-            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros')->find($id);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros','brigada')->find($id);
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){

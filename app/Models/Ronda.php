@@ -14,4 +14,8 @@ class Ronda extends Model
     public function registros(){
         return $this->hasMany('App\Models\RondaRegistro','ronda_id');
     }
+
+    public function brigada(){
+        return $this->belongsTo('App\Models\Brigada','brigada_id');
+    }
 }

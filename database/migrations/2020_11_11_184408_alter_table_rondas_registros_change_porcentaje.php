@@ -14,7 +14,7 @@ class AlterTableRondasRegistrosChangePorcentaje extends Migration
     public function up()
     {
         Schema::table('rondas_registros', function (Blueprint $table) {
-            $table->decimal('porcentaje_transmision',15,2)->nullable()->change();
+            $table->decimal('porcentaje_transmision',15,2)->default('')->change();
         });
     }
 

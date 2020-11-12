@@ -27,7 +27,7 @@
                     <mat-form-field fxFlex="40">
                         <mat-label>Cabecera Recorrida</mat-label>
                         <input type="text" placeholder="Seleccionar Municipio" aria-label="Cabecera" matInput formControlName="cabecera_recorrida" [matAutocomplete]="municipiosAutocomplete" (blur)="checkAutocompleteMunicipio()">
-                        <button tabindex="-1" *ngIf="formRegistro.get('cabecera_recorrida').value" mat-icon-button matSuffix (click)="formRegistro.get('cabecera_recorrida').patchValue('')" [attr.aria-label]="'limpiar-municipio'" [attr.aria-pressed]="limpiar-municipio">
+                        <button tabindex="-1" *ngIf="formRegistro.get('cabecera_recorrida').value" mat-icon-button matSuffix (click)="formRegistro.get('cabecera_recorrida').patchValue('')">
                             <mat-icon>clear</mat-icon>
                         </button>
                         <mat-autocomplete #municipiosAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="municipioSeleccionado($event)">
@@ -42,10 +42,10 @@
                     <mat-form-field fxFlex="58">
                         <mat-label>Colonia Visitada (Sin abreviaciones)</mat-label>
                         <input type="text" placeholder="Seleccionar Colonia" aria-label="Colonia" matInput formControlName="colonia_visitada" [matAutocomplete]="coloniasAutocomplete" (blur)="checkAutocompleteColonia()">
-                        <button tabindex="-1" color="primary" *ngIf="formRegistro.get('colonia_visitada').value && !formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="agregarColonia()" [attr.aria-label]="'agregar-colonia'" [attr.aria-pressed]="agregar-colonia">
+                        <button tabindex="-1" color="primary" *ngIf="formRegistro.get('colonia_visitada').value && !formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="agregarColonia()">
                             <mat-icon>add_box</mat-icon>
                         </button>
-                        <button tabindex="-1" *ngIf="formRegistro.get('colonia_visitada').value && formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="limpiarColonia()" [attr.aria-label]="'limpiar-municipio'" [attr.aria-pressed]="limpiar-municipio">
+                        <button tabindex="-1" *ngIf="formRegistro.get('colonia_visitada').value && formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="limpiarColonia()">
                             <mat-icon>clear</mat-icon>
                         </button>
                         <mat-autocomplete #coloniasAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('nombre')" [panelWidth]="'auto'">

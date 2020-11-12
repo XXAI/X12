@@ -47,7 +47,7 @@
                     <div fxFlex class="small-search-input">
                         <mat-form-field appearance="outline">
                             <input matInput [(ngModel)]="filtroQuery" (keyup.enter)="filtrarRegistros()" placeholder="Filtrar">
-                            <button tabindex="-1" *ngIf="filtroQuery" mat-icon-button matSuffix (click)="limpiarFiltro()" [attr.aria-label]="'limpiar-filtro'" [attr.aria-pressed]="limpiar-filtro">
+                            <button tabindex="-1" *ngIf="filtroQuery" mat-icon-button matSuffix (click)="limpiarFiltro()">
                                 <mat-icon>clear</mat-icon>
                             </button>
                         </mat-form-field>

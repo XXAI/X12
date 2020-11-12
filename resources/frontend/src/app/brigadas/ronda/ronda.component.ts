@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 import { DialogoRegistroComponent } from '../dialogo-registro/dialogo-registro.component';
 import { DialogoFinalizarRondaComponent } from '../dialogo-finalizar-ronda/dialogo-finalizar-ronda.component';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from '../../shared/shared.service';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-ronda',
@@ -13,11 +14,13 @@ import { SharedService } from '../../shared/shared.service';
   styleUrls: ['./ronda.component.css']
 })
 export class RondaComponent implements OnInit {
+  @ViewChild(MatPaginator, {static: false}) registrosPaginator: MatPaginator;
+  @ViewChild(MatTable, {static:false}) dataTable: MatTable<any>;
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute, private brigadasService: BrigadasService, private sharedService: SharedService) { }
 
   listaRegistros:any[];
-  displayedColumns: string[] = ['fecha_registro','casas_visitadas','casas_ausentes','casas_renuentes','actions'];
+  displayedColumns: string[] = ['fecha_registro','cabecera_recorrida','colonia','casas_visitadas','casas_ausentes','casas_renuentes','actions'];
   datosRonda:any;
   idRegistroSeleccionado:number;
   isLoading:boolean;
@@ -29,12 +32,13 @@ export class RondaComponent implements OnInit {
   pageEvent: PageEvent;
   resultsLength: number = 0;
   currentPage: number = 0;
-  pageSize: number = 20;
+  pageSize: number = 9;
+  dataSourceRegistros: MatTableDataSource<any>;
 
   ngOnInit() {
     this.listaRegistros = [];
     this.datosRonda = {};
-    this.rondaFinalizada = false;
+    this.rondaFinalizada = true;
 
     this.route.paramMap.subscribe(params => {
       let ronda_id = +params.get('id');
@@ -51,10 +55,27 @@ export class RondaComponent implements OnInit {
               this.rondaFinalizada = true;
             }else{
               this.datosRonda.estatus = 'Activa';
+              this.rondaFinalizada = false;
             }
             if(!this.datosRonda.total_dias){
               this.datosRonda.total_dias = 0;
             }
+            let registros = JSON.parse(JSON.stringify(this.datosRonda.registros));
+            delete this.datosRonda.registros;
+
+            /* 
+             *     La Magia del DataSource 
+             */
+            this.dataSourceRegistros = new MatTableDataSource<any>(registros);
+            this.dataSourceRegistros.paginator = this.registrosPaginator;
+            this.dataSourceRegistros.filterPredicate = (data:any, filter:string) => {
+              let filtrado:boolean;
+              let filtro = filter.trim().toLowerCase();
+
+              filtrado = data.cabecera_recorrida.descripcion.toLowerCase().includes(filtro) || data.colonia_visitada.nombre.toLowerCase().includes(filtro) || data.fecha_registro.toLowerCase().includes(filter);
+              
+              return filtrado;
+            };
           }
           this.isLoading = false;
         },
@@ -70,24 +91,44 @@ export class RondaComponent implements OnInit {
     });
   }
 
-  nuevoRegistro(){
+  dialogoRegistro(editarRegistro?:any){
+    let config_data:any = {
+      idDistrito: this.datosRonda.brigada.distrito_id, 
+      idRonda:this.datosRonda.id
+    }    
+
+    if(editarRegistro){
+      config_data.registro = editarRegistro;
+    }
+
     let configDialog = {
       width: '85%',
       maxHeight: '90vh',
       height: '450px',
-      data:{idDistrito: this.datosRonda.brigada.distrito_id},
+      disableClose:true,
+      data: config_data,
       panelClass: 'no-padding-dialog'
     };
 
     const dialogRef = this.dialog.open(DialogoRegistroComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        console.log('Creado');
+    dialogRef.afterClosed().subscribe(registro => {
+      if(registro){
+        if(editarRegistro){
+          let index = this.dataSourceRegistros.data.findIndex(x => x.id === editarRegistro.id);
+          this.dataSourceRegistros.data[index] = registro;
+        }else{
+          this.dataSourceRegistros.data.unshift(registro);
+        }
+        this.filtrarRegistros();
       }else{
         console.log('Cancelar');
       }
     });
+  }
+
+  filtrarRegistros(){
+    this.dataSourceRegistros.filter = this.filtroQuery;
   }
 
   finalizarRonda(){
@@ -115,12 +156,9 @@ export class RondaComponent implements OnInit {
     return event;
   }
 
-  aplicarFiltro(){
-    //
-  }
-
   limpiarFiltro(){
-    //
+    this.filtroQuery = '';
+    this.dataSourceRegistros.filter = '';
   }
 
 }

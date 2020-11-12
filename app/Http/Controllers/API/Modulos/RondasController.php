@@ -25,8 +25,7 @@ class RondasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         try{
             $parametros = Input::all();
             
@@ -84,8 +83,7 @@ class RondasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         try{
             $mensajes = [            
                 'required' => "required",
@@ -120,10 +118,14 @@ class RondasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id){
         try{
-            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros','brigada')->find($id);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))
+                                ->with(['brigada'=>function($brigada){
+                                    $brigada->with('distrito','grupoEstrategico');
+                                },'registros'=>function($registros){
+                                    $registros->with('cabeceraRecorrida','ColoniaVisitada')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
+                                }])->find($id);
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -160,45 +162,8 @@ class RondasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        try{
-            $auth_user = auth()->user();
-            $parametros = Input::all();
-
-            $estrategia = Estrategia::find($id);
-            
-            if(!$estrategia){
-                throw new Exception("No existe el registro");
-            }
-
-            if(isset($parametros['activado'])){
-                $estrategia->activo = $parametros['activado'];
-                $estrategia->save();
-                return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
-            }
-
-            $mensajes = [            
-                'required' => "required",
-            ];
-    
-            $reglas = [
-                'nombre' => 'required',                
-            ];
-
-            $v = Validator::make($parametros, $reglas, $mensajes);
-
-            if ($v->fails()) {
-                return response()->json( $v->errors(), 409);
-            }
-
-            $estrategia->nombre = $parametros["nombre"];
-            $estrategia->save();
-            
-            return response()->json(['data'=>$estrategia],HttpResponse::HTTP_OK);
-        }catch(\Exception $e){
-            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
-        }
+    public function update(Request $request, $id){
+        //
     }
 
     /**
@@ -207,8 +172,7 @@ class RondasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         //
     }
 }

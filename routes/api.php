@@ -116,6 +116,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
      * Brigadas - Rondas
      */
     Route::apiResource('rondas',            'API\Modulos\RondasController');
+    Route::apiResource('rondas-registros',  'API\Modulos\RondaRegistrosController');
     Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
     Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
 
@@ -152,13 +153,15 @@ Route::group(['middleware' => 'auth'], function ($router) {
      */
 
     //Vigilancia Clinica
-    Route::apiResource('vigilancia-clinica',             'API\Modulos\VigilanciaClinicaController');
-    Route::get('resumen_camas',                          'API\Modulos\VigilanciaClinicaController@getResumenCamas');
-    Route::get('catalogos-resumen-clinicas',             'API\Modulos\VigilanciaClinicaController@getFilterCatalogsVc');
-    //responsables
-
-
+    Route::apiResource('vigilancia-clinica',            'API\Modulos\VigilanciaClinicaController');
+    Route::get('resumen_camas',                         'API\Modulos\VigilanciaClinicaController@getResumenCamas');
+    Route::get('catalogos-resumen-clinicas',            'API\Modulos\VigilanciaClinicaController@getFilterCatalogsVc');
+    
+    //Reponsables
     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
+    
+    //Colonias
+    Route::apiResource('colonias',                      'API\Catalogos\ColoniasController');
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

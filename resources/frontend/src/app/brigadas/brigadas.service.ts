@@ -12,6 +12,8 @@ export class BrigadasService {
   url_brigadistas = `${environment.base_url}/rondas-brigadistas`;
   url_fin_rondas =  `${environment.base_url}/finalizar-ronda`;
   url_catalogos = `${environment.base_url}/obtener-catalogos`;
+  url_colonias = `${environment.base_url}/colonias`;
+  url_rondas_registros = `${environment.base_url}/rondas-registros`;
 
   constructor(private http: HttpClient) { }
 
@@ -57,6 +59,22 @@ export class BrigadasService {
 
   obtenerCatalogos(payload) {
     return this.http.post<any>(this.url_catalogos,payload).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  getListadoColonias(payload){
+    return this.http.get<any>(this.url_colonias,{params:payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  guardarRegistro(payload) {
+    return this.http.post<any>(this.url_rondas_registros,payload).pipe(
       map( (response) => {
         return response;
       }

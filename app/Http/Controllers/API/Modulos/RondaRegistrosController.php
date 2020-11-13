@@ -100,8 +100,10 @@ class RondaRegistrosController extends Controller
 
             if($parametros['id']){
                 $registro = RondaRegistro::find($parametros['id']);
+                $parametros['modificado_por'] = $auth_user->id;
                 $registro->update($parametros);
             }else{
+                $parametros['creado_por'] = $auth_user->id;
                 $registro = RondaRegistro::create($parametros);
             }
             
@@ -132,23 +134,24 @@ class RondaRegistrosController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id){
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id){
-        //
+        try{
+            $auth_user = auth()->user();
+
+            $registro = RondaRegistro::find($id);
+            $registro->borrado_por = $auth_user->id;
+            $registro->save();
+
+            RondaRegistro::where('id',$id)->delete();
+            
+            return response()->json(['data'=>$registro],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
+        }
     }
 }

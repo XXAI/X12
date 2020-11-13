@@ -1,0 +1,80 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none" fxLayout="row">
+        <div fxFlex>
+            <mat-toolbar color="accent">
+                <span>Registro</span>
+                <span style="flex: 1 1 auto;"></span>
+                <button mat-icon-button aria-label="Cerrar Dialogo" (click)="cancelar()">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </mat-toolbar>
+        </div>
+    </section>
+    <section fxFlex style="overflow: hidden;">
+        <div fxLayout="column" style="height: 100%;">
+            <div fxFlex="none" fxLayout="column" style="padding:5px 0;">
+                <div fxFlex fxLayout="row"  style="padding-bottom:5px;">
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>Fecha de Registro</mat-label>
+                        <input matInput [ngModel]="datosRegistro.fecha_registro" readonly>
+                    </mat-form-field>
+                    <div fxFlex></div>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
+                    <mat-form-field fxFlex="40">
+                        <mat-label>Cabecera Recorrida</mat-label>
+                        <input matInput [ngModel]="datosRegistro.cabecera_recorrida.descripcion" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="58">
+                        <mat-label>Colonia Visitada</mat-label>
+                        <input matInput [ngModel]="datosRegistro.colonia_visitada.nombre" readonly>
+                    </mat-form-field>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="24">
+                        <mat-label>Casas Visitadas</mat-label>
+                        <input matInput [ngModel]="datosRegistro.casas_visitadas" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="24">
+                        <mat-label>Casas Ausentes</mat-label>
+                        <input matInput [ngModel]="datosRegistro.casas_ausentes" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="24">
+                        <mat-label>Casas Renuentes</mat-label>
+                        <input matInput [ngModel]="datosRegistro.casas_renuentes" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="25">
+                        <mat-label>Poblacion Beneficiada</mat-label>
+                        <input matInput [ngModel]="datosRegistro.poblacion_beneficiada" readonly>
+                    </mat-form-field>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="23">
+                        <mat-label>Casos Sospechosos</mat-label>
+                        <input matInput [ngModel]="datosRegistro.casos_sospechosos_identificados" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="18">
+                        <mat-label>% Transmision</mat-label>
+                        <input matInput [ngModel]="datosRegistro.porcentaje_transmision" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="27">
+                        <mat-label>Tratamientos en Brigadeo</mat-label>
+                        <input matInput [ngModel]="datosRegistro.tratamientos_otorgados_brigadeo" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="29">
+                        <mat-label>Tratamientos Casos Positivos</mat-label>
+                        <input matInput [ngModel]="datosRegistro.tratamientos_otorgados_casos_positivos" readonly>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cerrar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

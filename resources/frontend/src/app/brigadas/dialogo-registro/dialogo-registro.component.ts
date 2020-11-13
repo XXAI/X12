@@ -46,6 +46,7 @@ export class DialogoRegistroComponent implements OnInit {
   ngOnInit() {
     this.isLoading = true;
     this.municipios = [];
+    this.colonias = [];
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
@@ -66,8 +67,36 @@ export class DialogoRegistroComponent implements OnInit {
     });
 
     if(this.data.registro){
-      this.formRegistro.controls['colonia_visitada'].enable();
       this.formRegistro.patchValue(this.data.registro);
+
+      this.isLoadingColonias = true;
+
+      let filtroColonias={
+        distrito_id: this.idDistrito,
+        municipio_id: this.data.registro.cabecera_recorrida.id
+      }
+
+      this.brigadasService.getListadoColonias(filtroColonias).subscribe(
+        response =>{
+          if(response.error) {
+            let errorMessage = response.error.message;
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+          } else {
+            this.colonias = response.data;
+            this.formRegistro.controls['colonia_visitada'].enable();
+          }
+          this.isLoadingColonias = false;
+        },
+        errorResponse =>{
+          var errorMessage = "Ocurrió un error.";
+          if(errorResponse.status == 409){
+            errorMessage = errorResponse.error.error.message;
+          }
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+          this.isLoadingColonias = false;
+        }
+      );
+
       this.dialogTitle = 'Editar Registro';
     }else{
       this.dialogTitle = 'Nuevo Registro';
@@ -87,7 +116,6 @@ export class DialogoRegistroComponent implements OnInit {
           }
           
           this.municipiosFiltrados = this.formRegistro.controls['cabecera_recorrida'].valueChanges.pipe(startWith(''),map(value => this._filterMunicipios(value)));
-          this.colonias = [];
           this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
         }
         this.isLoading = false;

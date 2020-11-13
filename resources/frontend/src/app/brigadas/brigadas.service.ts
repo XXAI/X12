@@ -80,4 +80,12 @@ export class BrigadasService {
       }
     ));
   }
+
+  eliminarRegistro(id:number):Observable<any>{
+    return this.http.delete<any>(this.url_rondas_registros+'/'+id).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
 }

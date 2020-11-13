@@ -9,7 +9,7 @@ class RondaRegistro extends Model
 {
     use SoftDeletes;
     protected $table = 'rondas_registros';
-    protected $fillable = ['id','ronda_id','fecha_registro','cabecera_recorrida_id','colonia_visitada_id','poblacion_beneficiada','casas_visitadas','casas_ausentes','casas_renuentes','casos_sospechosos_identificados','porcentaje_transmision','tratamientos_otorgados_brigadeo','tratamientos_otorgados_casos_positivos'];
+    protected $fillable = ['id','ronda_id','fecha_registro','cabecera_recorrida_id','colonia_visitada_id','poblacion_beneficiada','casas_visitadas','casas_ausentes','casas_renuentes','casos_sospechosos_identificados','porcentaje_transmision','tratamientos_otorgados_brigadeo','tratamientos_otorgados_casos_positivos','creado_por','modificado_por','borrado_por'];
     
     public function ronda(){
         return $this->belongsTo('App\Models\Ronda','ronda_id');

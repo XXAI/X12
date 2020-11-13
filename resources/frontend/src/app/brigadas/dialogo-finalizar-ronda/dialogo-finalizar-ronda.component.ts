@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { formatDate } from '@angular/common';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from '../../shared/shared.service';
+import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
 
 export interface DialogData {
   idRonda: number;
@@ -38,23 +39,32 @@ export class DialogoFinalizarRondaComponent implements OnInit {
 
     finalizarRonda(){
       if(this.fechaFin){
-        this.isLoading = true;
-        
-        this.brigadasService.finalizarRonda(this.idRonda,{'fecha_fin':this.fechaFin}).subscribe(
-          response => {
-            this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
-            this.isLoading = false;
-            this.dialogRef.close(response.data);
-          },
-          errorResponse =>{
-            var errorMessage = "Ocurrió un error.";
-            if(errorResponse.status == 409){
-              errorMessage = errorResponse.error.error.message;
-            }
-            this.sharedService.showSnackBar(errorMessage, null, 3000);
-            this.isLoading = false;
+
+        const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+          width: '500px',
+          data:{dialogTitle:'Finalizar Ronda',dialogMessage:'Esta seguro de Finalizar la ronda?',btnColor:'primary',btnText:'Finalizar'}
+        });
+    
+        dialogRef.afterClosed().subscribe(valid => {
+          if(valid){
+            this.isLoading = true;
+            this.brigadasService.finalizarRonda(this.idRonda,{'fecha_fin':this.fechaFin}).subscribe(
+              response => {
+                this.sharedService.showSnackBar('Ronda Finalizada', null, 3000);
+                this.isLoading = false;
+                this.dialogRef.close(response.data);
+              },
+              errorResponse =>{
+                var errorMessage = "Ocurrió un error.";
+                if(errorResponse.status == 409){
+                  errorMessage = errorResponse.error.error.message;
+                }
+                this.sharedService.showSnackBar(errorMessage, null, 3000);
+                this.isLoading = false;
+              }
+            ); 
           }
-        );
+        });
       }
     }
 

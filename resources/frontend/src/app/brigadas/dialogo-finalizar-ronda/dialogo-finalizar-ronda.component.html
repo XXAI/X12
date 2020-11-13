@@ -22,7 +22,7 @@
             <div fxFlex></div>
             <div fxFlex="none">
                 <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
-                <button mat-raised-button color="warn" (click)="finalizarRonda()" [disabled]="!fechaFin || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Finalizar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="finalizarRonda()" [disabled]="!fechaFin || isLoading" [class.button-spinner]="isLoading"><mat-icon>save_alt</mat-icon> Finalizar</button>&nbsp;
             </div>
         </div>
     </section>

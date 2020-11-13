@@ -3,10 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 import { DialogoRegistroComponent } from '../dialogo-registro/dialogo-registro.component';
+import { DialogoVerRegistroComponent }  from '../dialogo-ver-registro/dialogo-ver-registro.component';
 import { DialogoFinalizarRondaComponent } from '../dialogo-finalizar-ronda/dialogo-finalizar-ronda.component';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from '../../shared/shared.service';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
 
 @Component({
   selector: 'app-ronda',
@@ -91,6 +93,40 @@ export class RondaComponent implements OnInit {
     });
   }
 
+  borrarRegistro(registro){
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data:{dialogTitle:'Eliminar Registro',dialogMessage:'Esta seguro de eliminar el regsitro?',btnColor:'warn',btnText:'Eliminar'}
+    });
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        this.isLoading = true;
+        this.brigadasService.eliminarRegistro(registro.id).subscribe(
+          response =>{
+            if(response.error) {
+              let errorMessage = response.error.message;
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+            } else {
+              let index = this.dataSourceRegistros.data.findIndex(x => x.id === registro.id);
+              this.dataSourceRegistros.data.splice(index,1);
+              this.filtrarRegistros();
+            }
+            this.isLoading = false;
+          },
+          errorResponse =>{
+            var errorMessage = "Ocurrió un error.";
+            if(errorResponse.status == 409){
+              errorMessage = errorResponse.error.error.message;
+            }
+            this.sharedService.showSnackBar(errorMessage, null, 3000);
+            this.isLoading = false;
+          }
+        );
+      }
+    });
+  }
+
   dialogoRegistro(editarRegistro?:any){
     let config_data:any = {
       idDistrito: this.datosRonda.brigada.distrito_id, 
@@ -127,6 +163,21 @@ export class RondaComponent implements OnInit {
     });
   }
 
+  dialogoVerRegistro(verRegistro){
+    let configDialog = {
+      width: '85%',
+      maxHeight: '90vh',
+      height: '450px',
+      data: {registro: verRegistro},
+      panelClass: 'no-padding-dialog'
+    };
+
+    const dialogRef = this.dialog.open(DialogoVerRegistroComponent, configDialog);
+    /*dialogRef.afterClosed().subscribe(registro => {
+      console.log('cerrar');
+    });*/
+  }
+
   filtrarRegistros(){
     this.dataSourceRegistros.filter = this.filtroQuery;
   }
@@ -142,10 +193,12 @@ export class RondaComponent implements OnInit {
 
     const dialogRef = this.dialog.open(DialogoFinalizarRondaComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        console.log('Finalizada');
+    dialogRef.afterClosed().subscribe(response => {
+      if(response){
         this.rondaFinalizada = true;
+        this.datosRonda.fecha_fin = response.fecha_fin;
+        this.datosRonda.total_dias = response.total_dias;
+        this.datosRonda.estatus = 'Finalizada';
       }else{
         console.log('Cancelar');
       }

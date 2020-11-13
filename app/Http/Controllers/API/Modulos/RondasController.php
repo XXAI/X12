@@ -138,7 +138,7 @@ class RondasController extends Controller
             //$auth_user = auth()->user();
             $parametros = Input::all();
 
-            $ronda = Ronda::find($id);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->find($id);
             
             if(!$ronda){
                 throw new \Exception("No existe el registro");

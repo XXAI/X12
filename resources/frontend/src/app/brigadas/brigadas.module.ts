@@ -12,10 +12,11 @@ import { DialogoNuevaRondaComponent } from './dialogo-nueva-ronda/dialogo-nueva-
 import { DialogoBrigadistasComponent } from './dialogo-brigadistas/dialogo-brigadistas.component';
 import { DialogoRegistroComponent } from './dialogo-registro/dialogo-registro.component';
 import { DialogoFinalizarRondaComponent } from './dialogo-finalizar-ronda/dialogo-finalizar-ronda.component';
+import { DialogoVerRegistroComponent } from './dialogo-ver-registro/dialogo-ver-registro.component';
 
 
 @NgModule({
-  declarations: [ListadoRondasComponent, RondaComponent, DialogoNuevaRondaComponent, DialogoBrigadistasComponent, DialogoRegistroComponent, DialogoFinalizarRondaComponent],
+  declarations: [ListadoRondasComponent, RondaComponent, DialogoNuevaRondaComponent, DialogoBrigadistasComponent, DialogoRegistroComponent, DialogoFinalizarRondaComponent, DialogoVerRegistroComponent],
   imports: [
     CommonModule,
     BrigadasRoutingModule,
@@ -25,7 +26,8 @@ import { DialogoFinalizarRondaComponent } from './dialogo-finalizar-ronda/dialog
     DialogoNuevaRondaComponent,
     DialogoBrigadistasComponent,
     DialogoRegistroComponent,
-    DialogoFinalizarRondaComponent
+    DialogoFinalizarRondaComponent,
+    DialogoVerRegistroComponent
   ],
   providers:[
     { provide: MatPaginatorIntl, useValue: getEspPaginatorIntl() }

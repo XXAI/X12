@@ -117,6 +117,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
      */
     Route::apiResource('rondas',            'API\Modulos\RondasController');
     Route::apiResource('rondas-registros',  'API\Modulos\RondaRegistrosController');
+    Route::get('brigada-municipios/{id}',   'API\Modulos\RondasController@listaMunicipios');
     Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
     Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
 

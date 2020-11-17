@@ -6,7 +6,7 @@
                 <mat-label>Brigadas</mat-label>
                 <mat-select [(ngModel)]="brigada" (selectionChange)="cambioBrigada()">
                     <mat-option *ngFor="let brigada of brigadas" [value]="brigada">
-                        Distrito {{brigada.distrito.clave}} - {{brigada.distrito.descripcion}} ({{brigada.rondas.length}} Rondas)
+                        Distrito {{brigada.distrito.clave}} - {{brigada.distrito.descripcion}} ({{(brigada.rondas[0])?brigada.rondas[0].total_rondas:0}} Rondas)
                     </mat-option>
                 </mat-select>
                 <mat-hint align="end" *ngIf="brigada">Grupo #{{brigada.grupo_estrategico.folio}}</mat-hint>
@@ -31,11 +31,28 @@
             </div>
         </mat-card>
     </section>
+    <section fxFlex="none" fxLayout="row" style="overflow: auto;">
+        <form fxFlex="50" class="example-form">
+            <mat-form-field style="width: 100%;">
+              <input type="text" placeholder="Seleccione un Municipio" aria-label="Municipio" matInput [formControl]="municipio" [matAutocomplete]="autoMunicipio" (blur)="checkAutocompleteMunicipio()">
+              <mat-autocomplete #autoMunicipio="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="municipioSeleccionado()">
+                <mat-option *ngFor="let municipio of municipiosFiltrados | async" [value]="municipio">
+                    <div  [ngStyle]="{'font-weight': (municipio.total_rondas > 0) ? 'bold' : 'normal'}">
+                        <span>{{municipio.descripcion}}</span> | <small>Rondas: {{municipio.total_rondas | number:'1.0-0'}}</small>
+                    </div>
+                </mat-option>
+              </mat-autocomplete>
+              <button tabindex="-1" *ngIf="municipio.value" mat-icon-button matSuffix (click)="limpiarMunicipio()">
+                <mat-icon>clear</mat-icon>
+            </button>
+            </mat-form-field>
+        </form>
+    </section>
     <section fxFlex style="overflow: auto;">
         <div>
             <h3>Rondas:</h3>
         </div>
-        <mat-grid-list cols="5" rowHeight="1:1" *ngIf="brigada">
+        <mat-grid-list cols="5" rowHeight="1:1" *ngIf="mostrarRondas">
             <mat-grid-tile *ngIf="rondaActiva == 0">
                 <div style="height: 100%; width: 100%; padding: 10px;">
                     <div class="circle nuevo" (click)="nuevaRonda()">

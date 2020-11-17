@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class BrigadasService {
   url_rondas = `${environment.base_url}/rondas`;
+  url_municipios = `${environment.base_url}/brigada-municipios`;
   url_brigadistas = `${environment.base_url}/rondas-brigadistas`;
   url_fin_rondas =  `${environment.base_url}/finalizar-ronda`;
   url_catalogos = `${environment.base_url}/obtener-catalogos`;
@@ -17,8 +18,16 @@ export class BrigadasService {
 
   constructor(private http: HttpClient) { }
 
-  getListadoRondas(payload):Observable<any> {
+  getListadoBrigadas(payload):Observable<any> {
     return this.http.get<any>(this.url_rondas,{params:payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
+  getListadoMunicipios(id):Observable<any> {
+    return this.http.get<any>(this.url_municipios+'/'+id).pipe(
       map( response => {
         return response;
       })

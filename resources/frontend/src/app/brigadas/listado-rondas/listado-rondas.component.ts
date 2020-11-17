@@ -5,6 +5,9 @@ import { DialogoNuevaRondaComponent } from '../dialogo-nueva-ronda/dialogo-nueva
 import { DialogoBrigadistasComponent }  from '../dialogo-brigadistas/dialogo-brigadistas.component';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from '../../shared/shared.service';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: 'app-listado-rondas',
@@ -22,11 +25,22 @@ export class ListadoRondasComponent implements OnInit {
 
   isLoading:boolean;
 
+  mostrarRondas:boolean;
+
   rondaActiva:number;
   rondaMax:number;
 
+  municipio:FormControl;
+  municipios:any[];
+  municipiosFiltrados:Observable<any[]>;
+
   ngOnInit() {
     this.cargarBrigadas();
+
+    this.municipios = [];
+    this.municipio = new FormControl();
+
+    this.municipiosFiltrados = this.municipio.valueChanges.pipe(startWith(''),map(value => this._filterMunicipios(value)));
   }
 
   cargarBrigadas(){
@@ -34,15 +48,15 @@ export class ListadoRondasComponent implements OnInit {
     this.rondaActiva = 0;
     this.isLoading = true;
 
-    this.brigadasService.getListadoRondas({}).subscribe(
+    this.brigadasService.getListadoBrigadas({}).subscribe(
       response =>{
         if(response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
           this.brigadas = response.data;
-          this.brigada = response.data[0];
-          this.checarRondaActiva();
+          //this.brigada = response.data[0];
+          //this.checarRondaActiva();
         }
         this.isLoading = false;
       },
@@ -58,7 +72,31 @@ export class ListadoRondasComponent implements OnInit {
   }
 
   cambioBrigada(){
-    this.checarRondaActiva();
+    this.mostrarRondas = false;
+    this.isLoading = true;
+    this.brigadasService.getListadoMunicipios(this.brigada.id).subscribe(
+      response =>{
+        if(response.error) {
+          let errorMessage = response.error.message;
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+        } else {
+          this.municipios = response.data;
+          this.municipio.setValue('');
+          //this.brigada = response.data[0];
+          //this.checarRondaActiva();
+        }
+        this.isLoading = false;
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+        this.isLoading = false;
+      }
+    );
+    //this.checarRondaActiva();
   }
 
   checarRondaActiva(){
@@ -120,6 +158,43 @@ export class ListadoRondasComponent implements OnInit {
         console.log('Cancelar');
       }
     });
+  }
+
+  limpiarMunicipio(){
+    this.municipio.setValue('');
+    this.mostrarRondas = false;
+  }
+
+  municipioSeleccionado(){
+    this.mostrarRondas = true;
+  }
+
+  private _filterMunicipios(value: any): string[] {
+    let filterValue = '';
+    if(value){
+      if(typeof(value) == 'object'){
+        filterValue = value['descripcion'].toLowerCase();
+      }else{
+        filterValue = value.toLowerCase();
+      }
+    }
+    return this.municipios.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
+  }
+
+  checkAutocompleteMunicipio() {
+    setTimeout(() => {
+      if (typeof(this.municipio.value) != 'object') {
+        this.municipio.reset();
+      } 
+    }, 300);
+  }
+
+  getDisplayFn(label: string){
+    return (val) => this.displayFn(val,label);
+  }
+
+  displayFn(value: any, valueLabel: string){
+    return value ? value[valueLabel] : value;
   }
 
 }

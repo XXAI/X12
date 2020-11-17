@@ -9,10 +9,14 @@ class Ronda extends Model
 {
     use SoftDeletes;
     protected $table = 'rondas';
-    protected $fillable = ['id','brigada_id','no_ronda','fecha_inicio','fecha_fin'];
+    protected $fillable = ['id','brigada_id','municipio_id','no_ronda','fecha_inicio','fecha_fin'];
 
     public function registros(){
         return $this->hasMany('App\Models\RondaRegistro','ronda_id');
+    }
+
+    public function municipio(){
+        return $this->belongsTo('App\Models\Municipio','municipio_id');
     }
 
     public function brigada(){

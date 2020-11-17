@@ -17,6 +17,7 @@ use \Validator,\Hash;
 use App\Models\Brigada;
 use App\Models\Ronda;
 use App\Models\RondaRegistro;
+use App\Models\Municipio;
 
 class RondasController extends Controller
 {
@@ -30,8 +31,12 @@ class RondasController extends Controller
             $parametros = Input::all();
             
             $brigadas = Brigada::with(['grupoEstrategico','distrito','rondas'=>function($rondas){
-                $rondas->select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->orderBy('fecha_inicio','desc');
+                $rondas->select('brigada_id',DB::raw('COUNT(no_ronda) as total_rondas'),
+                                DB::raw('COUNT(DISTINCT municipio_id) as total_municipios'))
+                        ->groupBy('brigada_id');
             }])->get();
+
+            //DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias')
             
             //Filtros, busquedas, ordenamiento
             /*if(isset($parametros['query']) && $parametros['query']){
@@ -52,6 +57,25 @@ class RondasController extends Controller
             return response()->json(['data'=>$brigadas],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function listaMunicipios($id){
+        try{
+            $brigada = Brigada::find($id);
+            $municipios = Municipio::select('catalogo_municipios.*',DB::raw('COUNT(rondas.no_ronda) as total_rondas'))
+                                    ->leftjoin('rondas',function($join)use($id){
+                                        $join->where('brigada_id',$id)->on('rondas.municipio_id','=','catalogo_municipios.id');
+                                    })
+                                    ->where('distrito_id',$brigada->distrito_id)
+                                    ->groupBy('catalogo_municipios.id')
+                                    ->orderBY('total_rondas','desc')
+                                    ->orderBy('descripcion')
+                                    ->get();
+            
+            return response()->json(['data'=>$municipios],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }
     }
 

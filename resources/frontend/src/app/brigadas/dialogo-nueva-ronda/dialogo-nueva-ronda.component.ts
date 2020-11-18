@@ -8,6 +8,7 @@ import { SharedService } from '../../shared/shared.service';
 export interface DialogData {
   ultimaRonda: any;
   idBrigada: number;
+  idMunicipio: number;
 }
 
 @Component({
@@ -39,6 +40,7 @@ export class DialogoNuevaRondaComponent implements OnInit {
 
     this.formRonda = this.formBuilder.group({
       brigada_id: this.data.idBrigada,
+      municipio_id: this.data.idMunicipio,
       fecha_inicio:[fecha_hoy,Validators.required],
       no_ronda:[ultima_ronda,Validators.required],
       id:['']

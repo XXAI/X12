@@ -10,12 +10,15 @@
                                 <span>Ronda no. {{datosRonda.no_ronda}}</span><br>
                                 <mat-hint align="end">{{datosRonda.estatus}}</mat-hint>
                             </h2>
+                            <mat-divider></mat-divider>
                         </div>
-                        <div fxFlex style="text-align: center;">
+                        
+                        <div fxFlex style="text-align: center; font-size: 1.25em !important;">
                             <p *ngIf="datosRonda.brigada">
-                                {{datosRonda.brigada.distrito.clave}} - {{datosRonda.brigada.distrito.descripcion}}<br>
-                                <mat-hint align="end">{{datosRonda.brigada.grupo_estrategico.descripcion}}</mat-hint>
+                                {{datosRonda.municipio.descripcion}}<br>
+                                <mat-hint style="font-size: 0.70em !important;">{{datosRonda.brigada.distrito.clave}} - {{datosRonda.brigada.distrito.descripcion}}</mat-hint>
                             </p>
+                            <mat-divider></mat-divider>
                         </div>
                         <mat-form-field fxFlex appearance="standard">
                             <mat-label>Fecha Inicio</mat-label>
@@ -65,14 +68,9 @@
                             <td mat-cell *matCellDef="let row" style="white-space: nowrap; padding:0px 5px;">{{row.fecha_registro}}</td>
                         </ng-container>
 
-                        <ng-container matColumnDef="cabecera_recorrida">
-                            <th mat-header-cell *matHeaderCellDef style="white-space: nowrap; padding:0px 5px;"> Cabecera Recorrida </th>
-                            <td mat-cell *matCellDef="let row" style="padding:0px 5px;">{{row.cabecera_recorrida.descripcion}}</td>
-                        </ng-container>
-
                         <ng-container matColumnDef="colonia">
                             <th mat-header-cell *matHeaderCellDef style="white-space: nowrap; padding:0px 5px;"> Colonia </th>
-                            <td mat-cell *matCellDef="let row" style="padding:0px 5px;">{{row.colonia_visitada.nombre}}</td>
+                            <td mat-cell *matCellDef="let row" style="text-align: center; padding:0px 5px;">{{row.colonia_visitada.nombre}}</td>
                         </ng-container>
                         
                         <ng-container matColumnDef="casas_visitadas" >
@@ -88,6 +86,11 @@
                         <ng-container matColumnDef="casas_renuentes" >
                             <th mat-header-cell *matHeaderCellDef fxHide.xs="true" width="1" style="padding:0px 5px;"> Casas Renuentes </th>
                             <td mat-cell *matCellDef="let row" fxHide.xs="true" style="white-space: nowrap; text-align: center;"> {{row.casas_renuentes | number:'1.0-0'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="casos_sospechosos" >
+                            <th mat-header-cell *matHeaderCellDef fxHide.xs="true" width="1" style="padding:0px 5px;"> Casos Sospechosos </th>
+                            <td mat-cell *matCellDef="let row" fxHide.xs="true" style="white-space: nowrap; text-align: center;"> {{row.casos_sospechosos_identificados | number:'1.0-0'}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="actions">

@@ -11,6 +11,7 @@ export interface DialogData {
   registro?: any;
   idDistrito:number;
   idRonda:number;
+  municipio:any;
 }
 
 @Component({
@@ -37,22 +38,19 @@ export class DialogoRegistroComponent implements OnInit {
   
   idRonda:number;
   idDistrito:number;
-  municipios:any[];
   colonias:any[];
-  municipiosFiltrados:Observable<any[]>;
   coloniasFiltradas:Observable<any[]>;
   nuevaColonia:boolean;
 
   ngOnInit() {
     this.isLoading = true;
-    this.municipios = [];
     this.colonias = [];
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
 
     this.formRegistro = this.formBuilder.group({
-      cabecera_recorrida:[{value:{descripcion:'Cargando Municipios...'},disabled:true},Validators.required],
+      cabecera_recorrida:[this.data.municipio],
       colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
       poblacion_beneficiada:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -66,58 +64,23 @@ export class DialogoRegistroComponent implements OnInit {
       id:['']
     });
 
-    if(this.data.registro){
-      this.formRegistro.patchValue(this.data.registro);
+    this.isLoadingColonias = true;
 
-      this.isLoadingColonias = true;
-
-      let filtroColonias={
-        distrito_id: this.idDistrito,
-        municipio_id: this.data.registro.cabecera_recorrida.id
-      }
-
-      this.brigadasService.getListadoColonias(filtroColonias).subscribe(
-        response =>{
-          if(response.error) {
-            let errorMessage = response.error.message;
-            this.sharedService.showSnackBar(errorMessage, null, 3000);
-          } else {
-            this.colonias = response.data;
-            this.formRegistro.controls['colonia_visitada'].enable();
-          }
-          this.isLoadingColonias = false;
-        },
-        errorResponse =>{
-          var errorMessage = "Ocurrió un error.";
-          if(errorResponse.status == 409){
-            errorMessage = errorResponse.error.error.message;
-          }
-          this.sharedService.showSnackBar(errorMessage, null, 3000);
-          this.isLoadingColonias = false;
-        }
-      );
-
-      this.dialogTitle = 'Editar Registro';
-    }else{
-      this.dialogTitle = 'Nuevo Registro';
+    let filtroColonias={
+      distrito_id: this.idDistrito,
+      municipio_id: this.data.municipio.id
     }
-    
-    this.brigadasService.obtenerCatalogos([{nombre:'municipios', orden:'descripcion', filtro_id:{ campo:'distrito_id', valor:this.idDistrito }}]).subscribe(
+
+    this.brigadasService.getListadoColonias(filtroColonias).subscribe(
       response =>{
         if(response.error) {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          this.municipios = response.data.municipios;
-          this.formRegistro.controls['cabecera_recorrida'].enable();
-
-          if(!this.data.registro){
-            this.formRegistro.get('cabecera_recorrida').patchValue('');
-          }
-          
-          this.municipiosFiltrados = this.formRegistro.controls['cabecera_recorrida'].valueChanges.pipe(startWith(''),map(value => this._filterMunicipios(value)));
-          this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
+          this.colonias = response.data;
+          this.formRegistro.controls['colonia_visitada'].enable();
         }
+        this.isLoadingColonias = false;
         this.isLoading = false;
       },
       errorResponse =>{
@@ -126,9 +89,19 @@ export class DialogoRegistroComponent implements OnInit {
           errorMessage = errorResponse.error.error.message;
         }
         this.sharedService.showSnackBar(errorMessage, null, 3000);
+        this.isLoadingColonias = false;
         this.isLoading = false;
       }
     );
+
+    if(this.data.registro){
+      this.formRegistro.patchValue(this.data.registro);
+      this.dialogTitle = 'Editar Registro';
+    }else{
+      this.dialogTitle = 'Nuevo Registro';
+    }
+
+    this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
   }
 
   guardarRegistro(){
@@ -175,55 +148,12 @@ export class DialogoRegistroComponent implements OnInit {
     );
   }
 
-  checkAutocompleteMunicipio() {
-    setTimeout(() => {
-      if (typeof(this.formRegistro.get('cabecera_recorrida').value) != 'object') {
-        this.formRegistro.get('cabecera_recorrida').reset();
-        this.formRegistro.get('colonia_visitada').reset();
-        this.formRegistro.controls['colonia_visitada'].disable();
-      } 
-    }, 300);
-  }
-
   checkAutocompleteColonia() {
     setTimeout(() => {
       if (typeof(this.formRegistro.get('colonia_visitada').value) != 'object') {
         this.formRegistro.get('colonia_visitada').reset();
       } 
     }, 300);
-  }
-
-  municipioSeleccionado(event){
-    //console.log(event);
-    this.formRegistro.get('colonia_visitada').patchValue({nombre:'Cargando Colonias...'});
-    this.isLoadingColonias = true;
-
-    let filtroColonias={
-      distrito_id: this.idDistrito,
-      municipio_id: this.formRegistro.get('cabecera_recorrida').value.id
-    }
-
-    this.brigadasService.getListadoColonias(filtroColonias).subscribe(
-      response =>{
-        if(response.error) {
-          let errorMessage = response.error.message;
-          this.sharedService.showSnackBar(errorMessage, null, 3000);
-        } else {
-          this.colonias = response.data;
-          this.formRegistro.controls['colonia_visitada'].enable();
-          this.formRegistro.get('colonia_visitada').patchValue('');
-        }
-        this.isLoadingColonias = false;
-      },
-      errorResponse =>{
-        var errorMessage = "Ocurrió un error.";
-        if(errorResponse.status == 409){
-          errorMessage = errorResponse.error.error.message;
-        }
-        this.sharedService.showSnackBar(errorMessage, null, 3000);
-        this.isLoadingColonias = false;
-      }
-    );
   }
 
   agregarColonia(){
@@ -235,18 +165,6 @@ export class DialogoRegistroComponent implements OnInit {
   limpiarColonia(){
     this.nuevaColonia = false;
     this.formRegistro.get('colonia_visitada').patchValue('');
-  }
-
-  private _filterMunicipios(value: any): string[] {
-    let filterValue = '';
-    if(value){
-      if(typeof(value) == 'object'){
-        filterValue = value['descripcion'].toLowerCase();
-      }else{
-        filterValue = value.toLowerCase();
-      }
-    }
-    return this.municipios.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
   }
 
   private _filterColonias(value: any): string[] {

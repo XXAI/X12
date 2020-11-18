@@ -22,7 +22,7 @@ export class RondaComponent implements OnInit {
   constructor(private dialog: MatDialog, private route: ActivatedRoute, private brigadasService: BrigadasService, private sharedService: SharedService) { }
 
   listaRegistros:any[];
-  displayedColumns: string[] = ['fecha_registro','cabecera_recorrida','colonia','casas_visitadas','casas_ausentes','casas_renuentes','actions'];
+  displayedColumns: string[] = ['fecha_registro','colonia','casas_visitadas','casas_ausentes','casas_renuentes','casos_sospechosos','actions'];
   datosRonda:any;
   idRegistroSeleccionado:number;
   isLoading:boolean;
@@ -130,7 +130,8 @@ export class RondaComponent implements OnInit {
   dialogoRegistro(editarRegistro?:any){
     let config_data:any = {
       idDistrito: this.datosRonda.brigada.distrito_id, 
-      idRonda:this.datosRonda.id
+      idRonda:this.datosRonda.id,
+      municipio:this.datosRonda.municipio,
     }    
 
     if(editarRegistro){

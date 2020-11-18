@@ -26,18 +26,7 @@
                 <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
                     <mat-form-field fxFlex="40">
                         <mat-label>Cabecera Recorrida</mat-label>
-                        <input type="text" placeholder="Seleccionar Municipio" aria-label="Cabecera" matInput formControlName="cabecera_recorrida" [matAutocomplete]="municipiosAutocomplete" (blur)="checkAutocompleteMunicipio()">
-                        <button tabindex="-1" *ngIf="formRegistro.get('cabecera_recorrida').value" mat-icon-button matSuffix (click)="formRegistro.get('cabecera_recorrida').patchValue('')">
-                            <mat-icon>clear</mat-icon>
-                        </button>
-                        <mat-autocomplete #municipiosAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="municipioSeleccionado($event)">
-                            <mat-option *ngFor="let item of municipiosFiltrados | async" [value]="item">
-                                {{item.descripcion}}
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-hint *ngIf="!formRegistro.get('cabecera_recorrida').value">Selecciona un municipio de la lista</mat-hint>
-                        <mat-hint align="end" *ngIf="formRegistro.get('cabecera_recorrida').value">[{{formRegistro.get('cabecera_recorrida').value.clave}}]</mat-hint>
-                        <mat-error *ngIf="formRegistro.get('cabecera_recorrida').hasError('required')">Este campo es obligatorio</mat-error>
+                        <input type="text" placeholder="Municipio" aria-label="Cabecera" matInput [value]="formRegistro.get('cabecera_recorrida').value.descripcion" readonly>
                     </mat-form-field>
                     <mat-form-field fxFlex="58">
                         <mat-label>Colonia Visitada (Sin abreviaciones)</mat-label>

@@ -19,8 +19,6 @@ export class ListadoRondasComponent implements OnInit {
   constructor(private dialog: MatDialog, private route: Router, private brigadasService: BrigadasService, private sharedService: SharedService) { }
 
   brigadas:any[];
-
-  rondas:any[];
   brigada:any;
 
   isLoading:boolean;
@@ -34,18 +32,25 @@ export class ListadoRondasComponent implements OnInit {
   municipios:any[];
   municipiosFiltrados:Observable<any[]>;
 
-  ngOnInit() {
-    this.cargarBrigadas();
+  rondasXMunicipio:any;
+  rondas:any[];
 
+  ngOnInit() {
     this.municipios = [];
     this.municipio = new FormControl();
 
     this.municipiosFiltrados = this.municipio.valueChanges.pipe(startWith(''),map(value => this._filterMunicipios(value)));
+
+    this.cargarBrigadas();
   }
 
   cargarBrigadas(){
     this.rondaMax = 0;
     this.rondaActiva = 0;
+    this.mostrarRondas = false;
+    this.rondas = [];
+    this.municipio.reset();
+    this.brigada = undefined;
     this.isLoading = true;
 
     this.brigadasService.getListadoBrigadas({}).subscribe(
@@ -55,7 +60,8 @@ export class ListadoRondasComponent implements OnInit {
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
           this.brigadas = response.data;
-          //this.brigada = response.data[0];
+          this.brigada = response.data[0];
+          this.cambioBrigada();
           //this.checarRondaActiva();
         }
         this.isLoading = false;
@@ -80,8 +86,10 @@ export class ListadoRondasComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          this.municipios = response.data;
+          this.municipios = response.data.municipios;
           this.municipio.setValue('');
+
+          this.rondasXMunicipio = response.data.rondas;
           //this.brigada = response.data[0];
           //this.checarRondaActiva();
         }
@@ -102,9 +110,9 @@ export class ListadoRondasComponent implements OnInit {
   checarRondaActiva(){
     this.rondaActiva = 0;
     this.rondaMax = 0;
-    if(this.brigada){
-      for (let i in this.brigada.rondas) {
-        let ronda = this.brigada.rondas[i];
+    if(this.rondas){
+      for (let i in this.rondas) {
+        let ronda = this.rondas[i];
         if(!ronda.fecha_fin){
           this.rondaActiva = ronda.no_ronda;
         }
@@ -124,7 +132,7 @@ export class ListadoRondasComponent implements OnInit {
       width: '450px',
       maxHeight: '90vh',
       height: '250px',
-      data:{ultimaRonda: this.rondaMax, idBrigada: this.brigada.id},
+      data:{ultimaRonda: this.rondaMax, idBrigada: this.brigada.id, idMunicipio: this.municipio.value.id},
       panelClass: 'no-padding-dialog'
     };
 
@@ -132,8 +140,23 @@ export class ListadoRondasComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(ronda => {
       if(ronda){
-        this.brigada.rondas.unshift(ronda);
+        if(this.rondasXMunicipio[this.municipio.value.id]){
+          this.rondasXMunicipio[this.municipio.value.id].unshift(ronda);
+        }else{
+          this.rondasXMunicipio[this.municipio.value.id] = [ronda];
+          this.rondas = this.rondasXMunicipio[this.municipio.value.id];
+        }
         this.checarRondaActiva();
+
+        let index = this.brigadas.findIndex(x => x.id === ronda.brigada_id);
+        this.brigadas[index].total_rondas += 1;
+
+        index = this.municipios.findIndex(x => x.id === ronda.municipio_id);
+        this.municipios[index].total_rondas += 1;
+        let municipio = this.municipios[index];
+        this.municipios.splice(index,1);
+        this.municipios.unshift(municipio);
+
       }else{
         console.log('Cancelar');
       }
@@ -167,6 +190,8 @@ export class ListadoRondasComponent implements OnInit {
 
   municipioSeleccionado(){
     this.mostrarRondas = true;
+    this.rondas = this.rondasXMunicipio[this.municipio.value.id];
+    this.checarRondaActiva();
   }
 
   private _filterMunicipios(value: any): string[] {
@@ -185,6 +210,8 @@ export class ListadoRondasComponent implements OnInit {
     setTimeout(() => {
       if (typeof(this.municipio.value) != 'object') {
         this.municipio.reset();
+        this.mostrarRondas = false;
+        this.rondas = [];
       } 
     }, 300);
   }

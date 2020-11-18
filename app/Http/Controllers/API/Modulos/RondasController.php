@@ -30,11 +30,12 @@ class RondasController extends Controller
         try{
             $parametros = Input::all();
             
-            $brigadas = Brigada::with(['grupoEstrategico','distrito','rondas'=>function($rondas){
-                $rondas->select('brigada_id',DB::raw('COUNT(no_ronda) as total_rondas'),
-                                DB::raw('COUNT(DISTINCT municipio_id) as total_municipios'))
-                        ->groupBy('brigada_id');
-            }])->get();
+            $brigadas = Brigada::select('brigadas.*',DB::raw('COUNT(rondas.no_ronda) as total_rondas'))
+                                ->leftjoin('rondas',function($join){
+                                    $join->on('rondas.brigada_id','=','brigadas.id');
+                                })
+                                ->groupBy('brigadas.id')
+                                ->with('grupoEstrategico','distrito')->get();
 
             //DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias')
             
@@ -73,7 +74,9 @@ class RondasController extends Controller
                                     ->orderBy('descripcion')
                                     ->get();
             
-            return response()->json(['data'=>$municipios],HttpResponse::HTTP_OK);
+            $rondas = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->where('brigada_id',$id)->orderBy('no_ronda','desc')->get()->groupBy('municipio_id');
+            
+            return response()->json(['data'=>['municipios'=>$municipios, 'rondas'=>$rondas]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }
@@ -129,6 +132,7 @@ class RondasController extends Controller
             }
 
             $ronda = Ronda::create($parametros);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->find($ronda->id);
 
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -149,7 +153,7 @@ class RondasController extends Controller
                                     $brigada->with('distrito','grupoEstrategico');
                                 },'registros'=>function($registros){
                                     $registros->with('cabeceraRecorrida','ColoniaVisitada')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
-                                }])->find($id);
+                                },'municipio'])->find($id);
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){

@@ -28,14 +28,23 @@ class RondasController extends Controller
      */
     public function index(){
         try{
+            $auth_user = auth()->user();
+
             $parametros = Input::all();
-            
+
             $brigadas = Brigada::select('brigadas.*',DB::raw('COUNT(rondas.no_ronda) as total_rondas'))
                                 ->leftjoin('rondas',function($join){
                                     $join->on('rondas.brigada_id','=','brigadas.id');
                                 })
                                 ->groupBy('brigadas.id')
-                                ->with('grupoEstrategico','distrito')->get();
+                                ->with('grupoEstrategico','distrito');//->get();
+            
+            if(!$auth_user->is_superuser){
+                $grupos_ids = $auth_user->grupos()->pluck('id');
+                $brigadas = $brigadas->whereIn('grupo_estrategico_id',$grupos_ids);
+            }
+
+            $brigadas = $brigadas->get();
 
             //DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias')
             

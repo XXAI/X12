@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogoNuevaRondaComponent } from '../dialogo-nueva-ronda/dialogo-nueva-ronda.component';
@@ -50,6 +50,7 @@ export class ListadoRondasComponent implements OnInit {
     this.mostrarRondas = false;
     this.rondas = [];
     this.municipio.reset();
+    this.brigadas = [];
     this.brigada = undefined;
     this.isLoading = true;
 
@@ -184,8 +185,8 @@ export class ListadoRondasComponent implements OnInit {
   }
 
   limpiarMunicipio(){
-    this.municipio.setValue('');
     this.mostrarRondas = false;
+    this.municipio.reset();
   }
 
   municipioSeleccionado(){

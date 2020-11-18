@@ -12,8 +12,9 @@
                 <mat-hint align="end" *ngIf="brigada">Grupo #{{brigada.grupo_estrategico.folio}}</mat-hint>
             </mat-form-field>
             <mat-form-field fxFlex appearance="fill" *ngIf="brigadas && brigadas.length == 1">
-                <mat-label>Grupo #{{brigada.grupo_estrategico.folio}}</mat-label>
-                <input matInput value="Distrito {{brigada.distrito.clave}}: {{brigada.distrito.descripcion}}" readonly>
+                <mat-label>Brigada</mat-label>
+                <input matInput value="Distrito {{brigada.distrito.clave}} - {{brigada.distrito.descripcion}} ({{ brigada.total_rondas | number:'1.0-0'}} Rondas)" readonly>
+                <mat-hint align="end">Grupo #{{brigada.grupo_estrategico.folio}}</mat-hint>
             </mat-form-field>
             <div fxFlex="10"></div>
             <mat-form-field fxFlex="none" *ngIf="brigada" appearance="outline">

@@ -192,6 +192,36 @@ class RondasController extends Controller
         }
     }
 
+    public function exportExcel(Request $request){
+        ini_set('memory_limit', '-1');
+
+        try{
+            $query = $request->get('query');
+
+            $resultado = Brigada::select('catalogo_distritos.clave', 'catalogo_distritos.descripcion', DB::raw('COUNT(DISTINCT rondas.municipio_id) as cabeceras_recorridas'), 
+                                            DB::raw('COUNT(DISTINCT rondas_registros.colonia_visitada_id) as colonias_visitadas'), DB::raw('SUM(rondas_registros.poblacion_beneficiada) as poblacion_beneficiada'),
+                                            DB::raw('SUM(rondas_registros.casas_visitadas) as casas_visitadas'), DB::raw('SUM(rondas_registros.casas_ausentes) as casas_ausentes'), 
+                                            DB::raw('SUM(rondas_registros.casas_renuentes) as casas_renuentes'), DB::raw('SUM(rondas_registros.casos_sospechosos_identificados) as casos_sospechosos_identificados'), 
+                                            DB::raw('A.total_brigadistas as brigadistas_acumulados'), DB::raw('SUM(rondas_registros.tratamientos_otorgados_brigadeo) as tratamientos_otorgados_brigadeo'), 
+                                            DB::raw('SUM(rondas_registros.tratamientos_otorgados_casos_positivos) as tratamientos_otorgados_casos_positivos'))
+                                ->leftjoin('catalogo_distritos','catalogo_distritos.id','=','brigadas.distrito_id')
+                                ->leftjoin('rondas',function($join){
+                                    $join->on('rondas.brigada_id','=','brigadas.id')->whereNull('rondas.deleted_at');
+                                })
+                                ->leftjoin('rondas_registros',function($join){
+                                    $join->on('rondas_registros.ronda_id','=','rondas.id')->whereNull('rondas.deleted_at');
+                                })
+                                ->groupBy('brigadas.distrito_id')
+                                ;
+            
+            $filename = 'brigadas_concentrado';
+            
+            return (new DevReportExport($resultado,$columnas))->download($filename.'.xlsx'); //Excel::XLSX, ['Access-Control-Allow-Origin'=>'*','Access-Control-Allow-Methods'=>'GET']
+        }catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage(),'line'=>$e->getLine()], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *

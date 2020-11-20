@@ -10,6 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 
 use Illuminate\Support\Facades\Input;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Exports\ReportRondasExport;
 
 use DB;
 use \Validator,\Hash;
@@ -194,16 +197,27 @@ class RondasController extends Controller
 
     public function exportExcel(Request $request){
         ini_set('memory_limit', '-1');
-
         try{
-            $query = $request->get('query');
+            $auth_user = auth()->user();
+            $ids_brigadas = Brigada::getModel();
 
-            $resultado = Brigada::select('catalogo_distritos.clave', 'catalogo_distritos.descripcion', DB::raw('COUNT(DISTINCT rondas.municipio_id) as cabeceras_recorridas'), 
+            if(!$auth_user->is_superuser){
+                $grupos_ids = $auth_user->grupos()->pluck('id');
+                $ids_brigadas = $ids_brigadas->whereIn('grupo_estrategico_id',$grupos_ids);
+            }
+            $ids_brigadas = $ids_brigadas->get()->pluck('id');
+
+            $ronda_maxima = Ronda::whereIn('brigada_id',$ids_brigadas)->max('no_ronda');
+
+            $resultado = Brigada::select('catalogo_distritos.clave', DB::raw('COUNT(DISTINCT rondas.municipio_id) as cabeceras_recorridas'), 
                                             DB::raw('COUNT(DISTINCT rondas_registros.colonia_visitada_id) as colonias_visitadas'), DB::raw('SUM(rondas_registros.poblacion_beneficiada) as poblacion_beneficiada'),
                                             DB::raw('SUM(rondas_registros.casas_visitadas) as casas_visitadas'), DB::raw('SUM(rondas_registros.casas_ausentes) as casas_ausentes'), 
                                             DB::raw('SUM(rondas_registros.casas_renuentes) as casas_renuentes'), DB::raw('SUM(rondas_registros.casos_sospechosos_identificados) as casos_sospechosos_identificados'), 
-                                            DB::raw('A.total_brigadistas as brigadistas_acumulados'), DB::raw('SUM(rondas_registros.tratamientos_otorgados_brigadeo) as tratamientos_otorgados_brigadeo'), 
-                                            DB::raw('SUM(rondas_registros.tratamientos_otorgados_casos_positivos) as tratamientos_otorgados_casos_positivos'))
+                                            DB::raw('SUM(rondas_registros.porcentaje_transmision) as porcentaje_transmision'),
+                                            DB::raw('brigadas.total_brigadistas as brigadistas_acumulados'), DB::raw('SUM(rondas_registros.tratamientos_otorgados_brigadeo) as tratamientos_otorgados_brigadeo'), 
+                                            DB::raw('SUM(rondas_registros.tratamientos_otorgados_casos_positivos) as tratamientos_otorgados_casos_positivos'),
+                                            DB::raw('(SUM(rondas_registros.tratamientos_otorgados_casos_positivos) + SUM(rondas_registros.tratamientos_otorgados_brigadeo)) as total_tratamientos'),
+                                            'brigadas.distrito_id')
                                 ->leftjoin('catalogo_distritos','catalogo_distritos.id','=','brigadas.distrito_id')
                                 ->leftjoin('rondas',function($join){
                                     $join->on('rondas.brigada_id','=','brigadas.id')->whereNull('rondas.deleted_at');
@@ -211,12 +225,52 @@ class RondasController extends Controller
                                 ->leftjoin('rondas_registros',function($join){
                                     $join->on('rondas_registros.ronda_id','=','rondas.id')->whereNull('rondas.deleted_at');
                                 })
+                                ->whereIn('brigadas.id',$ids_brigadas)
                                 ->groupBy('brigadas.distrito_id')
-                                ;
+                                ->get();
             
+            $municipios_por_ronda = DB::select("select distrito_id, ronda, count(distinct municipio_id) as total_municipios
+                                                from (
+                                                    select B.distrito_id, max(A.no_ronda) as ronda, A.municipio_id
+                                                    from rondas A
+                                                    left join brigadas B on B.id = A.brigada_id
+                                                    group by B.distrito_id, A.municipio_id
+                                                ) as rondas_maximas
+                                                group by distrito_id, ronda
+                                                order by distrito_id, ronda");
+            $municipios_por_ronda = collect($municipios_por_ronda);
+            $municipios_por_ronda = $municipios_por_ronda->groupBy('distrito_id');
+            
+            $rondas_placeholder = [];
+            for ($i=0; $i < $ronda_maxima; $i++) { 
+                $rondas_placeholder[($i+1).'a_ronda'] = 0;
+            }
+            
+            $resultado = $resultado->map(function($item) use ($rondas_placeholder, $municipios_por_ronda) {
+                $item = $item->toArray();
+                
+                $key = 'tratamientos_otorgados_brigadeo';
+                $offset = array_search($key, array_keys($item));
+
+                $result = array_merge(
+                            array_slice($item, 0, $offset),
+                            $rondas_placeholder,
+                            array_slice($item, $offset, null)
+                        );
+                
+                if(isset($municipios_por_ronda[$result['distrito_id']])){
+                    foreach ($municipios_por_ronda[$result['distrito_id']] as $grupo_ronda) {
+                        $result[$grupo_ronda->ronda.'a_ronda'] = $grupo_ronda->total_municipios;
+                    }
+                }
+
+                array_pop($result);
+
+                return $result;
+            });
+
             $filename = 'brigadas_concentrado';
-            
-            return (new DevReportExport($resultado,$columnas))->download($filename.'.xlsx'); //Excel::XLSX, ['Access-Control-Allow-Origin'=>'*','Access-Control-Allow-Methods'=>'GET']
+            return (new ReportRondasExport($resultado, $ronda_maxima))->download($filename.'.xlsx'); //Excel::XLSX, ['Access-Control-Allow-Origin'=>'*','Access-Control-Allow-Methods'=>'GET']
         }catch(\Exception $e){
             return response()->json(['error' => $e->getMessage(),'line'=>$e->getLine()], HttpResponse::HTTP_CONFLICT);
         }

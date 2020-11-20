@@ -15,6 +15,7 @@ export class BrigadasService {
   url_catalogos = `${environment.base_url}/obtener-catalogos`;
   url_colonias = `${environment.base_url}/colonias`;
   url_rondas_registros = `${environment.base_url}/rondas-registros`;
+  url_exportar_rondas = `${environment.base_url}/exportar-rondas`;
 
   constructor(private http: HttpClient) { }
 
@@ -96,5 +97,9 @@ export class BrigadasService {
         return response;
       })
     );
+  }
+
+  exportarReporteRondas(payload={}):Observable<any>{
+    return this.http.get<any>(this.url_exportar_rondas, {params:payload, responseType: 'blob' as 'json'});
   }
 }

@@ -8,6 +8,7 @@ import { SharedService } from '../../shared/shared.service';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-listado-rondas',
@@ -22,6 +23,7 @@ export class ListadoRondasComponent implements OnInit {
   brigada:any;
 
   isLoading:boolean;
+  isLoadingExcel:boolean;
 
   mostrarRondas:boolean;
 
@@ -223,6 +225,25 @@ export class ListadoRondasComponent implements OnInit {
 
   displayFn(value: any, valueLabel: string){
     return value ? value[valueLabel] : value;
+  }
+
+  exportarExcel(){
+    this.isLoadingExcel = true;
+    this.brigadasService.exportarReporteRondas().subscribe(
+      response => {
+        //FileSaver.saveAs(response);
+        FileSaver.saveAs(response,'reporte');
+        this.isLoadingExcel = false;
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+        this.isLoading = false;
+      }
+    );
   }
 
 }

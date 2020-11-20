@@ -120,6 +120,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('brigada-municipios/{id}',   'API\Modulos\RondasController@listaMunicipios');
     Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
     Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
+    Route::get('exportar-rondas',           'API\Modulos\RondasController@exportExcel');
 
 
     /**

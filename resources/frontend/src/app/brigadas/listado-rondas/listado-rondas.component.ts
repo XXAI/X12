@@ -232,7 +232,7 @@ export class ListadoRondasComponent implements OnInit {
     this.brigadasService.exportarReporteRondas().subscribe(
       response => {
         //FileSaver.saveAs(response);
-        FileSaver.saveAs(response,'reporte');
+        FileSaver.saveAs(response,'concentrado_brigadas');
         this.isLoadingExcel = false;
       },
       errorResponse =>{

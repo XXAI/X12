@@ -39,10 +39,16 @@ class ReportRondasExport implements FromCollection, WithHeadings, WithEvents //,
             ['','','','','','','','','','','1a. Ronda']
         ];
 
+        $total_rows = count($data);
+        $last_row = ['','=SUM(B3:B'.(2+$total_rows).')','','','','','','','','','=SUM(K3:K'.(2+$total_rows).')'];
+
         $this->ronda_maxima = $ronda_maxima;
+        $columna = 'L';
         for ($i=1; $i < $this->ronda_maxima; $i++) { 
             $this->headings[0][] = '';
             $this->headings[1][] = ($i+1).'a. Ronda';
+            $last_row[] = '=SUM('.$columna.'3:'.$columna.(2+$total_rows).')';
+            $columna++;
         }
 
         $this->headings[0][] = 'Tratamientos';
@@ -50,15 +56,8 @@ class ReportRondasExport implements FromCollection, WithHeadings, WithEvents //,
         $this->headings[1][] = 'Tratamiento Otorgado a Casos Positivos (caso y contacto)';
         $this->headings[1][] = 'Total';
 
+        $data[] = $last_row;
         $this->data = $data;
-    }
-
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 55,
-            'B' => 45,            
-        ];
     }
 
     // freeze the first row with headings
@@ -101,12 +100,44 @@ class ReportRondasExport implements FromCollection, WithHeadings, WithEvents //,
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                             'color' => ['argb' => 'DDDDDD']
                         ],
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
+                                'color' => ['argb' => '666666'],
+                            ],
+                        ],
                         'font' => array(
                             'name'      =>  'Calibri',
                             'size'      =>  10,
                             'bold'      =>  true,
                             'color' => ['argb' => '000000'],
                         )
+                    ]
+                );
+                $event->sheet->styleCells(
+                    'A3:'.($event->sheet->getHighestColumn()).($event->sheet->getHighestRow()),
+                    [
+                        'alignment' => [
+                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                            'vertical' =>  \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        ],
+                        'font' => array(
+                            'name'      =>  'Calibri',
+                            'size'      =>  10,
+                            'bold'      =>  true,
+                            'color' => ['argb' => '000000'],
+                        )
+                    ]
+                );
+                $event->sheet->styleCells(
+                    'A3:'.($event->sheet->getHighestColumn()).($event->sheet->getHighestRow()-1),
+                    [
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
+                                'color' => ['argb' => '666666'],
+                            ],
+                        ]
                     ]
                 );
                 /*

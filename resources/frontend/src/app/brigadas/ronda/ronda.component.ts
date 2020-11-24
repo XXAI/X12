@@ -139,9 +139,10 @@ export class RondaComponent implements OnInit {
     }
 
     let configDialog = {
-      width: '85%',
-      maxHeight: '90vh',
-      height: '450px',
+      width: '100%',
+      maxWidth: '100%',
+      //maxHeight: '90vh',
+      height: '100%',
       disableClose:true,
       data: config_data,
       panelClass: 'no-padding-dialog'

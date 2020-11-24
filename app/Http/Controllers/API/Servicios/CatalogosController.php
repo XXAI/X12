@@ -19,6 +19,7 @@ use App\Models\CategoriaLlamada;
 use App\Models\Turno;
 use App\Models\Distrito;
 use App\Models\GrupoEstrategico;
+use App\Models\GrupoEdad;
 use App\Models\CasosCovid\TipoAtencion;
 use App\Models\CasosCovid\TipoUnidad;
 use App\Models\CasosCovid\EgresosCovid;
@@ -42,6 +43,7 @@ class CatalogosController extends Controller
                 'distritos' => Distrito::getModel(),
                 'grupos' => GrupoEstrategico::getModel(),
                 'grupos_estrategicos' => GrupoEstrategico::getModel(),
+                'grupos_edades' => GrupoEdad::getModel(),
                 'estatusCovid' => EstatusCovid::orderBy("descripcion"),
                 'tipo_atencion' => TipoAtencion::orderBy("descripcion"),
                 'tipo_unidad' => TipoUnidad::orderBy("descripcion"),

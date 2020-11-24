@@ -160,12 +160,6 @@ export const APPS: App[] = [
     permission: "2pL1uPR9Mzb02KV4Xa4vqVZxudWfLe35",
   },
   {
-    name: "Concentrado de Actividades de Brigadas",
-    route: "concentrado-actividades",
-    icon: "assets/icons/brigadas.svg",
-    permission: "2pL1uPR9Mzb02KV4Xa4vqVZxudWfLe35",
-  },
-  {
     name: "Catalogos",
     route: "catalogos",
     icon: "assets/icons/catalogos.svg",

@@ -32,6 +32,15 @@ export class DialogoRegistroComponent implements OnInit {
 
   dialogTitle:string;
 
+  displayedColumnsHeader: string[] = ['grupos_edades','sexo','inf_respiratoria','covid','tratamientos_otorgados'];
+  displayedColumns: string[] = ['sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino'];
+  displayedColumnsData: string[] = ['grupos_edades','sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino','tratamientos_otorgados'];
+  gruposEdades:any[];
+  dataSource:any[] = [];
+
+  localidades:any[];
+  localidadesFiltradas:Observable<any[]>;
+
   formRegistro:FormGroup;
   isLoading:boolean;
   isLoadingColonias:boolean;
@@ -44,23 +53,28 @@ export class DialogoRegistroComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
+    this.localidades = [];
     this.colonias = [];
+    this.gruposEdades = [];
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
 
     this.formRegistro = this.formBuilder.group({
       cabecera_recorrida:[this.data.municipio],
+      localidad:[this.data.municipio],
       colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
-      poblacion_beneficiada:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      no_brigada:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_visitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_ausentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_renuentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      casos_sospechosos_identificados:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      porcentaje_transmision:['',[Validators.required,Validators.min(0),Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')]],
-      tratamientos_otorgados_brigadeo:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      tratamientos_otorgados_casos_positivos:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      casas_promocionadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      casas_encuestadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      casas_deshabitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      pacientes_referidos_valoracion:['',[Validators.required,Validators.min(0),Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')]],
+      pacientes_referidos_hospitalizacion:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      pacientes_candidatos_muestra_covid:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       id:['']
     });
 
@@ -91,6 +105,18 @@ export class DialogoRegistroComponent implements OnInit {
         this.sharedService.showSnackBar(errorMessage, null, 3000);
         this.isLoadingColonias = false;
         this.isLoading = false;
+      }
+    );
+
+    let carga_catalogos = [
+      {nombre:'grupos_edades'},
+      {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:this.data.municipio.id}},
+    ];
+    
+    this.brigadasService.obtenerCatalogos(carga_catalogos).subscribe(
+      response => {
+        this.gruposEdades = response.data.grupos_edades;
+        this.localidades = response.data.localidades;
       }
     );
 

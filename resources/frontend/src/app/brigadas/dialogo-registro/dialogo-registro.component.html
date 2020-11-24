@@ -13,8 +13,8 @@
     <section fxFlex style="overflow: hidden;">
         <!--div class="data-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div-->
         <div fxLayout="column" style="height: 100%;" [formGroup]="formRegistro">
-            <div fxFlex="none" fxLayout="column" style="padding:5px 0;">
-                <div fxFlex fxLayout="row"  style="padding-bottom:5px;">
+            <div fxFlex="none" fxLayout="column" style="padding:5px 0; height: 100%; overflow: auto; flex: 1 1 0%;" >
+                <div fxFlex="none" fxLayout="row"  style="padding-bottom:5px;">
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Fecha de Registro</mat-label>
                         <input matInput mascaraFecha formControlName="fecha_registro" required cdkFocusInitial>
@@ -22,13 +22,23 @@
                         <mat-error *ngIf="formRegistro.get('fecha_registro').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                     <div fxFlex></div>
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>No. Brigada</mat-label>
+                        <input matInput type="number" formControlName="no_brigada" required>
+                        <mat-error *ngIf="formRegistro.get('no_brigada').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('no_brigada').hasError('min') || formRegistro.get('no_brigada').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
-                    <mat-form-field fxFlex="40">
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
+                    <mat-form-field fxFlex="29">
                         <mat-label>Cabecera Recorrida</mat-label>
                         <input type="text" placeholder="Municipio" aria-label="Cabecera" matInput [value]="formRegistro.get('cabecera_recorrida').value.descripcion" readonly>
                     </mat-form-field>
-                    <mat-form-field fxFlex="58">
+                    <mat-form-field fxFlex="29">
+                        <mat-label>Localidad</mat-label>
+                        <input type="text" placeholder="Localidad" aria-label="Localidad" matInput [value]="formRegistro.get('localidad').value.descripcion" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="40">
                         <mat-label>Colonia Visitada (Sin abreviaciones)</mat-label>
                         <input type="text" placeholder="Seleccionar Colonia" aria-label="Colonia" matInput formControlName="colonia_visitada" [matAutocomplete]="coloniasAutocomplete" (blur)="checkAutocompleteColonia()">
                         <button tabindex="-1" color="primary" *ngIf="formRegistro.get('colonia_visitada').value && !formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="agregarColonia()">
@@ -47,56 +57,166 @@
                         <mat-error *ngIf="formRegistro.get('colonia_visitada').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-                    <mat-form-field fxFlex="24">
+                <div fxFlex style="overflow: auto;">
+                    <table #dataTable mat-table [dataSource]="gruposEdades" class="data-table" multiTemplateDataRows>
+                        <ng-container matColumnDef="grupos_edades" >
+                            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2" > Grupo de Edades </th>
+                            <td mat-cell *matCellDef="let row" width="1" style="padding:3px; white-space: nowrap;" >
+                                {{(row.edad_minima)?row.edad_minima:'<'}} {{(row.edad_minima && row.edad_maxima)?'-':' '}} {{(row.edad_maxima)?row.edad_maxima:'>'}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > Sexo </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo_masculino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.sexo_m" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo_femenino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.sexo_f" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_respiratoria" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > Inf. Respiratoria </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_resp_masculino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.inf_resp_m" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_resp_femenino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.inf_resp_f" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > COVID </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid_masculino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.covid_m" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid_femenino" >
+                            <th mat-header-cell *matHeaderCellDef width="1"> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                <input type="number" class="data-input" [(ngModel)]="row.covid_f" [ngModelOptions]="{standalone: true}">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="tratamientos_otorgados" >
+                            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2" > Tratamientos Otorgados </th>
+                            <td mat-cell *matCellDef="let row" >tratamientos</td>
+                        </ng-container>
+
+                        
+
+                        <tr mat-header-row style="height: 25px;" *matHeaderRowDef="displayedColumnsHeader; sticky: true"></tr>
+                        <tr mat-header-row style="height: 25px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumnsData;"></tr>
+                    </table>
+
+
+                    <!--table style="width: 100%;">
+                        <tr>
+                            <th rowspan="2">Grupos Edades</th>
+                            <th colspan="2">Sexo</th>
+                            <th colspan="2">Inf. Respiratoria</th>
+                            <th colspan="2">COVID</th>
+                            <th rowspan="2">Tratamientos Otorgados</th>
+                        </tr>
+                        <tr>
+                            <th>Masculino</th>
+                            <th>Femenino</th>
+                            <th>Masculino</th>
+                            <th>Femenino</th>
+                            <th>Masculino</th>
+                            <th>Femenino</th>
+                        </tr>
+                        <tr *ngFor="let item of gruposEdades">
+                            <td>{{(item.edad_minima)?(item.edad_minima+'-'):'<'}}{{(item.edad_maxima)?(item.edad_maxima):'>'}}</td>
+                            <td>M</td>
+                            <td>F</td>
+                            <td>M</td>
+                            <td>F</td>
+                            <td>M</td>
+                            <td>F</td>
+                            <td>0</td>
+                        </tr>
+                    </table-->
+                </div>
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="16">
                         <mat-label>Casas Visitadas</mat-label>
                         <input matInput type="number" formControlName="casas_visitadas" required>
                         <mat-error *ngIf="formRegistro.get('casas_visitadas').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('casas_visitadas').hasError('min') || formRegistro.get('casas_visitadas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="24">
+                    <mat-form-field fxFlex="16">
                         <mat-label>Casas Ausentes</mat-label>
                         <input matInput type="number" formControlName="casas_ausentes" required>
                         <mat-error *ngIf="formRegistro.get('casas_ausentes').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('casas_ausentes').hasError('min') || formRegistro.get('casas_ausentes').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="24">
+                    <mat-form-field fxFlex="16">
                         <mat-label>Casas Renuentes</mat-label>
                         <input matInput type="number" formControlName="casas_renuentes" required>
                         <mat-error *ngIf="formRegistro.get('casas_renuentes').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('casas_renuentes').hasError('min') || formRegistro.get('casas_renuentes').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="25">
-                        <mat-label>Poblacion Beneficiada</mat-label>
-                        <input matInput type="number" formControlName="poblacion_beneficiada" required>
-                        <mat-error *ngIf="formRegistro.get('poblacion_beneficiada').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('poblacion_beneficiada').hasError('min') || formRegistro.get('poblacion_beneficiada').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Promocionadas</mat-label>
+                        <input matInput type="number" formControlName="casas_promocionadas" required>
+                        <mat-error *ngIf="formRegistro.get('casas_promocionadas').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('casas_promocionadas').hasError('min') || formRegistro.get('casas_promocionadas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Encuestadas</mat-label>
+                        <input matInput type="number" formControlName="casas_encuestadas" required>
+                        <mat-error *ngIf="formRegistro.get('casas_encuestadas').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('casas_encuestadas').hasError('min') || formRegistro.get('casas_encuestadas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Deshabitadas</mat-label>
+                        <input matInput type="number" formControlName="casas_deshabitadas" required>
+                        <mat-error *ngIf="formRegistro.get('casas_deshabitadas').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('casas_deshabitadas').hasError('min') || formRegistro.get('casas_deshabitadas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-                    <mat-form-field fxFlex="23">
-                        <mat-label>Casos Sospechosos</mat-label>
-                        <input matInput type="number" formControlName="casos_sospechosos_identificados" required>
-                        <mat-error *ngIf="formRegistro.get('casos_sospechosos_identificados').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('casos_sospechosos_identificados').hasError('min') || formRegistro.get('casos_sospechosos_identificados').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Referidos para Validación</mat-label>
+                        <input matInput type="number" formControlName="pacientes_referidos_valoracion" required>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_valoracion').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_valoracion').hasError('min') || formRegistro.get('pacientes_referidos_valoracion').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="18">
-                        <mat-label>% Transmision</mat-label>
-                        <input matInput type="number" formControlName="porcentaje_transmision" required>
-                        <mat-error *ngIf="formRegistro.get('porcentaje_transmision').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('porcentaje_transmision').hasError('min') || formRegistro.get('porcentaje_transmision').hasError('pattern')">Solo se permiten números positivos</mat-error>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Referidos para Hospitalización</mat-label>
+                        <input matInput type="number" formControlName="pacientes_referidos_hospitalizacion" required>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('min') || formRegistro.get('pacientes_referidos_hospitalizacion').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="27">
-                        <mat-label>Tratamientos en Brigadeo</mat-label>
-                        <input matInput type="number" formControlName="tratamientos_otorgados_brigadeo" required>
-                        <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_brigadeo').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_brigadeo').hasError('min') || formRegistro.get('tratamientos_otorgados_brigadeo').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="29">
-                        <mat-label>Tratamientos Casos Positivos</mat-label>
-                        <input matInput type="number" formControlName="tratamientos_otorgados_casos_positivos" required>
-                        <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_casos_positivos').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('tratamientos_otorgados_casos_positivos').hasError('min') || formRegistro.get('tratamientos_otorgados_casos_positivos').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Candidatos para Toma de Muestra</mat-label>
+                        <input matInput type="number" formControlName="pacientes_candidatos_muestra_covid" required>
+                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('min') || formRegistro.get('pacientes_candidatos_muestra_covid').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
                 </div>
             </div>

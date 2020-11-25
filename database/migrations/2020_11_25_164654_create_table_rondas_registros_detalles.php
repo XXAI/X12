@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableConcentradoActividadesDetalles extends Migration
+class CreateTableRondasRegistrosDetalles extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateTableConcentradoActividadesDetalles extends Migration
      */
     public function up()
     {
-        Schema::create('concentrado_actividades_brigadas_detalles', function (Blueprint $table) {
+        Schema::create('rondas_registros_detalles', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('concentrado_actividad_brigada_id')->unsigned();
+            $table->bigInteger('ronda_registro_id')->unsigned();
             $table->bigInteger('grupo_edad_id')->unsigned();
             $table->integer('total_masculino')->nullable();
             $table->integer('total_femenino')->nullable();
@@ -26,6 +26,8 @@ class CreateTableConcentradoActividadesDetalles extends Migration
             $table->integer('tratamientos_otorgados')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('ronda_registro_id')->references('id')->on('rondas_registros');
         });
     }
 
@@ -36,6 +38,6 @@ class CreateTableConcentradoActividadesDetalles extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('concentrado_actividades_brigadas_detalles');
+        Schema::dropIfExists('rondas_registros_detalles');
     }
 }

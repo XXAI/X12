@@ -164,7 +164,7 @@ class RondasController extends Controller
                                 ->with(['brigada'=>function($brigada){
                                     $brigada->with('distrito','grupoEstrategico');
                                 },'registros'=>function($registros){
-                                    $registros->with('cabeceraRecorrida','ColoniaVisitada')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
+                                    $registros->with('cabeceraRecorrida','localidad','coloniaVisitada','detalles')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
                                 },'municipio'])->find($id);
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);

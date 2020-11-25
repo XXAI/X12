@@ -36,7 +36,8 @@ export class DialogoRegistroComponent implements OnInit {
   displayedColumns: string[] = ['sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino'];
   displayedColumnsData: string[] = ['grupos_edades','sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino','tratamientos_otorgados'];
   gruposEdades:any[];
-  dataSource:any[] = [];
+
+  totalesGrupos:any;
 
   localidades:any[];
   localidadesFiltradas:Observable<any[]>;
@@ -44,6 +45,7 @@ export class DialogoRegistroComponent implements OnInit {
   formRegistro:FormGroup;
   isLoading:boolean;
   isLoadingColonias:boolean;
+  isLoadingCatalogos:boolean;
   
   idRonda:number;
   idDistrito:number;
@@ -52,17 +54,18 @@ export class DialogoRegistroComponent implements OnInit {
   nuevaColonia:boolean;
 
   ngOnInit() {
-    this.isLoading = true;
+    //this.isLoading = true;
     this.localidades = [];
     this.colonias = [];
     this.gruposEdades = [];
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
+    this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
 
     this.formRegistro = this.formBuilder.group({
       cabecera_recorrida:[this.data.municipio],
-      localidad:[this.data.municipio],
+      localidad:[{value:'',disabled:true},Validators.required],
       colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
       no_brigada:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -75,59 +78,72 @@ export class DialogoRegistroComponent implements OnInit {
       pacientes_referidos_valoracion:['',[Validators.required,Validators.min(0),Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')]],
       pacientes_referidos_hospitalizacion:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       pacientes_candidatos_muestra_covid:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      total_personas:[0,[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       id:['']
     });
-
-    this.isLoadingColonias = true;
-
-    let filtroColonias={
-      distrito_id: this.idDistrito,
-      municipio_id: this.data.municipio.id
-    }
-
-    this.brigadasService.getListadoColonias(filtroColonias).subscribe(
-      response =>{
-        if(response.error) {
-          let errorMessage = response.error.message;
-          this.sharedService.showSnackBar(errorMessage, null, 3000);
-        } else {
-          this.colonias = response.data;
-          this.formRegistro.controls['colonia_visitada'].enable();
-        }
-        this.isLoadingColonias = false;
-        this.isLoading = false;
-      },
-      errorResponse =>{
-        var errorMessage = "Ocurrió un error.";
-        if(errorResponse.status == 409){
-          errorMessage = errorResponse.error.error.message;
-        }
-        this.sharedService.showSnackBar(errorMessage, null, 3000);
-        this.isLoadingColonias = false;
-        this.isLoading = false;
-      }
-    );
 
     let carga_catalogos = [
       {nombre:'grupos_edades'},
       {nombre:'localidades',orden:'descripcion',filtro_id:{campo:'municipio_id',valor:this.data.municipio.id}},
     ];
+    this.isLoadingCatalogos = true;
     
     this.brigadasService.obtenerCatalogos(carga_catalogos).subscribe(
       response => {
-        this.gruposEdades = response.data.grupos_edades;
         this.localidades = response.data.localidades;
+        this.formRegistro.get('localidad').enable();
+        
+        let grupos_edades:any[] = [];
+        let temp_grupos_edades:any = {};
+        if(this.data.registro){
+          for(let i in this.data.registro.detalles){
+            let grupo = JSON.parse(JSON.stringify(this.data.registro.detalles[i]));
+            temp_grupos_edades[grupo.grupo_edad_id] = grupo;
+
+            
+            this.totalesGrupos.total_masculino += +grupo.total_masculino;
+            this.totalesGrupos.total_femenino += +grupo.total_femenino;
+            this.totalesGrupos.infeccion_respiratoria_m += +grupo.infeccion_respiratoria_m;
+            this.totalesGrupos.infeccion_respiratoria_f += +grupo.infeccion_respiratoria_f;
+            this.totalesGrupos.covid_m += +grupo.covid_m;
+            this.totalesGrupos.covid_f += +grupo.covid_f;
+            this.totalesGrupos.tratamientos_otorgados += +grupo.tratamientos_otorgados;
+          }
+        }
+
+        this.formRegistro.get('total_personas').patchValue(this.totalesGrupos.total_masculino + this.totalesGrupos.total_femenino);
+        
+        for(let i in response.data.grupos_edades){
+          let grupo = response.data.grupos_edades[i];
+          let grupo_edad:any = {};
+          if(temp_grupos_edades[grupo.id]){
+            grupo_edad = temp_grupos_edades[grupo.id];
+          }else{
+            grupo_edad = {
+              grupo_edad_id: grupo.id
+            }
+          }
+          grupo_edad.etiqueta = ((grupo.edad_minima)?grupo.edad_minima:'<')+' '+((grupo.edad_minima && grupo.edad_maxima)?'-':' ')+' '+((grupo.edad_maxima)?grupo.edad_maxima:'>');
+          grupos_edades.push(grupo_edad);
+        }
+
+        this.gruposEdades = grupos_edades;
+
+        this.isLoadingCatalogos = false;
       }
     );
 
     if(this.data.registro){
       this.formRegistro.patchValue(this.data.registro);
       this.dialogTitle = 'Editar Registro';
+
+      this.cargarColonias(this.data.registro.localidad.id);
     }else{
       this.dialogTitle = 'Nuevo Registro';
     }
 
     this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
+    this.localidadesFiltradas = this.formRegistro.controls['localidad'].valueChanges.pipe(startWith(''),map(value => this._filterLocalidades(value)));
   }
 
   guardarRegistro(){
@@ -138,19 +154,29 @@ export class DialogoRegistroComponent implements OnInit {
     registro.cabecera_recorrida_id = registro.cabecera_recorrida.id;
     delete registro.cabecera_recorrida;
 
+    registro.localidad_id = registro.localidad.id;
+    delete registro.localidad;
+
     if(this.nuevaColonia){
       registro.nueva_colonia = {
         nombre: registro.colonia_visitada.nombre,
         distrito_id: this.idDistrito,
-        municipio_id: registro.cabecera_recorrida_id
+        municipio_id: registro.cabecera_recorrida_id,
+        localidad_id: registro.localidad_id,
       }
     }else{
       registro.colonia_visitada_id = registro.colonia_visitada.id;
     }
     delete registro.colonia_visitada;
 
-    //console.log(registro);
-    //return false;
+    let grupos_edades:any[] = [];
+    for(let i in this.gruposEdades){
+      if(this.gruposEdades[i].total_femenino || this.gruposEdades[i].total_masculino){
+        grupos_edades.push(this.gruposEdades[i]);
+      }
+    }
+    registro.detalles = grupos_edades;
+
     registro.ronda_id = this.idRonda;
 
     this.brigadasService.guardarRegistro(registro).subscribe(
@@ -174,10 +200,58 @@ export class DialogoRegistroComponent implements OnInit {
     );
   }
 
+  localidadSeleccionada(){
+    let localidad = this.formRegistro.get('localidad').value;
+    if(localidad){
+      this.cargarColonias(localidad.id);
+    }
+  }
+
+  cargarColonias(localidad_id){
+    this.isLoadingColonias = true;
+
+    let filtroColonias={
+      /*distrito_id: this.idDistrito,
+      municipio_id: this.data.municipio.id,*/
+      localidad_id: localidad_id,
+    }
+
+    this.brigadasService.getListadoColonias(filtroColonias).subscribe(
+      response =>{
+        if(response.error) {
+          let errorMessage = response.error.message;
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+        } else {
+          this.colonias = response.data;
+          this.formRegistro.controls['colonia_visitada'].enable();
+        }
+        this.isLoadingColonias = false;
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+        this.isLoadingColonias = false;
+      }
+    );
+  }
+
   checkAutocompleteColonia() {
     setTimeout(() => {
       if (typeof(this.formRegistro.get('colonia_visitada').value) != 'object') {
         this.formRegistro.get('colonia_visitada').reset();
+      } 
+    }, 300);
+  }
+
+  checkAutocompleteLocalidad() {
+    setTimeout(() => {
+      if (typeof(this.formRegistro.get('localidad').value) != 'object') {
+        this.formRegistro.get('localidad').patchValue('');
+        this.limpiarColonia();
+        this.formRegistro.get('colonia_visitada').disable();
       } 
     }, 300);
   }
@@ -191,6 +265,25 @@ export class DialogoRegistroComponent implements OnInit {
   limpiarColonia(){
     this.nuevaColonia = false;
     this.formRegistro.get('colonia_visitada').patchValue('');
+  }
+
+  limpiarLocalidad(){
+    this.formRegistro.get('localidad').patchValue('');
+    this.colonias = [];
+    this.limpiarColonia();
+    this.formRegistro.get('colonia_visitada').disable();
+  }
+
+  private _filterLocalidades(value: any): string[] {
+    let filterValue = '';
+    if(value){
+      if(typeof(value) == 'object'){
+        filterValue = value['descripcion'].toLowerCase();
+      }else{
+        filterValue = value.toLowerCase();
+      }
+    }
+    return this.localidades.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
   }
 
   private _filterColonias(value: any): string[] {
@@ -215,6 +308,20 @@ export class DialogoRegistroComponent implements OnInit {
 
   cancelar(): void {
     this.dialogRef.close();
+  }
+
+  sumarTotales(tipo){
+    let total_suma = 0;
+
+    for(let i in this.gruposEdades){
+      total_suma += (this.gruposEdades[i][tipo])?this.gruposEdades[i][tipo]:0;
+    }
+
+    this.totalesGrupos[tipo] = total_suma;
+
+    if(tipo == 'total_masculino' || tipo == 'total_femenino'){
+      this.formRegistro.get('total_personas').patchValue(this.totalesGrupos.total_masculino + this.totalesGrupos.total_femenino);
+    }
   }
 
 }

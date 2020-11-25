@@ -17,6 +17,7 @@ use \Validator,\Hash;
 use App\Models\Brigada;
 use App\Models\Ronda;
 use App\Models\RondaRegistro;
+use App\Models\RondaRegistroDetalle;
 use App\Models\Colonia;
 
 class RondaRegistrosController extends Controller
@@ -69,23 +70,25 @@ class RondaRegistrosController extends Controller
             $reglas = [
                 'ronda_id' => 'required',
                 'cabecera_recorrida_id' => 'required',
+                'localidad_id' => 'required',
                 'colonia_visitada_id' => 'required',
                 'fecha_registro' => 'required',
-                'poblacion_beneficiada' => 'required',
                 'casas_visitadas' => 'required',
+                'casas_deshabitadas' => 'required',
+                'casas_encuestadas' => 'required',
+                'casas_promocionadas' => 'required',
                 'casas_ausentes' => 'required',
                 'casas_renuentes' => 'required',
-                'casos_sospechosos_identificados' => 'required',
-                'porcentaje_transmision' => 'required',
-                'tratamientos_otorgados_brigadeo' => 'required',
-                'tratamientos_otorgados_casos_positivos' => 'required',
+                'pacientes_candidatos_muestra_covid' => 'required',
+                'pacientes_referidos_hospitalizacion' => 'required',
+                'pacientes_referidos_valoracion' => 'required',
+                'no_brigada' => 'required',
             ];
 
             DB::beginTransaction();
             $auth_user = auth()->user();
             $parametros = Input::all();
 
-            
             if(isset($parametros['nueva_colonia']) && $parametros['nueva_colonia']){
                 $parametros['nueva_colonia']['usuario_captura_id'] = $auth_user->id;
                 $nueva_colonia = Colonia::create($parametros['nueva_colonia']);
@@ -106,10 +109,33 @@ class RondaRegistrosController extends Controller
                 $parametros['creado_por'] = $auth_user->id;
                 $registro = RondaRegistro::create($parametros);
             }
+
+            if(isset($parametros['detalles']) && $parametros['detalles']){
+                $editar_detalles = [];
+                $crear_detalles = [];
+
+                foreach ($parametros['detalles'] as $grupo_edad) {
+                    if(isset($grupo_edad['id']) && $grupo_edad['id']){
+                        $editar_detalles[] = new RondaRegistroDetalle($grupo_edad);
+                    }else{
+                        $crear_detalles[] = $grupo_edad;
+                    }
+                }
+                
+                if(count($editar_detalles)){
+                    foreach ($editar_detalles as $detalle) {
+                        RondaRegistroDetalle::where('id',$detalle['id'])->update($detalle->toArray());
+                    }
+                }
+
+                if(count($crear_detalles)){
+                    $registro->detalles()->createMany($crear_detalles);
+                }
+            }
             
             DB::commit();
 
-            $registro->load('cabeceraRecorrida','ColoniaVisitada');
+            $registro->load('cabeceraRecorrida','localidad','ColoniaVisitada','detalles');
             return response()->json(['data'=>$registro],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             DB::rollback();
@@ -125,7 +151,7 @@ class RondaRegistrosController extends Controller
      */
     public function show($id){
         try{
-            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros','brigada')->find($id);
+            $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->with('registros.detalles','brigada')->find($id);
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -146,6 +172,8 @@ class RondaRegistrosController extends Controller
             $registro = RondaRegistro::find($id);
             $registro->borrado_por = $auth_user->id;
             $registro->save();
+
+            $registro->detalles()->delete();
 
             RondaRegistro::where('id',$id)->delete();
             

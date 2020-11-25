@@ -22,7 +22,7 @@ export class RondaComponent implements OnInit {
   constructor(private dialog: MatDialog, private route: ActivatedRoute, private brigadasService: BrigadasService, private sharedService: SharedService) { }
 
   listaRegistros:any[];
-  displayedColumns: string[] = ['fecha_registro','colonia','casas_visitadas','casas_ausentes','casas_renuentes','casos_sospechosos','actions'];
+  displayedColumns: string[] = ['fecha_registro','no_brigada','colonia','casas_visitadas','casas_ausentes','casas_renuentes','referidos_hospitalizacion','actions'];
   datosRonda:any;
   idRegistroSeleccionado:number;
   isLoading:boolean;

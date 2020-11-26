@@ -115,13 +115,14 @@ Route::group(['middleware' => 'auth'], function ($router) {
     /**
      * Brigadas - Rondas
      */
+    Route::apiResource('brigadas',          'API\Modulos\BrigadasController');
+    Route::get('exportar-concentrado',      'API\Modulos\BrigadasController@exportExcel');
     Route::apiResource('rondas',            'API\Modulos\RondasController');
-    Route::apiResource('rondas-registros',  'API\Modulos\RondaRegistrosController');
     Route::get('brigada-municipios/{id}',   'API\Modulos\RondasController@listaMunicipios');
     Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
     Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
     Route::get('exportar-rondas',           'API\Modulos\RondasController@exportExcel');
-
+    Route::apiResource('rondas-registros',  'API\Modulos\RondaRegistrosController');
 
     /**
      * Modulo de Casos por Contingencias

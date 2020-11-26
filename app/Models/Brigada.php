@@ -9,7 +9,7 @@ class Brigada extends Model
 {
     use SoftDeletes;
     protected $table = 'brigadas';
-    protected $fillable = ['id','grupo_estrategico_id','distrito_id','total_brigadistas'];
+    protected $fillable = ['id','grupo_estrategico_id','distrito_id','nombre_responsable_brigadas','telefono_responsable_brigadas','email_responsable_brigadas','total_brigadistas'];
 
     public function rondas(){
         return $this->hasMany('App\Models\Ronda','brigada_id');

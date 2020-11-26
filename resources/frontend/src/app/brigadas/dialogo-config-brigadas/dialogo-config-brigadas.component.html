@@ -1,0 +1,41 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none">
+        <h3 style="padding: 3px; margin:0px;">Configuración de Brigadas</h3>
+    </section>
+    <section fxFlex fxLayout="column"  [formGroup]="formConfiguracion">
+        <div fxFlex fxLayout="column">
+            <!--div fxFlex="none" fxLayout="column" style="padding:5px 0;"-->
+            <mat-form-field fxFlex="none">
+                <mat-label>Nombre del Responsable</mat-label>
+                <input matInput formControlName="nombre_responsable_brigadas" required>
+                <mat-error *ngIf="formConfiguracion.get('nombre_responsable_brigadas').hasError('required')">Este campo es obligatorio</mat-error>
+            </mat-form-field>
+            <div fxFlex="none" fxLayout="row">
+                <mat-form-field fxFlex>
+                    <mat-label># Teléfono</mat-label>
+                    <input matInput formControlName="telefono_responsable_brigadas" required>
+                    <mat-error *ngIf="formConfiguracion.get('telefono_responsable_brigadas').hasError('required')">Este campo es obligatorio</mat-error>
+                </mat-form-field>
+                <mat-form-field fxFlex>
+                    <mat-label>Correo Electrónico</mat-label>
+                    <input matInput formControlName="email_responsable_brigadas" required>
+                    <mat-error *ngIf="formConfiguracion.get('email_responsable_brigadas').hasError('required')">Este campo es obligatorio</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-form-field fxFlex="none">
+                <mat-label>Total Brigadistas</mat-label>
+                <input matInput type="number" formControlName="total_brigadistas">
+                <mat-error *ngIf="formConfiguracion.get('total_brigadistas').hasError('min') || formConfiguracion.get('total_brigadistas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+            </mat-form-field>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="actualizarConfiguracionBrigadas()" [disabled]="!formConfiguracion.valid || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

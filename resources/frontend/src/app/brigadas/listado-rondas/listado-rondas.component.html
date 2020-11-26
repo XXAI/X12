@@ -17,17 +17,17 @@
                 <mat-hint align="end">Grupo #{{brigada.grupo_estrategico.folio}}</mat-hint>
             </mat-form-field>
             <div fxFlex="10"></div>
-            <mat-form-field fxFlex="none" *ngIf="brigada" appearance="outline">
-                <mat-label>Total Brigadistas</mat-label>
-                <input matInput readonly value="{{brigada.total_brigadistas | number:'1.0-0'}}">
-                <button mat-icon-button matSuffix (click)="verBrigadistas()" [attr.aria-label]="'Ver Brigadistas'">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </mat-form-field>
+            <button mat-button fxFlex="none" (click)="exportarExcel()" color="primary">
+                <mat-icon>insert_drive_file</mat-icon><br>
+                Exportar
+            </button>
             <div fxFlex="5"></div>
             <div fxFlex="none">
                 <button mat-button (click)="cargarBrigadas()">
                     <mat-icon>refresh</mat-icon>
+                </button><br>
+                <button mat-button (click)="configBrigadas()">
+                    <mat-icon>settings</mat-icon>
                 </button>
             </div>
         </mat-card>

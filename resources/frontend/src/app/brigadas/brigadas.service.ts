@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class BrigadasService {
+  url_brigadas = `${environment.base_url}/brigadas`;
   url_rondas = `${environment.base_url}/rondas`;
   url_municipios = `${environment.base_url}/brigada-municipios`;
   url_brigadistas = `${environment.base_url}/rondas-brigadistas`;
@@ -16,6 +17,7 @@ export class BrigadasService {
   url_colonias = `${environment.base_url}/colonias`;
   url_rondas_registros = `${environment.base_url}/rondas-registros`;
   url_exportar_rondas = `${environment.base_url}/exportar-rondas`;
+  url_exportar_concentrado = `${environment.base_url}/exportar-concentrado`;
 
   constructor(private http: HttpClient) { }
 
@@ -51,8 +53,16 @@ export class BrigadasService {
     ));
   }
 
-  actualizarBrigadistas(id,payload) {
-    return this.http.put<any>(this.url_brigadistas+'/'+id,payload).pipe(
+  getDatosBrigadas(id) {
+    return this.http.get<any>(this.url_brigadas+'/'+id).pipe(
+      map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  configurarBrigadas(id,payload) {
+    return this.http.put<any>(this.url_brigadas+'/'+id,payload).pipe(
       map( (response) => {
         return response;
       }
@@ -97,6 +107,10 @@ export class BrigadasService {
         return response;
       })
     );
+  }
+
+  exportarReporteConcentrado(payload={}):Observable<any>{
+    return this.http.get<any>(this.url_exportar_concentrado, {params:payload, responseType: 'blob' as 'json'});
   }
 
   exportarReporteRondas(payload={}):Observable<any>{

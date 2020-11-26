@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogoNuevaRondaComponent } from '../dialogo-nueva-ronda/dialogo-nueva-ronda.component';
-import { DialogoBrigadistasComponent }  from '../dialogo-brigadistas/dialogo-brigadistas.component';
+import { DialogoConfigBrigadasComponent }  from '../dialogo-config-brigadas/dialogo-config-brigadas.component';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from '../../shared/shared.service';
 import {FormControl} from '@angular/forms';
@@ -166,20 +166,30 @@ export class ListadoRondasComponent implements OnInit {
     });
   }
 
-  verBrigadistas(){
+  configBrigadas(){
+    let datos = {
+      nombre_responsable_brigadas: this.brigada.nombre_responsable_brigadas,
+      telefono_responsable_brigadas: this.brigada.telefono_responsable_brigadas,
+      email_responsable_brigadas: this.brigada.email_responsable_brigadas,
+      total_brigadistas: this.brigada.total_brigadistas,
+    }
+
     let configDialog = {
       width: '450px',
       maxHeight: '90vh',
-      height: '250px',
-      data:{totalBrigadistas: this.brigada.total_brigadistas, idBrigada:this.brigada.id},
+      height: '320px',
+      data:{idBrigada:this.brigada.id, datosBrigada:datos},
       panelClass: 'no-padding-dialog'
     };
 
-    const dialogRef = this.dialog.open(DialogoBrigadistasComponent, configDialog);
+    const dialogRef = this.dialog.open(DialogoConfigBrigadasComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        this.brigada.total_brigadistas = valid;
+    dialogRef.afterClosed().subscribe(response => {
+      if(response){
+        this.brigada.nombre_responsable_brigadas    = response.nombre_responsable_brigadas;
+        this.brigada.telefono_responsable_brigadas  = response.telefono_responsable_brigadas;
+        this.brigada.email_responsable_brigadas     = response.email_responsable_brigadas;
+        this.brigada.total_brigadistas              = response.total_brigadistas;
       }else{
         console.log('Cancelar');
       }
@@ -229,9 +239,8 @@ export class ListadoRondasComponent implements OnInit {
 
   exportarExcel(){
     this.isLoadingExcel = true;
-    this.brigadasService.exportarReporteRondas().subscribe(
+    this.brigadasService.exportarReporteConcentrado().subscribe(
       response => {
-        //FileSaver.saveAs(response);
         FileSaver.saveAs(response,'concentrado_brigadas');
         this.isLoadingExcel = false;
       },

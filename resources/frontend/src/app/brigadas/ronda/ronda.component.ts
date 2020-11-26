@@ -167,9 +167,10 @@ export class RondaComponent implements OnInit {
 
   dialogoVerRegistro(verRegistro){
     let configDialog = {
-      width: '85%',
-      maxHeight: '90vh',
-      height: '450px',
+      width: '100%',
+      maxWidth: '100%',
+      //maxHeight: '90vh',
+      height: '100%',
       data: {registro: verRegistro},
       panelClass: 'no-padding-dialog'
     };

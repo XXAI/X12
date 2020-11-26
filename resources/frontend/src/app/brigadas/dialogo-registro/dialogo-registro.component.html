@@ -68,7 +68,7 @@
                         <mat-error *ngIf="formRegistro.get('colonia_visitada').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                 </div>
-                <div fxFlex style="overflow: auto;">
+                <div fxFlex>
                     <table #dataTable mat-table [dataSource]="gruposEdades" class="data-table" multiTemplateDataRows>
                         <ng-container matColumnDef="grupos_edades" >
                             <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2" > Grupo de Edades </th>

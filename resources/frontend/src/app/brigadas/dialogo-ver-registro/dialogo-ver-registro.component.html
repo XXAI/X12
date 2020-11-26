@@ -12,58 +12,154 @@
     </section>
     <section fxFlex style="overflow: hidden;">
         <div fxLayout="column" style="height: 100%;">
-            <div fxFlex="none" fxLayout="column" style="padding:5px 0;">
-                <div fxFlex fxLayout="row"  style="padding-bottom:5px;">
+            <div fxFlex="none" fxLayout="column" style="padding:5px 0; height: 100%; overflow: auto; flex: 1 1 0%;" >
+                <div fxFlex="none" fxLayout="row"  style="padding-bottom:5px;">
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Fecha de Registro</mat-label>
-                        <input matInput [ngModel]="datosRegistro.fecha_registro" readonly>
+                        <input matInput [value]="datosRegistro.fecha_registro" readonly>
                     </mat-form-field>
                     <div fxFlex></div>
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>No. Brigada</mat-label>
+                        <input matInput [value]="datosRegistro.no_brigada" required>
+                    </mat-form-field>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
-                    <mat-form-field fxFlex="40">
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
+                    <mat-form-field fxFlex="29">
                         <mat-label>Cabecera Recorrida</mat-label>
-                        <input matInput [ngModel]="datosRegistro.cabecera_recorrida.descripcion" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="58">
-                        <mat-label>Colonia Visitada</mat-label>
-                        <input matInput [ngModel]="datosRegistro.colonia_visitada.nombre" readonly>
-                    </mat-form-field>
-                </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-                    <mat-form-field fxFlex="24">
-                        <mat-label>Casas Visitadas</mat-label>
-                        <input matInput [ngModel]="datosRegistro.casas_visitadas" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="24">
-                        <mat-label>Casas Ausentes</mat-label>
-                        <input matInput [ngModel]="datosRegistro.casas_ausentes" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="24">
-                        <mat-label>Casas Renuentes</mat-label>
-                        <input matInput [ngModel]="datosRegistro.casas_renuentes" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="25">
-                        <mat-label>Poblacion Beneficiada</mat-label>
-                        <input matInput [ngModel]="datosRegistro.poblacion_beneficiada" readonly>
-                    </mat-form-field>
-                </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-                    <mat-form-field fxFlex="23">
-                        <mat-label>Casos Sospechosos</mat-label>
-                        <input matInput [ngModel]="datosRegistro.casos_sospechosos_identificados" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="18">
-                        <mat-label>% Transmision</mat-label>
-                        <input matInput [ngModel]="datosRegistro.porcentaje_transmision" readonly>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="27">
-                        <mat-label>Tratamientos en Brigadeo</mat-label>
-                        <input matInput [ngModel]="datosRegistro.tratamientos_otorgados_brigadeo" readonly>
+                        <input matInput [value]="datosRegistro.cabecera_recorrida.descripcion" readonly>
                     </mat-form-field>
                     <mat-form-field fxFlex="29">
-                        <mat-label>Tratamientos Casos Positivos</mat-label>
-                        <input matInput [ngModel]="datosRegistro.tratamientos_otorgados_casos_positivos" readonly>
+                        <mat-label>Localidad</mat-label>
+                        <input matInput [value]="datosRegistro.localidad.descripcion" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="40">
+                        <mat-label>Colonia Visitada</mat-label>
+                        <input matInput [value]="datosRegistro.colonia_visitada.nombre" readonly>
+                    </mat-form-field>
+                </div>
+                <div fxFlex>
+                    <table #dataTable mat-table [dataSource]="datosRegistro.detalles" class="data-table" multiTemplateDataRows>
+                        <ng-container matColumnDef="grupos_edades" >
+                            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2" > Grupo de Edades </th>
+                            <td mat-cell *matCellDef="let row" width="1" style="padding:3px; white-space: nowrap;" >
+                                {{(gruposEdades)?gruposEdades[row.grupo_edad_id]:'-'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> Totales </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > Sexo </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo_masculino" >
+                            <th mat-header-cell *matHeaderCellDef> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.total_masculino | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.total_masculino | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sexo_femenino" >
+                            <th mat-header-cell *matHeaderCellDef> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.total_femenino | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.total_femenino | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_respiratoria" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > Inf. Respiratoria </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_resp_masculino" >
+                            <th mat-header-cell *matHeaderCellDef> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.infeccion_respiratoria_m | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.infeccion_respiratoria_m | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="inf_resp_femenino" >
+                            <th mat-header-cell *matHeaderCellDef> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.infeccion_respiratoria_f | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.infeccion_respiratoria_f | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid" >
+                            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" > COVID </th>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid_masculino" >
+                            <th mat-header-cell *matHeaderCellDef> Masculino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.covid_m | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.covid_m | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="covid_femenino" >
+                            <th mat-header-cell *matHeaderCellDef> Femenino </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.covid_f | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.covid_f | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="tratamientos_otorgados" >
+                            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2" width="1"> Tratamientos Otorgados </th>
+                            <td mat-cell *matCellDef="let row" >
+                                {{row.tratamientos_otorgados | number:'1.0-0'}}
+                            </td>
+                            <td mat-footer-cell *matFooterCellDef> {{ totalesGrupos.tratamientos_otorgados | number:'1.0-0' }} </td>
+                        </ng-container>
+
+                        <tr mat-header-row style="height: 35px;" *matHeaderRowDef="displayedColumnsHeader; sticky: true"></tr>
+                        <tr mat-header-row style="height: 35px;" *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumnsData;"></tr>
+                        <tr mat-footer-row style="height: 35px; font-weight: bold; color: rgba(0,0,0,.54);" *matFooterRowDef="displayedColumnsData; sticky: true"></tr>
+                    </table>
+                </div>
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Visitadas</mat-label>
+                        <input matInput [value]="datosRegistro.casas_visitadas" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Ausentes</mat-label>
+                        <input matInput [value]="datosRegistro.casas_ausentes" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Renuentes</mat-label>
+                        <input matInput [value]="datosRegistro.casas_renuentes" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Promocionadas</mat-label>
+                        <input matInput [value]="datosRegistro.casas_promocionadas" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Encuestadas</mat-label>
+                        <input matInput [value]="datosRegistro.casas_encuestadas" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="16">
+                        <mat-label>Casas Deshabitadas</mat-label>
+                        <input matInput [value]="datosRegistro.casas_deshabitadas" readonly>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Referidos para Validación</mat-label>
+                        <input matInput [value]="datosRegistro.pacientes_referidos_valoracion" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Referidos para Hospitalización</mat-label>
+                        <input matInput [value]="datosRegistro.pacientes_referidos_hospitalizacion" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Candidatos para Toma de Muestra</mat-label>
+                        <input matInput [value]="datosRegistro.pacientes_candidatos_muestra_covid" readonly>
                     </mat-form-field>
                 </div>
             </div>
@@ -73,7 +169,7 @@
         <div fxLayout="row">
             <div fxFlex></div>
             <div fxFlex="none">
-                <button mat-button (click)="cancelar()">Cerrar</button>&nbsp;
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
             </div>
         </div>
     </section>

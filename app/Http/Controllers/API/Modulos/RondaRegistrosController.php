@@ -18,6 +18,7 @@ use App\Models\Brigada;
 use App\Models\Ronda;
 use App\Models\RondaRegistro;
 use App\Models\RondaRegistroDetalle;
+use App\Models\RondaLocalidadEstatus;
 use App\Models\Colonia;
 
 class RondaRegistrosController extends Controller
@@ -101,6 +102,18 @@ class RondaRegistrosController extends Controller
                 return response()->json( $v->errors(), 409);
             }
 
+            $ronda = Ronda::find($parametros['ronda_id']);
+
+            if(!$ronda){
+                DB::rollback();
+                return response()->json(['error'=>['message'=>'La Ronda no existe o ha sido eliminada']],HttpResponse::HTTP_OK);
+            }
+
+            if($ronda->fecha_inicio > $parametros['fecha_registro']){
+                DB::rollback();
+                return response()->json(['error'=>['message'=>'La Fecha de Registro es menor a la del inicio de la ronda']],HttpResponse::HTTP_OK);
+            }
+
             if($parametros['id']){
                 $registro = RondaRegistro::find($parametros['id']);
                 $parametros['modificado_por'] = $auth_user->id;
@@ -108,6 +121,18 @@ class RondaRegistrosController extends Controller
             }else{
                 $parametros['creado_por'] = $auth_user->id;
                 $registro = RondaRegistro::create($parametros);
+            }
+
+            if(isset($parametros['terminar_localidad']) && $parametros['terminar_localidad']){
+                $localidad_estatus = RondaLocalidadEstatus::where('ronda_id',$registro->ronda_id)->where('localidad_id',$registro->localidad_id)->first();
+                if(!$localidad_estatus){
+                    $localidad_estatus = RondaLocalidadEstatus::create(['ronda_id'=>$registro->ronda_id,'localidad_id'=>$registro->localidad_id,'fecha_termino'=>$registro->fecha_registro]);
+                }else{
+                    if($localidad_estatus->fecha_termino < $registro->fecha_registro){
+                        DB::rollback();
+                        return response()->json(['error'=>['message'=>'La fecha de termino de la Localidad es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
+                    }
+                }
             }
 
             if(isset($parametros['detalles']) && $parametros['detalles']){

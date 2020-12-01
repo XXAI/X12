@@ -222,6 +222,12 @@
     </section>
     <section fxFlex="none">
         <div fxLayout="row">
+            <div fxFlex="none">
+                <button mat-stroked-button color="accent" (click)="toggleTerminado('localidad')"><mat-icon>{{(localidadTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Localidad Terminada</button>
+            </div>
+            <div fxFlex="none">
+                <button mat-button color="accent" (click)="toggleTerminado('colonia')"><mat-icon>{{(coloniaTerminada)?'check_circle':'radio_button_unchecked'}}</mat-icon> Colonia Terminada</button>
+            </div>
             <div fxFlex></div>
             <div fxFlex="none">
                 <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;

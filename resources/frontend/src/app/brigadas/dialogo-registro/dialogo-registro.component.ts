@@ -37,6 +37,9 @@ export class DialogoRegistroComponent implements OnInit {
   displayedColumnsData: string[] = ['grupos_edades','sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino','tratamientos_otorgados'];
   gruposEdades:any[];
 
+  localidadTerminada:boolean;
+  coloniaTerminada:boolean;
+
   totalesGrupos:any;
 
   localidades:any[];
@@ -62,6 +65,8 @@ export class DialogoRegistroComponent implements OnInit {
     this.idRonda = this.data.idRonda;
     this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.localidadTerminada = false;
+    this.coloniaTerminada = false;
 
     this.formRegistro = this.formBuilder.group({
       cabecera_recorrida:[this.data.municipio],
@@ -148,7 +153,7 @@ export class DialogoRegistroComponent implements OnInit {
 
   guardarRegistro(){
     this.isLoading = true;
-    console.log(this.formRegistro.value);
+    
     let registro = JSON.parse(JSON.stringify(this.formRegistro.value));
 
     registro.cabecera_recorrida_id = registro.cabecera_recorrida.id;
@@ -321,6 +326,17 @@ export class DialogoRegistroComponent implements OnInit {
 
     if(tipo == 'total_masculino' || tipo == 'total_femenino'){
       this.formRegistro.get('total_personas').patchValue(this.totalesGrupos.total_masculino + this.totalesGrupos.total_femenino);
+    }
+  }
+
+  toggleTerminado(tipo){
+    if(tipo == 'localidad'){
+      this.localidadTerminada = !this.localidadTerminada;
+      if(this.localidadTerminada){
+        this.coloniaTerminada = true;
+      }
+    }else{
+      this.coloniaTerminada = !this.coloniaTerminada;
     }
   }
 

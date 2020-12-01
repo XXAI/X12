@@ -18,6 +18,8 @@ use DB;
 use \Validator,\Hash;
 
 use App\Models\Brigada;
+use App\Models\RondaRegistro;
+use App\Models\Municipio;
 
 class BrigadasController extends Controller
 {
@@ -144,87 +146,31 @@ class BrigadasController extends Controller
             }
             $ids_brigadas = $ids_brigadas->get()->pluck('id');
 
-            $ronda_maxima = Ronda::whereIn('brigada_id',$ids_brigadas)->max('no_ronda');
+            $resultado = RondaRegistro::select(DB::raw("concat(catalogo_distritos.clave, ' - ', catalogo_distritos.descripcion) as distrito"), "catalogo_municipios.descripcion  as municipio", "rondas.no_ronda", 
+                                                "catalogo_localidades.descripcion as localidad", "catalogo_colonias.nombre as colonia", "rondas_registros.fecha_registro", 
+                                                DB::raw("concat(catalogo_grupos_edades.edad_minima,'-',catalogo_grupos_edades.edad_maxima) as grupo_edad"), "rondas_registros_detalles.total_masculino", 
+                                                "rondas_registros_detalles.total_femenino", DB::raw("(rondas_registros_detalles.total_masculino + rondas_registros_detalles.total_femenino) as total_sexo"),
+                                                "rondas_registros_detalles.infeccion_respiratoria_m", "rondas_registros_detalles.infeccion_respiratoria_f", 
+                                                DB::raw("(rondas_registros_detalles.infeccion_respiratoria_m + rondas_registros_detalles.infeccion_respiratoria_f) as total_infeccion_respiratoria"),
+                                                "rondas_registros_detalles.covid_m", "rondas_registros_detalles.covid_f", DB::raw("(rondas_registros_detalles.covid_m + rondas_registros_detalles.covid_f) as total_covid"), 
+                                                "rondas_registros_detalles.tratamientos_otorgados", "rondas_registros.casas_visitadas", "rondas_registros.casas_ausentes", "rondas_registros.casas_deshabitadas", 
+                                                "rondas_registros.casas_encuestadas", "rondas_registros.casas_renuentes", "rondas_registros.casas_promocionadas", "rondas_registros.pacientes_referidos_valoracion", 
+                                                "rondas_registros.pacientes_referidos_hospitalizacion", "rondas_registros.pacientes_candidatos_muestra_covid")
+                                        ->leftjoin('rondas','rondas.id','=','rondas_registros.ronda_id')
+                                        ->leftjoin('brigadas','brigadas.id','=','rondas.brigada_id')
+                                        ->leftjoin('catalogo_distritos','catalogo_distritos.id','=','brigadas.distrito_id')
+                                        ->leftjoin('catalogo_municipios','catalogo_municipios.id','=','rondas.municipio_id')
+                                        ->leftjoin('catalogo_localidades','catalogo_localidades.id','=','rondas_registros.localidad_id')
+                                        ->leftjoin('catalogo_colonias','catalogo_colonias.id','=','rondas_registros.colonia_visitada_id')
+                                        ->leftjoin('rondas_registros_detalles',function($join){
+                                            $join->on('rondas_registros_detalles.ronda_registro_id','=','rondas_registros.id')->whereNull('rondas_registros_detalles.deleted_at');
+                                        })
+                                        ->leftjoin('catalogo_grupos_edades','catalogo_grupos_edades.id','=','rondas_registros_detalles.grupo_edad_id')
+                                        ->whereIn('brigadas.id',$ids_brigadas)
+                                        ->get();
 
-/*
-            select concat(D.clave, ' - ', D.descripcion) as distrito, E.descripcion as municipio, B.no_ronda, F.descripcion as localidad, G.nombre as colonia, A.fecha_registro, 
-            concat(I.edad_minima,'-',I.edad_maxima) as grupo_edad, H.total_masculino, H.total_femenino, (H.total_masculino + H.total_femenino) as total_sexo,
-            H.infeccion_respiratoria_m, H.infeccion_respiratoria_f, (H.infeccion_respiratoria_m + H.infeccion_respiratoria_f) as total_infeccion_respiratoria,
-            H.covid_m, H.covid_f, (H.covid_m + H.covid_f) as total_covid, H.tratamientos_otorgados,
-            A.casas_visitadas, A.casas_ausentes, A.casas_deshabitadas, A.casas_encuestadas, A.casas_renuentes, A.casas_promocionadas, 
-            A.pacientes_referidos_valoracion, A.pacientes_referidos_hospitalizacion, A.pacientes_candidatos_muestra_covid
-            from rondas_registros A
-            left join rondas B on B.id = A.ronda_id
-            left join brigadas C on C.id = B.brigada_id
-            left join catalogo_distritos D on D.id = C.distrito_id
-            left join catalogo_municipios E on E.id = B.municipio_id
-            left join catalogo_localidades F on F.id = A.localidad_id
-            left join catalogo_colonias G on G.id = A.colonia_visitada_id
-            left join rondas_registros_detalles H on H.ronda_registro_id = A.id
-            left join catalogo_grupos_edades I on I.id = H.grupo_edad_id
-*/
-            $resultado = Brigada::select('catalogo_distritos.clave', DB::raw('COUNT(DISTINCT rondas.municipio_id) as cabeceras_recorridas'), 
-                                            DB::raw('COUNT(DISTINCT rondas_registros.colonia_visitada_id) as colonias_visitadas'), DB::raw('SUM(rondas_registros.poblacion_beneficiada) as poblacion_beneficiada'),
-                                            DB::raw('SUM(rondas_registros.casas_visitadas) as casas_visitadas'), DB::raw('SUM(rondas_registros.casas_ausentes) as casas_ausentes'), 
-                                            DB::raw('SUM(rondas_registros.casas_renuentes) as casas_renuentes'), DB::raw('SUM(rondas_registros.casos_sospechosos_identificados) as casos_sospechosos_identificados'), 
-                                            DB::raw('SUM(rondas_registros.porcentaje_transmision) as porcentaje_transmision'),
-                                            DB::raw('brigadas.total_brigadistas as brigadistas_acumulados'), DB::raw('SUM(rondas_registros.tratamientos_otorgados_brigadeo) as tratamientos_otorgados_brigadeo'), 
-                                            DB::raw('SUM(rondas_registros.tratamientos_otorgados_casos_positivos) as tratamientos_otorgados_casos_positivos'),
-                                            DB::raw('(SUM(rondas_registros.tratamientos_otorgados_casos_positivos) + SUM(rondas_registros.tratamientos_otorgados_brigadeo)) as total_tratamientos'),
-                                            'brigadas.distrito_id')
-                                ->leftjoin('catalogo_distritos','catalogo_distritos.id','=','brigadas.distrito_id')
-                                ->leftjoin('rondas',function($join){
-                                    $join->on('rondas.brigada_id','=','brigadas.id')->whereNull('rondas.deleted_at');
-                                })
-                                ->leftjoin('rondas_registros',function($join){
-                                    $join->on('rondas_registros.ronda_id','=','rondas.id')->whereNull('rondas.deleted_at');
-                                })
-                                ->whereIn('brigadas.id',$ids_brigadas)
-                                ->groupBy('brigadas.distrito_id')
-                                ->get();
-            
-            $municipios_por_ronda = DB::select("select distrito_id, ronda, count(distinct municipio_id) as total_municipios
-                                                from (
-                                                    select B.distrito_id, max(A.no_ronda) as ronda, A.municipio_id
-                                                    from rondas A
-                                                    left join brigadas B on B.id = A.brigada_id
-                                                    group by B.distrito_id, A.municipio_id
-                                                ) as rondas_maximas
-                                                group by distrito_id, ronda
-                                                order by distrito_id, ronda");
-            $municipios_por_ronda = collect($municipios_por_ronda);
-            $municipios_por_ronda = $municipios_por_ronda->groupBy('distrito_id');
-            
-            $rondas_placeholder = [];
-            for ($i=0; $i < $ronda_maxima; $i++) { 
-                $rondas_placeholder[($i+1).'a_ronda'] = 0;
-            }
-            
-            $resultado = $resultado->map(function($item) use ($rondas_placeholder, $municipios_por_ronda) {
-                $item = $item->toArray();
-                
-                $key = 'tratamientos_otorgados_brigadeo';
-                $offset = array_search($key, array_keys($item));
-
-                $result = array_merge(
-                            array_slice($item, 0, $offset),
-                            $rondas_placeholder,
-                            array_slice($item, $offset, null)
-                        );
-                
-                if(isset($municipios_por_ronda[$result['distrito_id']])){
-                    foreach ($municipios_por_ronda[$result['distrito_id']] as $grupo_ronda) {
-                        $result[$grupo_ronda->ronda.'a_ronda'] = $grupo_ronda->total_municipios;
-                    }
-                }
-
-                array_pop($result);
-
-                return $result;
-            });
-
-            $filename = 'brigadas_concentrado';
-            return (new ReportConcentradoExport($resultado, $ronda_maxima))->download($filename.'.xlsx'); //Excel::XLSX, ['Access-Control-Allow-Origin'=>'*','Access-Control-Allow-Methods'=>'GET']
+            $filename = 'concentrado_actividades';
+            return (new ReportConcentradoExport($resultado))->download($filename.'.xlsx'); //Excel::XLSX, ['Access-Control-Allow-Origin'=>'*','Access-Control-Allow-Methods'=>'GET']
         }catch(\Exception $e){
             return response()->json(['error' => $e->getMessage(),'line'=>$e->getLine()], HttpResponse::HTTP_CONFLICT);
         }

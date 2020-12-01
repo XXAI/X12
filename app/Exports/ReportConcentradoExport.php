@@ -31,32 +31,14 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
 {
     use Exportable;
 
-    protected $ronda_maxima = 0;
-
-    public function __construct($data,$ronda_maxima){
+    public function __construct($data){
         $this->headings = [
-            ['Distrito', 'Total de Cabeceras Recorridas', 'Colonias Visitadas', 'Poblacion Beneficiada', 'Casas Visitadas', 'Casas Ausentes', 'Casas Renuentes', 'Casos Sospechosos Identificados', 'Porcentaje de Transmisión', 'Brigadistas (acumulado en todas las rondas)','Cantidad de Cabeceras'],
-            ['','','','','','','','','','','1a. Ronda']
+            ["Distrito", "Municipio", "No. Ronda", "Localidad", "Colonia", "Fecha Registro", "Grupo Edad", "Sexo", "", "",
+            "Inf. Respiratoria", "", "", "Covid", "", "", "Tratamientos Otorgados",
+            "Casas Visitadas", "Casas Ausentes", "Casas Deshabitadas", "Casas Encuestadas", "Casas Renuentes", "Casas Promocionadas", 
+            "Pacientes Referidos a Valoración", "Pacientes Referidos a Hospitalización", "Pacientes Candidatos a Toma de Muestra Covid"],
+            ["", "", "", "", "", "", "", "Masc.", "Fem.", "Total","Masc.", "Fem.", "Total", "Masc.", "Fem.", "Total"]
         ];
-
-        $total_rows = count($data);
-        $last_row = ['','=SUM(B3:B'.(2+$total_rows).')','','','','','','','','','=SUM(K3:K'.(2+$total_rows).')'];
-
-        $this->ronda_maxima = $ronda_maxima;
-        $columna = 'L';
-        for ($i=1; $i < $this->ronda_maxima; $i++) { 
-            $this->headings[0][] = '';
-            $this->headings[1][] = ($i+1).'a. Ronda';
-            $last_row[] = '=SUM('.$columna.'3:'.$columna.(2+$total_rows).')';
-            $columna++;
-        }
-
-        $this->headings[0][] = 'Tratamientos';
-        $this->headings[1][] = 'Tratamientos Otorgados en Brigadeo';
-        $this->headings[1][] = 'Tratamiento Otorgado a Casos Positivos (caso y contacto)';
-        $this->headings[1][] = 'Total';
-
-        $data[] = $last_row;
         $this->data = $data;
     }
 
@@ -65,12 +47,25 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
         return [            
             AfterSheet::class => function(AfterSheet $event) {
                 $letra = 'A';
-                $anchos = [8,10,9,11,9.5,9.5,9.5,12.4,11.8,14.2];
+                $anchos = [30,30,7,30,30,12,9.5];
+                for ($i=0; $i < 7; $i++) { 
+                    $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra.'2');
+                    $event->sheet->getDelegate()->getColumnDimension($letra)->setWidth($anchos[$i]);
+                    $letra++;
+                }
+                $letra = 'Q';
+                $anchos = [12,10,9,11,11,9.5,14,17,16.5,21];
                 for ($i=0; $i < 10; $i++) { 
                     $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra.'2');
                     $event->sheet->getDelegate()->getColumnDimension($letra)->setWidth($anchos[$i]);
                     $letra++;
                 }
+
+                $event->sheet->getDelegate()->mergeCells('H1:J1'); //Sexo
+                $event->sheet->getDelegate()->mergeCells('K1:M1'); //Inf. Respiratoria
+                $event->sheet->getDelegate()->mergeCells('N1:P1'); //Covid
+
+                /*
                 
                 $letra_control = $letra;
                 for ($i=0; $i < $this->ronda_maxima; $i++) {
@@ -78,7 +73,7 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
                     $event->sheet->getDelegate()->getColumnDimension($letra_rango)->setWidth(8.1);
                     $letra_control++;
                 }
-                $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra_rango.'1');
+                
 
                 $letra = $letra_control;
                 $anchos = [20.2, 24.8, 10];
@@ -86,9 +81,9 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
                     $letra_rango++;
                     $event->sheet->getDelegate()->getColumnDimension($letra_rango)->setWidth($anchos[$i]);
                 }
-                $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra_rango.'1');
+                $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra_rango.'1');*/
 
-                $event->sheet->getDelegate()->getStyle('A1:'.($event->sheet->getHighestColumn()).'2')->getAlignment()->setWrapText(true);
+                $event->sheet->getDelegate()->getStyle('A1:'.($event->sheet->getHighestColumn()).($event->sheet->getHighestRow()))->getAlignment()->setWrapText(true);
                 $event->sheet->styleCells(
                     'A1:'.($event->sheet->getHighestColumn()).'2',
                     [
@@ -130,7 +125,7 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
                     ]
                 );
                 $event->sheet->styleCells(
-                    'A3:'.($event->sheet->getHighestColumn()).($event->sheet->getHighestRow()-1),
+                    'A3:'.($event->sheet->getHighestColumn()).($event->sheet->getHighestRow()),
                     [
                         'borders' => [
                             'allBorders' => [

@@ -19,6 +19,7 @@ use App\Models\Ronda;
 use App\Models\RondaRegistro;
 use App\Models\RondaRegistroDetalle;
 use App\Models\RondaLocalidadEstatus;
+use App\Models\RondaColoniaEstatus;
 use App\Models\Colonia;
 
 class RondaRegistrosController extends Controller
@@ -131,6 +132,18 @@ class RondaRegistrosController extends Controller
                     if($localidad_estatus->fecha_termino < $registro->fecha_registro){
                         DB::rollback();
                         return response()->json(['error'=>['message'=>'La fecha de termino de la Localidad es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
+                    }
+                }
+            }
+
+            if(isset($parametros['terminar_colonia']) && $parametros['terminar_colonia']){
+                $colonia_estatus = RondaColoniaEstatus::where('ronda_id',$registro->ronda_id)->where('colonia_id',$registro->colonia_visitada_id)->first();
+                if(!$colonia_estatus){
+                    $colonia_estatus = RondaColoniaEstatus::create(['ronda_id'=>$registro->ronda_id,'colonia_id'=>$registro->colonia_visitada_id,'fecha_termino'=>$registro->fecha_registro]);
+                }else{
+                    if($colonia_estatus->fecha_termino < $registro->fecha_registro){
+                        DB::rollback();
+                        return response()->json(['error'=>['message'=>'La fecha de termino de la Colonia es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
                     }
                 }
             }

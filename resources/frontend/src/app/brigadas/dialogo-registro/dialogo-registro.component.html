@@ -45,7 +45,7 @@
                                 {{item.descripcion}}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-hint *ngIf="!formRegistro.get('localidad').value">Selecciona una localdiad de la lista</mat-hint>
+                        <mat-hint *ngIf="!formRegistro.get('localidad').value">Selecciona una localidad de la lista</mat-hint>
                         <mat-error *ngIf="formRegistro.get('localidad').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                     <mat-form-field fxFlex="40">
@@ -223,10 +223,10 @@
     <section fxFlex="none">
         <div fxLayout="row">
             <div fxFlex="none">
-                <button mat-stroked-button color="accent" (click)="toggleTerminado('localidad')"><mat-icon>{{(localidadTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Localidad Terminada</button>
+                <button mat-stroked-button color="accent" (click)="toggleTerminado('localidad')" [disabled]="!formRegistro.get('localidad').value"><mat-icon>{{(localidadTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Localidad Terminada</button>
             </div>
             <div fxFlex="none">
-                <button mat-button color="accent" (click)="toggleTerminado('colonia')"><mat-icon>{{(coloniaTerminada)?'check_circle':'radio_button_unchecked'}}</mat-icon> Colonia Terminada</button>
+                <button mat-button color="accent" (click)="toggleTerminado('colonia')" [disabled]="!formRegistro.get('colonia_visitada').value"><mat-icon>{{(coloniaTerminada)?'check_circle':'radio_button_unchecked'}}</mat-icon> Colonia Terminada</button>
             </div>
             <div fxFlex></div>
             <div fxFlex="none">

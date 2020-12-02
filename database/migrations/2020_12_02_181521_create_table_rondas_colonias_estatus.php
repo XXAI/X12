@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableRondasLocalidadesEstatus extends Migration
+class CreateTableRondasColoniasEstatus extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreateTableRondasLocalidadesEstatus extends Migration
      */
     public function up()
     {
-        Schema::create('rondas_localidades_estatus', function (Blueprint $table) {
+        Schema::create('rondas_colonias_estatus', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('ronda_id')->unsigned();
-            $table->bigInteger('localidad_id')->unsigned();
+            $table->bigInteger('colonia_id')->unsigned();
             $table->date('fecha_termino')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('ronda_id')->references('id')->on('rondas');
-            $table->foreign('localidad_id')->references('id')->on('catalogo_localidades');
+            $table->foreign('colonia_id')->references('id')->on('catalogo_colonias');
         });
     }
 
@@ -33,6 +33,6 @@ class CreateTableRondasLocalidadesEstatus extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rondas_localidades_estatus');
+        Schema::dropIfExists('rondas_colonias_estatus');
     }
 }

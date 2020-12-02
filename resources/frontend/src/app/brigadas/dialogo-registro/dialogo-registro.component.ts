@@ -184,6 +184,14 @@ export class DialogoRegistroComponent implements OnInit {
 
     registro.ronda_id = this.idRonda;
 
+    if(this.localidadTerminada){
+      registro.terminar_localidad = this.localidadTerminada;
+    }
+
+    if(this.coloniaTerminada){
+      registro.terminar_colonia = this.coloniaTerminada;
+    }
+
     this.brigadasService.guardarRegistro(registro).subscribe(
       response =>{
         if(response.error) {
@@ -207,6 +215,7 @@ export class DialogoRegistroComponent implements OnInit {
 
   localidadSeleccionada(){
     let localidad = this.formRegistro.get('localidad').value;
+    this.localidadTerminada = false;
     if(localidad){
       this.cargarColonias(localidad.id);
     }
@@ -274,6 +283,7 @@ export class DialogoRegistroComponent implements OnInit {
 
   limpiarLocalidad(){
     this.formRegistro.get('localidad').patchValue('');
+    this.localidadTerminada = false;
     this.colonias = [];
     this.limpiarColonia();
     this.formRegistro.get('colonia_visitada').disable();
@@ -332,9 +342,6 @@ export class DialogoRegistroComponent implements OnInit {
   toggleTerminado(tipo){
     if(tipo == 'localidad'){
       this.localidadTerminada = !this.localidadTerminada;
-      if(this.localidadTerminada){
-        this.coloniaTerminada = true;
-      }
     }else{
       this.coloniaTerminada = !this.coloniaTerminada;
     }

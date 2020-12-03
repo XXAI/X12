@@ -37,6 +37,18 @@ class ColoniasController extends Controller{
 
             if(isset($parametros['localidad_id']) && $parametros['localidad_id']){
                 $colonias = $colonias->where('localidad_id',$parametros['localidad_id']);
+            }elseif(isset($parametros['localidad_id_or_null']) && $parametros['localidad_id_or_null']){
+                $colonias = $colonias->where(function ($query)use($parametros){
+                    $query->where('localidad_id',$parametros['localidad_id_or_null'])->orWhereNull('localidad_id');
+                });
+            }
+
+            if(isset($parametros['zona']) && $parametros['zona']){
+                $colonias = $colonias->where('zona',$parametros['zona']);
+            }
+
+            if(isset($parametros['region']) && $parametros['region']){
+                $colonias = $colonias->where('region',$parametros['region']);
             }
 
             if(isset($parametros['usuario_captura_id']) && $parametros['usuario_captura_id']){

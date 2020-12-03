@@ -9,7 +9,7 @@ class Colonia extends Model
 {
     use SoftDeletes;
     protected $table = 'catalogo_colonias';
-    protected $fillable = ['id','distrito_id','municipio_id','localidad_id','nombre','usuario_captura_id'];
+    protected $fillable = ['id','distrito_id','municipio_id','localidad_id','zona','region','nombre','usuario_captura_id'];
 
     public function municipio(){
         return $this->belongsTo('App\Models\Municipio','municipio_id');

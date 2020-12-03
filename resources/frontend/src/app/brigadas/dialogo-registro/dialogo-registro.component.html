@@ -23,6 +23,18 @@
                     </mat-form-field>
                     <div fxFlex></div>
                     <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>Zona</mat-label>
+                        <input matInput type="number" formControlName="zona" required (change)="habilitarLocalidades()">
+                        <mat-error *ngIf="formRegistro.get('zona').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('zona').hasError('min') || formRegistro.get('zona').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>Región</mat-label>
+                        <input matInput type="number" formControlName="region" required (change)="habilitarLocalidades()">
+                        <mat-error *ngIf="formRegistro.get('region').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('region').hasError('min') || formRegistro.get('region').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>No. Brigada</mat-label>
                         <input matInput type="number" formControlName="no_brigada" required>
                         <mat-error *ngIf="formRegistro.get('no_brigada').hasError('required')">Este campo es obligatorio</mat-error>

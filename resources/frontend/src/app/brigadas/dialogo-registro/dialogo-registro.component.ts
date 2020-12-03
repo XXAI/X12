@@ -74,6 +74,8 @@ export class DialogoRegistroComponent implements OnInit {
       colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
       no_brigada:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      zona:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      region:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_visitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_ausentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_renuentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -142,7 +144,7 @@ export class DialogoRegistroComponent implements OnInit {
       this.formRegistro.patchValue(this.data.registro);
       this.dialogTitle = 'Editar Registro';
 
-      this.cargarColonias(this.data.registro.localidad.id);
+      this.cargarColonias(this.data.registro.zona, this.data.registro.region); ///this.data.registro.localidad.id, 
     }else{
       this.dialogTitle = 'Nuevo Registro';
     }
@@ -168,6 +170,8 @@ export class DialogoRegistroComponent implements OnInit {
         distrito_id: this.idDistrito,
         municipio_id: registro.cabecera_recorrida_id,
         localidad_id: registro.localidad_id,
+        zona: registro.zona,
+        region: registro.region
       }
     }else{
       registro.colonia_visitada_id = registro.colonia_visitada.id;
@@ -213,21 +217,39 @@ export class DialogoRegistroComponent implements OnInit {
     );
   }
 
-  localidadSeleccionada(){
-    let localidad = this.formRegistro.get('localidad').value;
-    this.localidadTerminada = false;
-    if(localidad){
-      this.cargarColonias(localidad.id);
+  habilitarLocalidades(){
+    if(this.formRegistro.get('zona').valid && this.formRegistro.get('region').valid){
+      if(this.formRegistro.get('colonia_visitada').disabled){
+        this.formRegistro.get('colonia_visitada').enable();
+      }
+      this.limpiarColonia();
+      this.cargarColonias(this.formRegistro.get('zona').value, this.formRegistro.get('region').value);
+    }else{
+      this.formRegistro.get('colonia_visitada').disable();
+      this.limpiarColonia();
     }
   }
 
-  cargarColonias(localidad_id){
+  localidadSeleccionada(){
+    /*let localidad = this.formRegistro.get('localidad').value;
+    let zona = this.formRegistro.get('zona').value;
+    let region = this.formRegistro.get('region').value;*/
+    this.localidadTerminada = false;
+    /*this.limpiarColonia();
+    if(localidad){
+      this.cargarColonias(localidad.id, zona, region);
+    }*/
+  }
+
+  cargarColonias(zona, region){ //localidad_id,
     this.isLoadingColonias = true;
 
     let filtroColonias={
-      /*distrito_id: this.idDistrito,
-      municipio_id: this.data.municipio.id,*/
-      localidad_id: localidad_id,
+      distrito_id: this.idDistrito,
+      municipio_id: this.data.municipio.id,
+      //localidad_id_or_null: localidad_id,
+      zona: zona,
+      region: region
     }
 
     this.brigadasService.getListadoColonias(filtroColonias).subscribe(
@@ -278,7 +300,7 @@ export class DialogoRegistroComponent implements OnInit {
 
   limpiarColonia(){
     this.nuevaColonia = false;
-    this.formRegistro.get('colonia_visitada').patchValue('');
+    this.formRegistro.get('colonia_visitada').reset();
   }
 
   limpiarLocalidad(){

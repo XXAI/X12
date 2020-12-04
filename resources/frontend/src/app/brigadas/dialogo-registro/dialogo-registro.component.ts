@@ -12,6 +12,7 @@ export interface DialogData {
   idDistrito:number;
   idRonda:number;
   municipio:any;
+  filtroZonaRegion:any;
 }
 
 @Component({
@@ -31,6 +32,9 @@ export class DialogoRegistroComponent implements OnInit {
   ) { }
 
   dialogTitle:string;
+
+  zonas:number[];
+  regiones:number[];
 
   displayedColumnsHeader: string[] = ['grupos_edades','sexo','inf_respiratoria','covid','tratamientos_otorgados'];
   displayedColumns: string[] = ['sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino'];
@@ -61,6 +65,10 @@ export class DialogoRegistroComponent implements OnInit {
     this.localidades = [];
     this.colonias = [];
     this.gruposEdades = [];
+
+    this.zonas = this.data.filtroZonaRegion.zonas;
+    this.regiones = this.data.filtroZonaRegion.regiones;
+
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
     this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
@@ -74,20 +82,40 @@ export class DialogoRegistroComponent implements OnInit {
       colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
       no_brigada:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      zona:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      region:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      //zona:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      //region:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_visitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_ausentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_renuentes:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_promocionadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_encuestadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_deshabitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      embarazadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      diabeticos:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       pacientes_referidos_valoracion:['',[Validators.required,Validators.min(0),Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')]],
       pacientes_referidos_hospitalizacion:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       pacientes_candidatos_muestra_covid:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       total_personas:[0,[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       id:['']
     });
+
+    if(this.zonas.length == 1){
+      this.formRegistro.addControl('zona', new FormControl(this.zonas[0], Validators.required));
+    }else if(this.zonas.length > 0){
+      let zonas_lista = this.zonas.join(',');
+      this.formRegistro.addControl('zona', new FormControl('', [Validators.required,Validators.pattern('['+zonas_lista+']*')]));
+    }else{
+      this.formRegistro.addControl('zona', new FormControl('', [Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]));
+    }
+
+    if(this.regiones.length == 1){
+      this.formRegistro.addControl('region', new FormControl(this.regiones[0], Validators.required));
+    }else if(this.regiones.length > 0){
+      let regiones_lista = this.regiones.join(',');
+      this.formRegistro.addControl('region', new FormControl('', [Validators.required,Validators.pattern('['+regiones_lista+']*')]));
+    }else{
+      this.formRegistro.addControl('region', new FormControl('', [Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]));
+    }
 
     let carga_catalogos = [
       {nombre:'grupos_edades'},
@@ -146,6 +174,9 @@ export class DialogoRegistroComponent implements OnInit {
 
       this.cargarColonias(this.data.registro.zona, this.data.registro.region); ///this.data.registro.localidad.id, 
     }else{
+      if(this.zonas.length == 1 && this.regiones.length == 1){
+        this.cargarColonias(this.zonas[0], this.regiones[0]);
+      }
       this.dialogTitle = 'Nuevo Registro';
     }
 
@@ -285,9 +316,7 @@ export class DialogoRegistroComponent implements OnInit {
   checkAutocompleteLocalidad() {
     setTimeout(() => {
       if (typeof(this.formRegistro.get('localidad').value) != 'object') {
-        this.formRegistro.get('localidad').patchValue('');
-        this.limpiarColonia();
-        this.formRegistro.get('colonia_visitada').disable();
+        this.formRegistro.get('localidad').reset();
       } 
     }, 300);
   }
@@ -306,9 +335,6 @@ export class DialogoRegistroComponent implements OnInit {
   limpiarLocalidad(){
     this.formRegistro.get('localidad').patchValue('');
     this.localidadTerminada = false;
-    this.colonias = [];
-    this.limpiarColonia();
-    this.formRegistro.get('colonia_visitada').disable();
   }
 
   private _filterLocalidades(value: any): string[] {

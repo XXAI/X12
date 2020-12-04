@@ -22,18 +22,23 @@
                         <mat-error *ngIf="formRegistro.get('fecha_registro').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                     <div fxFlex></div>
+
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Zona</mat-label>
-                        <input matInput type="number" formControlName="zona" required (change)="habilitarLocalidades()">
+                        <input matInput type="number" formControlName="zona" required (change)="habilitarLocalidades()" *ngIf="zonas.length != 1">
+                        <input matInput type="number" formControlName="zona" required readonly *ngIf="zonas.length == 1" tabindex="-1">
                         <mat-error *ngIf="formRegistro.get('zona').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('zona').hasError('min') || formRegistro.get('zona').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                        <mat-error *ngIf="formRegistro.get('zona').hasError('min') || formRegistro.get('zona').hasError('pattern')">Valor de zona no valida</mat-error>
                     </mat-form-field>
+
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Región</mat-label>
-                        <input matInput type="number" formControlName="region" required (change)="habilitarLocalidades()">
+                        <input matInput type="number" formControlName="region" required (change)="habilitarLocalidades()" *ngIf="regiones.length != 1">
+                        <input matInput type="number" formControlName="region" required readonly *ngIf="regiones.length == 1" tabindex="-1">
                         <mat-error *ngIf="formRegistro.get('region').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('region').hasError('min') || formRegistro.get('region').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                        <mat-error *ngIf="formRegistro.get('region').hasError('min') || formRegistro.get('region').hasError('pattern')">Valor de Región no valido</mat-error>
                     </mat-form-field>
+
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>No. Brigada</mat-label>
                         <input matInput type="number" formControlName="no_brigada" required>
@@ -228,6 +233,21 @@
                         <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('min') || formRegistro.get('pacientes_candidatos_muestra_covid').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
+                </div>
+                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Embarazadas</mat-label>
+                        <input matInput type="number" formControlName="embarazadas" required>
+                        <mat-error *ngIf="formRegistro.get('embarazadas').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('embarazadas').hasError('min') || formRegistro.get('embarazadas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Diabéticos</mat-label>
+                        <input matInput type="number" formControlName="diabeticos" required>
+                        <mat-error *ngIf="formRegistro.get('diabeticos').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('diabeticos').hasError('min') || formRegistro.get('diabeticos').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <div fxFlex="33"></div>
                 </div>
             </div>
         </div>

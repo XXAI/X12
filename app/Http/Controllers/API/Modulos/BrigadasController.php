@@ -18,6 +18,7 @@ use DB;
 use \Validator,\Hash;
 
 use App\Models\Brigada;
+use App\Models\Ronda;
 use App\Models\RondaRegistro;
 use App\Models\Municipio;
 
@@ -56,6 +57,17 @@ class BrigadasController extends Controller
 
     public function listaMunicipios($id){
         try{
+            $auth_user = auth()->user();
+            $auth_user->load('configuracionBrigadas');
+            $listado_municipios = [];
+
+            if(count($auth_user->configuracionBrigadas)){
+                $listado_municipios = $auth_user->configuracionBrigadas->pluck('municipio_id');
+                if(count($listado_municipios) == 1 && !$listado_municipios[0]){
+                    $listado_municipios = [];
+                }
+            }
+
             $brigada = Brigada::find($id);
             $municipios = Municipio::select('catalogo_municipios.*',DB::raw('COUNT(rondas.no_ronda) as total_rondas'))
                                     ->leftjoin('rondas',function($join)use($id){
@@ -64,12 +76,16 @@ class BrigadasController extends Controller
                                     ->where('distrito_id',$brigada->distrito_id)
                                     ->groupBy('catalogo_municipios.id')
                                     ->orderBY('total_rondas','desc')
-                                    ->orderBy('descripcion')
-                                    ->get();
+                                    ->orderBy('descripcion');
+                                    
+            if(count($listado_municipios)){
+                $municipios = $municipios->whereIn('catalogo_municipios.id',$listado_municipios);
+            }
+            $municipios = $municipios->get();
             
             $rondas = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->where('brigada_id',$id)->orderBy('no_ronda','desc')->get()->groupBy('municipio_id');
             
-            return response()->json(['data'=>['municipios'=>$municipios, 'rondas'=>$rondas]],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>['municipios'=>$municipios, 'rondas'=>$rondas, 'usuario'=>$listado_municipios]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }

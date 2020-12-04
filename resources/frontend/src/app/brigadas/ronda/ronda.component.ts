@@ -21,6 +21,8 @@ export class RondaComponent implements OnInit {
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute, private brigadasService: BrigadasService, private sharedService: SharedService) { }
 
+  filtroZonaRegion:any;
+
   listaRegistros:any[];
   displayedColumns: string[] = ['fecha_registro','no_brigada','colonia','casas_visitadas','casas_ausentes','casas_renuentes','referidos_hospitalizacion','actions'];
   datosRonda:any;
@@ -51,7 +53,9 @@ export class RondaComponent implements OnInit {
             let errorMessage = response.error.message;
             this.sharedService.showSnackBar(errorMessage, null, 3000);
           } else {
+            this.filtroZonaRegion = response.filtros;
             this.datosRonda = response.data;
+
             if(this.datosRonda.fecha_fin){
               this.datosRonda.estatus = 'Finalizada';
               this.rondaFinalizada = true;
@@ -130,8 +134,9 @@ export class RondaComponent implements OnInit {
   dialogoRegistro(editarRegistro?:any){
     let config_data:any = {
       idDistrito: this.datosRonda.brigada.distrito_id, 
-      idRonda:this.datosRonda.id,
-      municipio:this.datosRonda.municipio,
+      idRonda: this.datosRonda.id,
+      municipio: this.datosRonda.municipio,
+      filtroZonaRegion: this.filtroZonaRegion
     }    
 
     if(editarRegistro){

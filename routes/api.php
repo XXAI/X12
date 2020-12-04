@@ -117,8 +117,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
      */
     Route::apiResource('brigadas',          'API\Modulos\BrigadasController');
     Route::get('exportar-concentrado',      'API\Modulos\BrigadasController@exportExcel');
+    Route::get('brigada-municipios/{id}',   'API\Modulos\BrigadasController@listaMunicipios');
     Route::apiResource('rondas',            'API\Modulos\RondasController');
-    Route::get('brigada-municipios/{id}',   'API\Modulos\RondasController@listaMunicipios');
     Route::put('finalizar-ronda/{id}',      'API\Modulos\RondasController@finalizarRonda');
     Route::put('rondas-brigadistas/{id}',   'API\Modulos\RondasController@actualizarBrigadistas');
     Route::get('exportar-rondas',           'API\Modulos\RondasController@exportExcel');

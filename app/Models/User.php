@@ -58,6 +58,10 @@ class User extends Authenticatable implements JWTSubject{
         return $this->belongsToMany('App\Models\GrupoEstrategico','grupos_estrategicos_usuarios','user_id','grupo_estrategico_id');
     }
 
+    public function configuracionBrigadas(){
+        return $this->hasMany('App\Models\ConfigUsuarioBrigadaRegistro','usuario_id');
+    }
+
     public function permissions(){
         return $this->belongsToMany('App\Models\Permission')->withPivot('status');
     }

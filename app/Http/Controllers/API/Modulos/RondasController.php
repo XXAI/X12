@@ -73,27 +73,6 @@ class RondasController extends Controller
         }
     }
 
-    public function listaMunicipios($id){
-        try{
-            $brigada = Brigada::find($id);
-            $municipios = Municipio::select('catalogo_municipios.*',DB::raw('COUNT(rondas.no_ronda) as total_rondas'))
-                                    ->leftjoin('rondas',function($join)use($id){
-                                        $join->where('brigada_id',$id)->on('rondas.municipio_id','=','catalogo_municipios.id');
-                                    })
-                                    ->where('distrito_id',$brigada->distrito_id)
-                                    ->groupBy('catalogo_municipios.id')
-                                    ->orderBY('total_rondas','desc')
-                                    ->orderBy('descripcion')
-                                    ->get();
-            
-            $rondas = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->where('brigada_id',$id)->orderBy('no_ronda','desc')->get()->groupBy('municipio_id');
-            
-            return response()->json(['data'=>['municipios'=>$municipios, 'rondas'=>$rondas]],HttpResponse::HTTP_OK);
-        }catch(\Exception $e){
-            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
-        }
-    }
-
     public function actualizarBrigadistas(Request $request, $id){
         try{
             //$auth_user = auth()->user();
@@ -160,14 +139,35 @@ class RondasController extends Controller
      */
     public function show($id){
         try{
+            $auth_user = auth()->user();
+            $ronda_municipio = Ronda::find($id)->municipio_id;
+            $lista_zonas = [];
+            $lista_regiones = [];
+
+            $auth_user->load(['configuracionBrigadas'=>function($config)use($ronda_municipio){
+                $config->where('municipio_id',$ronda_municipio);
+            }]);
+            
+            $lista_zonas = array_unique($auth_user->configuracionBrigadas->pluck('zona')->toArray());
+            if(count($lista_zonas) == 1 && !$lista_zonas[0]){
+                $lista_zonas = [];
+            }else{
+                $lista_regiones = array_unique($auth_user->configuracionBrigadas->pluck('region')->toArray());
+                if(count($lista_regiones) == 1 && !$lista_regiones[0]){
+                    $lista_regiones = [];
+                }
+            }
+            
             $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))
                                 ->with(['brigada'=>function($brigada){
                                     $brigada->with('distrito','grupoEstrategico');
-                                },'registros'=>function($registros){
-                                    $registros->with('cabeceraRecorrida','localidad','coloniaVisitada','detalles')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
+                                },'registros'=>function($registros)use($lista_zonas,$lista_regiones){
+                                    $registros = $registros->with('cabeceraRecorrida','localidad','coloniaVisitada','detalles')->orderby('fecha_registro','DESC')->orderby('created_at','DESC');
+                                    if(count($lista_zonas)){    $registros = $registros->whereIn('zona',$lista_zonas);      }
+                                    if(count($lista_regiones)){ $registros = $registros->whereIn('region',$lista_regiones); }
                                 },'municipio'])->find($id);
             
-            return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$ronda,'filtros'=>['zonas'=>$lista_zonas,'regiones'=>$lista_regiones]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }

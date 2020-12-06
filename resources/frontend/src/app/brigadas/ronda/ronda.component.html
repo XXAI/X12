@@ -73,9 +73,9 @@
                             <td mat-cell *matCellDef="let row" style="white-space: nowrap; text-align: center; padding:0px 5px;"> {{row.zona}} - {{row.region}}</td>
                         </ng-container>
 
-                        <ng-container matColumnDef="colonia">
-                            <th mat-header-cell *matHeaderCellDef style="white-space: nowrap; padding:0px 5px;"> Colonia </th>
-                            <td mat-cell *matCellDef="let row" style="text-align: center; padding:0px 5px;">{{row.colonia_visitada.nombre}}</td>
+                        <ng-container matColumnDef="localidad">
+                            <th mat-header-cell *matHeaderCellDef style="white-space: nowrap; padding:0px 5px;"> Localidad </th>
+                            <td mat-cell *matCellDef="let row" style="text-align: center; padding:0px 5px;">{{(row.localidad)?row.localidad.descripcion:'--'}}</td>
                         </ng-container>
                         
                         <ng-container matColumnDef="casas_visitadas" >

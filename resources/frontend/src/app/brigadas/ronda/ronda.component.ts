@@ -24,7 +24,7 @@ export class RondaComponent implements OnInit {
   filtroZonaRegion:any;
 
   listaRegistros:any[];
-  displayedColumns: string[] = ['fecha_registro','no_brigada','colonia','casas_visitadas','casas_ausentes','casas_renuentes','referidos_hospitalizacion','actions'];
+  displayedColumns: string[] = ['fecha_registro','no_brigada','localidad','casas_visitadas','casas_ausentes','casas_renuentes','referidos_hospitalizacion','actions'];
   datosRonda:any;
   idRegistroSeleccionado:number;
   isLoading:boolean;

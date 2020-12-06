@@ -40,10 +40,10 @@
                     </mat-form-field>
 
                     <mat-form-field fxFlex="none" appearance="fill">
-                        <mat-label>No. Brigada</mat-label>
-                        <input matInput type="number" formControlName="no_brigada" required>
-                        <mat-error *ngIf="formRegistro.get('no_brigada').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('no_brigada').hasError('min') || formRegistro.get('no_brigada').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                        <mat-label>No. de Brigadistas</mat-label>
+                        <input matInput type="number" formControlName="no_brigadistas" required>
+                        <mat-error *ngIf="formRegistro.get('no_brigadistas').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('no_brigadistas').hasError('min') || formRegistro.get('no_brigadistas').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
                 </div>
                 <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
@@ -65,7 +65,8 @@
                         <mat-hint *ngIf="!formRegistro.get('localidad').value">Selecciona una localidad de la lista</mat-hint>
                         <mat-error *ngIf="formRegistro.get('localidad').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="40">
+                    <div fxFlex="40"></div>
+                    <!--mat-form-field fxFlex="40">
                         <mat-label>Colonia Visitada (Sin abreviaciones)</mat-label>
                         <input type="text" placeholder="Seleccionar Colonia" aria-label="Colonia" matInput formControlName="colonia_visitada" [matAutocomplete]="coloniasAutocomplete" (blur)="checkAutocompleteColonia()">
                         <button tabindex="-1" color="primary" *ngIf="formRegistro.get('colonia_visitada').value && !formRegistro.get('colonia_visitada').value.nombre" mat-icon-button matSuffix (click)="agregarColonia()">
@@ -83,7 +84,7 @@
                         <mat-hint *ngIf="!nuevaColonia">Total Colonias:{{colonias.length}} <span *ngIf="isLoadingColonias">Cargando...</span></mat-hint>
                         <mat-hint *ngIf="nuevaColonia">Esta colonia se agregará al catalogo</mat-hint>
                         <mat-error *ngIf="formRegistro.get('colonia_visitada').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
+                    </mat-form-field-->
                 </div>
                 <div fxFlex>
                     <table #dataTable mat-table [dataSource]="gruposEdades" class="data-table" multiTemplateDataRows>
@@ -257,9 +258,9 @@
             <div fxFlex="none">
                 <button mat-stroked-button color="accent" (click)="toggleTerminado('localidad')" [disabled]="!formRegistro.get('localidad').value"><mat-icon>{{(localidadTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Localidad Terminada</button>
             </div>
-            <div fxFlex="none">
+            <!--div fxFlex="none">
                 <button mat-button color="accent" (click)="toggleTerminado('colonia')" [disabled]="!formRegistro.get('colonia_visitada').value"><mat-icon>{{(coloniaTerminada)?'check_circle':'radio_button_unchecked'}}</mat-icon> Colonia Terminada</button>
-            </div>
+            </div-->
             <div fxFlex></div>
             <div fxFlex="none">
                 <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;

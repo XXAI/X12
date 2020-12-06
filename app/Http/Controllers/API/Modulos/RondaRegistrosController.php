@@ -73,7 +73,7 @@ class RondaRegistrosController extends Controller
                 'ronda_id' => 'required',
                 'cabecera_recorrida_id' => 'required',
                 'localidad_id' => 'required',
-                'colonia_visitada_id' => 'required',
+                //'colonia_visitada_id' => 'required',
                 'fecha_registro' => 'required',
                 'casas_visitadas' => 'required',
                 'casas_deshabitadas' => 'required',
@@ -86,18 +86,18 @@ class RondaRegistrosController extends Controller
                 'pacientes_candidatos_muestra_covid' => 'required',
                 'pacientes_referidos_hospitalizacion' => 'required',
                 'pacientes_referidos_valoracion' => 'required',
-                'no_brigada' => 'required',
+                'no_brigadistas' => 'required',
             ];
 
             DB::beginTransaction();
             $auth_user = auth()->user();
             $parametros = Input::all();
 
-            if(isset($parametros['nueva_colonia']) && $parametros['nueva_colonia']){
+            /*if(isset($parametros['nueva_colonia']) && $parametros['nueva_colonia']){
                 $parametros['nueva_colonia']['usuario_captura_id'] = $auth_user->id;
                 $nueva_colonia = Colonia::create($parametros['nueva_colonia']);
                 $parametros['colonia_visitada_id'] = $nueva_colonia->id;
-            }
+            }*/
 
             $v = Validator::make($parametros, $reglas, $mensajes);
 
@@ -138,7 +138,7 @@ class RondaRegistrosController extends Controller
                 }
             }
 
-            if(isset($parametros['terminar_colonia']) && $parametros['terminar_colonia']){
+            /*if(isset($parametros['terminar_colonia']) && $parametros['terminar_colonia']){
                 $colonia_estatus = RondaColoniaEstatus::where('ronda_id',$registro->ronda_id)->where('colonia_id',$registro->colonia_visitada_id)->first();
                 if(!$colonia_estatus){
                     $colonia_estatus = RondaColoniaEstatus::create(['ronda_id'=>$registro->ronda_id,'colonia_id'=>$registro->colonia_visitada_id,'fecha_termino'=>$registro->fecha_registro]);
@@ -148,7 +148,7 @@ class RondaRegistrosController extends Controller
                         return response()->json(['error'=>['message'=>'La fecha de termino de la Colonia es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
                     }
                 }
-            }
+            }*/
 
             if(isset($parametros['detalles']) && $parametros['detalles']){
                 $editar_detalles = [];

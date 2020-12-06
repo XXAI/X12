@@ -42,7 +42,7 @@ export class DialogoRegistroComponent implements OnInit {
   gruposEdades:any[];
 
   localidadTerminada:boolean;
-  coloniaTerminada:boolean;
+  //coloniaTerminada:boolean;
 
   totalesGrupos:any;
 
@@ -51,19 +51,19 @@ export class DialogoRegistroComponent implements OnInit {
 
   formRegistro:FormGroup;
   isLoading:boolean;
-  isLoadingColonias:boolean;
+  //isLoadingColonias:boolean;
   isLoadingCatalogos:boolean;
   
   idRonda:number;
   idDistrito:number;
-  colonias:any[];
-  coloniasFiltradas:Observable<any[]>;
-  nuevaColonia:boolean;
+  //colonias:any[];
+  //coloniasFiltradas:Observable<any[]>;
+  //nuevaColonia:boolean;
 
   ngOnInit() {
     //this.isLoading = true;
     this.localidades = [];
-    this.colonias = [];
+    //this.colonias = [];
     this.gruposEdades = [];
 
     this.zonas = this.data.filtroZonaRegion.zonas;
@@ -74,14 +74,14 @@ export class DialogoRegistroComponent implements OnInit {
     this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.localidadTerminada = false;
-    this.coloniaTerminada = false;
+    //this.coloniaTerminada = false;
 
     this.formRegistro = this.formBuilder.group({
       cabecera_recorrida:[this.data.municipio],
       localidad:[{value:'',disabled:true},Validators.required],
-      colonia_visitada:[{value:'',disabled:true},Validators.required],
+      //colonia_visitada:[{value:'',disabled:true},Validators.required],
       fecha_registro:[fecha_hoy,[Validators.required]],
-      no_brigada:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      no_brigadistas:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       //zona:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       //region:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       casas_visitadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -135,7 +135,6 @@ export class DialogoRegistroComponent implements OnInit {
             let grupo = JSON.parse(JSON.stringify(this.data.registro.detalles[i]));
             temp_grupos_edades[grupo.grupo_edad_id] = grupo;
 
-            
             this.totalesGrupos.total_masculino += +grupo.total_masculino;
             this.totalesGrupos.total_femenino += +grupo.total_femenino;
             this.totalesGrupos.infeccion_respiratoria_m += +grupo.infeccion_respiratoria_m;
@@ -172,15 +171,15 @@ export class DialogoRegistroComponent implements OnInit {
       this.formRegistro.patchValue(this.data.registro);
       this.dialogTitle = 'Editar Registro';
 
-      this.cargarColonias(this.data.registro.zona, this.data.registro.region); ///this.data.registro.localidad.id, 
+      //this.cargarColonias(this.data.registro.zona, this.data.registro.region); ///this.data.registro.localidad.id, 
     }else{
-      if(this.zonas.length == 1 && this.regiones.length == 1){
+      /*if(this.zonas.length == 1 && this.regiones.length == 1){
         this.cargarColonias(this.zonas[0], this.regiones[0]);
-      }
+      }*/
       this.dialogTitle = 'Nuevo Registro';
     }
 
-    this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
+    //this.coloniasFiltradas = this.formRegistro.controls['colonia_visitada'].valueChanges.pipe(startWith(''),map(value => this._filterColonias(value)));
     this.localidadesFiltradas = this.formRegistro.controls['localidad'].valueChanges.pipe(startWith(''),map(value => this._filterLocalidades(value)));
   }
 
@@ -195,6 +194,7 @@ export class DialogoRegistroComponent implements OnInit {
     registro.localidad_id = registro.localidad.id;
     delete registro.localidad;
 
+    /*
     if(this.nuevaColonia){
       registro.nueva_colonia = {
         nombre: registro.colonia_visitada.nombre,
@@ -208,6 +208,7 @@ export class DialogoRegistroComponent implements OnInit {
       registro.colonia_visitada_id = registro.colonia_visitada.id;
     }
     delete registro.colonia_visitada;
+    */
 
     let grupos_edades:any[] = [];
     for(let i in this.gruposEdades){
@@ -223,9 +224,9 @@ export class DialogoRegistroComponent implements OnInit {
       registro.terminar_localidad = this.localidadTerminada;
     }
 
-    if(this.coloniaTerminada){
+    /*if(this.coloniaTerminada){
       registro.terminar_colonia = this.coloniaTerminada;
-    }
+    }*/
 
     this.brigadasService.guardarRegistro(registro).subscribe(
       response =>{
@@ -249,7 +250,7 @@ export class DialogoRegistroComponent implements OnInit {
   }
 
   habilitarLocalidades(){
-    if(this.formRegistro.get('zona').valid && this.formRegistro.get('region').valid){
+    /*if(this.formRegistro.get('zona').valid && this.formRegistro.get('region').valid){
       if(this.formRegistro.get('colonia_visitada').disabled){
         this.formRegistro.get('colonia_visitada').enable();
       }
@@ -258,7 +259,7 @@ export class DialogoRegistroComponent implements OnInit {
     }else{
       this.formRegistro.get('colonia_visitada').disable();
       this.limpiarColonia();
-    }
+    }*/
   }
 
   localidadSeleccionada(){
@@ -272,13 +273,12 @@ export class DialogoRegistroComponent implements OnInit {
     }*/
   }
 
-  cargarColonias(zona, region){ //localidad_id,
+  /*cargarColonias(zona, region){
     this.isLoadingColonias = true;
 
     let filtroColonias={
       distrito_id: this.idDistrito,
       municipio_id: this.data.municipio.id,
-      //localidad_id_or_null: localidad_id,
       zona: zona,
       region: region
     }
@@ -303,15 +303,15 @@ export class DialogoRegistroComponent implements OnInit {
         this.isLoadingColonias = false;
       }
     );
-  }
+  }*/
 
-  checkAutocompleteColonia() {
+  /*checkAutocompleteColonia() {
     setTimeout(() => {
       if (typeof(this.formRegistro.get('colonia_visitada').value) != 'object') {
         this.formRegistro.get('colonia_visitada').reset();
       } 
     }, 300);
-  }
+  }*/
 
   checkAutocompleteLocalidad() {
     setTimeout(() => {
@@ -321,7 +321,7 @@ export class DialogoRegistroComponent implements OnInit {
     }, 300);
   }
 
-  agregarColonia(){
+  /*agregarColonia(){
     let nueva_colonia = this.formRegistro.get('colonia_visitada').value;
     this.formRegistro.get('colonia_visitada').patchValue({nombre: nueva_colonia});
     this.nuevaColonia = true;
@@ -330,7 +330,7 @@ export class DialogoRegistroComponent implements OnInit {
   limpiarColonia(){
     this.nuevaColonia = false;
     this.formRegistro.get('colonia_visitada').reset();
-  }
+  }*/
 
   limpiarLocalidad(){
     this.formRegistro.get('localidad').patchValue('');
@@ -349,7 +349,7 @@ export class DialogoRegistroComponent implements OnInit {
     return this.localidades.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
   }
 
-  private _filterColonias(value: any): string[] {
+  /*private _filterColonias(value: any): string[] {
     let filterValue = '';
     if(value){
       if(typeof(value) == 'object'){
@@ -359,7 +359,7 @@ export class DialogoRegistroComponent implements OnInit {
       }
     }
     return this.colonias.filter(option => option['nombre'].toLowerCase().includes(filterValue));
-  }
+  }*/
 
   getDisplayFn(label: string){
     return (val) => this.displayFn(val,label);
@@ -390,9 +390,10 @@ export class DialogoRegistroComponent implements OnInit {
   toggleTerminado(tipo){
     if(tipo == 'localidad'){
       this.localidadTerminada = !this.localidadTerminada;
-    }else{
-      this.coloniaTerminada = !this.coloniaTerminada;
     }
+    /*else{
+      this.coloniaTerminada = !this.coloniaTerminada;
+    }*/
   }
 
 }

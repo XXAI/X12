@@ -151,6 +151,12 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('concentrado-casos-covid',             'API\Modulos\PacientesCovidController@getConcentradoCasos');
     Route::post('actualizar-masivo',                  'API\Modulos\PacientesCovidController@updateMasivo');
 
+    /*
+    * Modulo de Casos sospechosos
+    */
+
+    Route::apiResource('casos-sospechosos',          'API\Modulos\CasosSospechososController');
+
     /**
      * Catalogos
      */
@@ -165,6 +171,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     
     //Colonias
     Route::apiResource('colonias',                      'API\Catalogos\ColoniasController');
+    
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

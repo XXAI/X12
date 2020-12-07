@@ -1,0 +1,66 @@
+<div class="spinner-container" *ngIf="dataSource.loading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div> 
+<div fxLayout="row" style="background-color: white; padding: 10px;" fxLayoutGap="10px" fxLayoutAlign="start center">
+  <div fxFlex>
+    <div class="search-toolbar-field" >
+      <button mat-button  matSuffix mat-icon-button aria-label="Buscar" (click)="applyFilter()" matTooltip="Filtro avanzado">
+          <mat-icon>filter_alt</mat-icon>
+      </button>
+      <input matTooltip="Click para escribir" type="text" [(ngModel)]="inputSearchTxt" placeholder="Búsqueda por folio, nombre, municipio o colonia" (keyup.enter)="applyFilter()">
+      <button mat-button *ngIf="inputSearchTxt" matSuffix mat-icon-button aria-label="Limpiar" (click)="inputSearchTxt=''; dataSource.filter = null">
+          <mat-icon>close</mat-icon>
+        </button>
+    </div> 
+  </div>
+  <div>
+    <button mat-flat-button color="primary" routerLink="agregar"><mat-icon>add</mat-icon>  Agregar</button>
+  </div>
+  
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort>
+  <!-- Position Column -->
+  <ng-container matColumnDef="folio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Folio </th>
+      <td mat-cell *matCellDef="let element" >{{element.folio? element.folio: "Sin folio *" }} </td>                        
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="nombre" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+      <td mat-cell *matCellDef="let element"  >{{element.apellido_paterno}} {{element.apellido_materno}} {{element.nombre}}</td> 
+  </ng-container> 
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="sexo" >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sexo </th>
+    <td mat-cell *matCellDef="let element">{{element.sexo}}</td> 
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="municipio_nombre" >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Municipio </th>
+    <td mat-cell *matCellDef="let element">{{element.municipio_nombre}}</td> 
+  </ng-container>
+  <!-- Name Column -->
+  <ng-container matColumnDef="localidad_nombre" >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Localidad </th>
+    <td mat-cell *matCellDef="let element">{{element.localidad_nombre}}</td> 
+  </ng-container>
+  <!-- Name Column -->
+  <ng-container matColumnDef="colonia_nombre" >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Colonia </th>
+    <td mat-cell *matCellDef="let element">{{element.colonia_nombre}}</td> 
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="updated_at" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header fxHide.lt-md> Actualizado </th>
+      <td mat-cell *matCellDef="let element" fxHide.lt-md> {{element.updated_at | date: 'dd/MM/yyyy HH:mm:ss'}} </td> 
+  </ng-container>
+  
+  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" routerLink="{{row.id}}" ></tr>
+</table>
+<mat-paginator  [length]="dataSource.length" [pageSizeOptions]="[5, 10, 20, 50]"  showFirstLastButtons></mat-paginator>

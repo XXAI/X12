@@ -10,6 +10,7 @@ export class CasosSospechososDataSource implements DataSource<CasoSospechoso> {
     private loadingSubject = new BehaviorSubject<boolean>(false);
     public loading$ = this.loadingSubject.asObservable();
     public length:number = 0;
+    public filter:string = '';
     constructor(private apiService: CasosSospechososService){}
 
     connect(collectionViewer: CollectionViewer):Observable<CasoSospechoso[]>{

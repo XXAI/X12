@@ -58,6 +58,12 @@ export const APPS: App[] = [
     permission: "kjBw52kYMsDiR0xdK1O9em7n7YPi18Ez",
   },
   {
+    name: "Casos Sospechosos",
+    route: "casos-sospechosos",
+    icon: "assets/icons/covid-suspect.svg",
+    permission: "0ZV9m4evdNTeQGfBqM4azfyRjpj5nu1t",
+  },
+  {
     name: "Casos Positivos",
     route: "casos-positivos",
     icon: "assets/icons/indice_contacto.svg",

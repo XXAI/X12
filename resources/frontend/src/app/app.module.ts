@@ -50,6 +50,7 @@ import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategi
 import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
 import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.module';
 import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica.module';
+import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.module";
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica
     ArchivosGruposModule,
     RedNegativaIragModule,
     VigilanciaClinicaModule,
+    CasosSospechososModule,
     WildcardRoutingModule,
   ],
   providers: [

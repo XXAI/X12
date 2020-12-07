@@ -1,0 +1,268 @@
+<div fxLayout="column" fxFill style="background-color: white;" fxFill >
+    <div fxFlex="auto" style="overflow: auto;">
+        <form [formGroup]="form" class="form" (ngSubmit)="guardar()" fxLayout="column" autocomplete="off" >
+            <h2 style="font-weight: 300;">Datos generales</h2>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Folio</mat-label>
+                    <input matInput  formControlName="folio" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['folio']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha identificacion</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="fecha_identificacion" placeholder="Elegir fecha">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_identificacion']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-select placeholder="Seleccionar tipo" formControlName="tipo_paciente_id" >
+                    <mat-option value="1">Sintomático</mat-option>
+                    <mat-option value="2">Asintomático</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form?.controls['tipo']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Apellido paterno</mat-label>
+                    <input matInput  formControlName="apellido_paterno" maxlength="255" required>            
+                    <mat-error *ngIf="form?.controls['apellido_paterno']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Apellido materno</mat-label>
+                    <input matInput formControlName="apellido_materno" maxlength="255" required>            
+                    <mat-error *ngIf="form?.controls['apellido_materno']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Nombre(s)</mat-label>
+                    <input matInput formControlName="nombre" maxlength="255" required>            
+                    <mat-error *ngIf="form?.controls['nombre']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-select placeholder="Seleccionar sexo" formControlName="sexo" required>
+                    <mat-option value="H">Hombre</mat-option>
+                    <mat-option value="M">Mujer</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form?.controls['sexo']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Edad</mat-label>
+                    <input type="number" matInput formControlName="edad" required>            
+                    <mat-error *ngIf="form?.controls['edad']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Ocupación</mat-label>
+                    <input matInput  formControlName="ocupacion" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['ocupacion']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <h2 style="font-weight: 300;">Ubicación</h2>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px" fxFlex>
+                <mat-form-field  appearance="fill">
+                    <mat-label>Municipio</mat-label>
+                    <input type="text" aria-label="Municipio"  matInput formControlName="municipio_id" [matAutocomplete]="autoMunicipio" required>
+                    <mat-autocomplete #autoMunicipio="matAutocomplete" [displayWith]="displayMunicipioFn" (optionSelected)="onMunicipioSelected($event)">
+                    <mat-option  *ngFor="let municipio of filteredMunicipios | async"[value]="municipio">
+                        {{municipio.descripcion}}
+                    </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form?.controls['municipio_id']?.hasError('invalidAutocompleteObject')">Opción inválida</mat-error>
+                </mat-form-field>
+        
+                <mat-form-field  appearance="fill" fxFlex>
+                    <mat-label>Localidad</mat-label>
+                    <input type="text" aria-label="Localidad"  matInput formControlName="localidad_id" [matAutocomplete]="autoLocalidad" required>
+                    <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayLocalidadFn" >
+                    <mat-option  *ngFor="let localidad of filteredLocalidades | async"[value]="localidad">
+                        {{localidad.descripcion}}
+                    </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+        
+                <mat-form-field  appearance="fill" fxFlex>
+                    <mat-label>Colonia</mat-label>
+                    <input type="text" aria-label="Colonia"  matInput formControlName="colonia_id" [matAutocomplete]="autoColonia" required>
+                    <mat-autocomplete #autoColonia="matAutocomplete" [displayWith]="displayColoniaFn" >
+                    <mat-option  *ngFor="let colonia of filteredColonias | async"[value]="colonia">
+                        {{colonia.nombre}}
+                    </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        
+            <div fxLayout="row" fxFlex fxLayoutGap="10px" >
+                <mat-form-field appearance="fill" fxFlex="70%">
+                    <mat-label>Domicilio</mat-label>
+                    <input type="text" matInput formControlName="domicilio" required>            
+                    <mat-error *ngIf="form?.controls['domicilio']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex="30%">
+                    <mat-label>Teléfono(s)</mat-label>
+                    <input type="text" matInput formControlName="telefonos">            
+                    <mat-error *ngIf="form?.controls['domicilio']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <h2 style="font-weight: 300;">Datos clínicos</h2>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px" >
+                <div fxFlex fxLayout="column" >
+                    <h3 style="font-weight: 300;">Signos y síntomas</h3>
+                    <mat-checkbox formControlName="inicio_subito_sintomas">Inicio súbito de los síntomas</mat-checkbox>
+                    <mat-checkbox formControlName="fiebre">Fiebre</mat-checkbox>
+                    <mat-checkbox formControlName="tos">Tos</mat-checkbox>
+                    <mat-checkbox formControlName="cefalea">Cefalea</mat-checkbox>
+                    <mat-checkbox formControlName="disnea">Disnea</mat-checkbox>
+                    <mat-checkbox formControlName="irritabilidad">Irritabilidad</mat-checkbox>
+                    <mat-checkbox formControlName="dolor_toracico">Dolor torácico</mat-checkbox>
+                    <mat-checkbox formControlName="escalofrios">Escalofríos</mat-checkbox>
+                    <mat-checkbox formControlName="odinofagia">Odinofagia</mat-checkbox>
+                    <mat-checkbox formControlName="mialgias">Mialgias</mat-checkbox>
+                    <mat-checkbox formControlName="artralgias">Artralgias</mat-checkbox>
+                    <mat-checkbox formControlName="anosmia">Anosmia</mat-checkbox>
+                    <mat-checkbox formControlName="disgeusia">Disgeusia</mat-checkbox>
+                    <mat-checkbox formControlName="rinorrea">Rinorrea</mat-checkbox>
+                    <mat-checkbox formControlName="conjuntivitis">Conjuntivitis</mat-checkbox>
+                </div>
+                <div fxFlex fxLayout="column" >
+                    <h4 style="font-weight: 300;">Otros síntomas</h4>
+                    <mat-checkbox formControlName="ataque_estado_general">Ataque al estado general</mat-checkbox>
+                    <mat-checkbox formControlName="diarrea">Diarrea</mat-checkbox>
+                    <mat-checkbox formControlName="polipnea">Polipnea</mat-checkbox>
+                    <mat-checkbox formControlName="dolor_abdominal">Dolor abdominal</mat-checkbox>
+                    <mat-checkbox formControlName="vomito">Vómito</mat-checkbox>
+                    <mat-checkbox formControlName="cianosis">Cianosis</mat-checkbox>
+            </div>
+            <div fxFlex fxLayout="column">
+                    <h3 style="font-weight: 300;">Co-morbilidad</h3>
+                    <mat-checkbox formControlName="diabetes">Diabetes</mat-checkbox>
+                    <mat-checkbox formControlName="hipertension">Hipertensión</mat-checkbox>
+                    <mat-checkbox formControlName="obesidad">Obesidad</mat-checkbox>
+                    <mat-checkbox formControlName="epoc">EPOC</mat-checkbox>
+                    <mat-checkbox formControlName="asma">Asma</mat-checkbox>
+                    <mat-checkbox formControlName="inmunosupresion">Inmunosupresión</mat-checkbox>
+                    <mat-checkbox formControlName="vih_sida">VIH/SIDA</mat-checkbox>
+                    <mat-checkbox formControlName="enfermedad_cardiovascular">Enfermedad cardiovascular</mat-checkbox>
+                    <mat-checkbox formControlName="insuficiencia_renal">Insuficiencia renal</mat-checkbox>
+                    <mat-checkbox formControlName="tabaquismo">Tabaquismo</mat-checkbox>
+            </div> 
+            </div>
+            <br>
+            <mat-divider></mat-divider>
+            <h2 style="font-weight: 300;">Tratamiento y seguimiento</h2>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha de inicio de síntomas</mat-label>
+                    <input  matInput [matDatepicker]="picker_fecha_inicio_sintomas" formControlName="fecha_inicio_sintomas" placeholder="Elegir fecha" (dateInput)="setFechaTerminoTratamiento('input', $event)" (dateChange)="setFechaTerminoTratamiento('change', $event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker_fecha_inicio_sintomas"></mat-datepicker-toggle>
+                    <mat-datepicker #picker_fecha_inicio_sintomas></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_inicio_sintomas']?.invalid">Fecha incorrecta</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha de término de seguimiento (automático)</mat-label>
+                    <input matInput [matDatepicker]="picker_fecha_termino_seguimiento" formControlName="fecha_termino_seguimiento" placeholder="Elegir fecha" readonly>
+                    <!-- <mat-datepicker-toggle matSuffix [for]="picker_fecha_termino_seguimiento"></mat-datepicker-toggle> -->
+                    <mat-datepicker #picker_fecha_termino_seguimiento></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_termino_seguimiento']?.invalid">Fecha incorrecta</mat-error>
+                    <mat-hint>Calculado 14 días a partir de la fecha de inicio de síntomas.</mat-hint>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha de inicio de tratamiento</mat-label>
+                    <input  matInput [matDatepicker]="picker_fecha_inicio_tratamiento" formControlName="fecha_inicio_tratamiento" placeholder="Elegir fecha" >
+                    <mat-datepicker-toggle matSuffix [for]="picker_fecha_inicio_tratamiento"></mat-datepicker-toggle>
+                    <mat-datepicker #picker_fecha_inicio_tratamiento></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_inicio_tratamiento']?.invalid">Fecha incorrecta</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha de término de tratamiento</mat-label>
+                    <input matInput [matDatepicker]="picker_fecha_termino_tratamiento" formControlName="fecha_termimo_tratamiento" placeholder="Elegir fecha">
+                    <mat-datepicker-toggle matSuffix [for]="picker_fecha_termino_tratamiento"></mat-datepicker-toggle>
+                    <mat-datepicker #picker_fecha_termino_tratamiento></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_termimo_tratamiento']?.invalid">Fecha incorrecta</mat-error>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Tratamiento</mat-label>
+                    <input matInput  formControlName="tratamiento" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['tratamiento']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Causa de no tratamiento</mat-label>
+                    <input matInput  formControlName="causa_no_tratamiento" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['causa_no_tratamiento']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <br>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-checkbox formControlName="tuvo_tratamiento_previo_para_covid" (change)="toggleTratamientoPrevio()">Tuvo tratamiento previo para covid</mat-checkbox>
+            </div>
+            <br>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Especifique el tratamiento previo para covid</mat-label>
+                    <input matInput  formControlName="tratamiento_previo_para_covid" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['tratamiento_previo_para_covid']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Fecha de tratamiento anterior</mat-label>
+                    <input  matInput [matDatepicker]="picker_fecha_tratamiento_anterior" formControlName="fecha_tratamiento_anterior" placeholder="Elegir fecha" >
+                    <mat-datepicker-toggle matSuffix [for]="picker_fecha_tratamiento_anterior"></mat-datepicker-toggle>
+                    <mat-datepicker #picker_fecha_tratamiento_anterior></mat-datepicker>
+                    <mat-error *ngIf="form?.controls['fecha_tratamiento_anterior']?.invalid">Fecha incorrecta</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Quién otorgo tratamiento anterior</mat-label>
+                    <input matInput placeholder="Nombre completo" formControlName="quien_otorgo_tratamiento_anterior" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['quien_otorgo_tratamiento_anterior']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <br>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Contactos sintomáticos</mat-label>
+                    <input type="number" matInput formControlName="contactos_sintomaticos" (change)="calcularNumeroContactos()" required>            
+                    <mat-error *ngIf="form?.controls['contactos_sintomaticos']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Contactos asintomáticos</mat-label>
+                    <input type="number" matInput formControlName="contactos_asintomaticos" (change)="calcularNumeroContactos()" required>            
+                    <mat-error *ngIf="form?.controls['contactos_asintomaticos']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Número de contactos</mat-label>
+                    <input type="number" matInput formControlName="numero_contactos" required readonly>   
+                    <mat-hint>Contactos sintomáticos + contactos asintomáticos</mat-hint>         
+                    <mat-error *ngIf="form?.controls['numero_contactos']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <br>
+            <div fxLayout="row" fxFlex fxLayoutGap="10px">
+                <mat-form-field appearance="fill" fxFlex>
+                    <mat-label>Condición al egreso</mat-label>
+                    <input matInput  formControlName="condicion_egreso" maxlength="255">            
+                    <mat-error *ngIf="form?.controls['condicion_egreso']?.hasError('required')">Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <br>
+        
+        </form>
+    </div>
+    <div fxFlex="30px" fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="end center" style="width:100%; padding: 10px;">
+        <button mat-flat-button color="" routerLink="/casos-sospechosos">  Cancelar</button>
+        <button mat-button color="primary" fxHide.xs> <mat-icon>backup</mat-icon> Subir estudio de caso</button>
+        <button mat-flat-button color="accent" fxHide.xs> <mat-icon>comment</mat-icon> Seguimiento por dia</button>
+        <button  mat-icon-button color="primary" fxHide.gt-xs> <mat-icon>backup</mat-icon></button>
+        <button mat-icon-button color="accent" fxHide.gt-xs> <mat-icon>comment</mat-icon></button>
+        <button mat-flat-button color="primary" [disabled]="form.invalid"><mat-icon>save</mat-icon>  Guardar</button>
+    </div>
+</div>

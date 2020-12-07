@@ -83,8 +83,8 @@ class RondaRegistrosController extends Controller
                 'casas_renuentes' => 'required',
                 'embarazadas' => 'required',
                 'diabeticos' => 'required',
-                'pacientes_candidatos_muestra_covid' => 'required',
-                'pacientes_referidos_hospitalizacion' => 'required',
+                //'pacientes_candidatos_muestra_covid' => 'required',
+                //'pacientes_referidos_hospitalizacion' => 'required',
                 'pacientes_referidos_valoracion' => 'required',
                 'no_brigadistas' => 'required',
             ];

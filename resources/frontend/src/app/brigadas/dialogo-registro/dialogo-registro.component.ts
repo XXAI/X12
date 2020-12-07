@@ -93,8 +93,8 @@ export class DialogoRegistroComponent implements OnInit {
       embarazadas:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       diabeticos:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       pacientes_referidos_valoracion:['',[Validators.required,Validators.min(0),Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')]],
-      pacientes_referidos_hospitalizacion:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      pacientes_candidatos_muestra_covid:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      //pacientes_referidos_hospitalizacion:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      //pacientes_candidatos_muestra_covid:['',[Validators.required,Validators.min(0),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       total_personas:[0,[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       id:['']
     });

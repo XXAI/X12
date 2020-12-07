@@ -217,25 +217,11 @@
                 </div>
                 <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
                     <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Referidos para Validación</mat-label>
+                        <mat-label>Casos Sospechosos</mat-label>
                         <input matInput type="number" formControlName="pacientes_referidos_valoracion" required>
                         <mat-error *ngIf="formRegistro.get('pacientes_referidos_valoracion').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('pacientes_referidos_valoracion').hasError('min') || formRegistro.get('pacientes_referidos_valoracion').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Referidos para Hospitalización</mat-label>
-                        <input matInput type="number" formControlName="pacientes_referidos_hospitalizacion" required>
-                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('min') || formRegistro.get('pacientes_referidos_hospitalizacion').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
-                    </mat-form-field>
-                    <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Candidatos para Toma de Muestra</mat-label>
-                        <input matInput type="number" formControlName="pacientes_candidatos_muestra_covid" required>
-                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('required')">Este campo es obligatorio</mat-error>
-                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('min') || formRegistro.get('pacientes_candidatos_muestra_covid').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
-                    </mat-form-field>
-                </div>
-                <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
                     <mat-form-field fxFlex="33">
                         <mat-label>Embarazadas</mat-label>
                         <input matInput type="number" formControlName="embarazadas" required>
@@ -248,8 +234,22 @@
                         <mat-error *ngIf="formRegistro.get('diabeticos').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('diabeticos').hasError('min') || formRegistro.get('diabeticos').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
                     </mat-form-field>
-                    <div fxFlex="33"></div>
                 </div>
+                <!--div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Referidos para Hospitalización</mat-label>
+                        <input matInput type="number" formControlName="pacientes_referidos_hospitalizacion" required>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('pacientes_referidos_hospitalizacion').hasError('min') || formRegistro.get('pacientes_referidos_hospitalizacion').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33">
+                        <mat-label>Pacientes Candidatos para Toma de Muestra</mat-label>
+                        <input matInput type="number" formControlName="pacientes_candidatos_muestra_covid" required>
+                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('pacientes_candidatos_muestra_covid').hasError('min') || formRegistro.get('pacientes_candidatos_muestra_covid').hasError('pattern')">Solo se permiten números enteros positivos</mat-error>
+                    </mat-form-field>
+                    <div fxFlex="33"></div>
+                </div-->
             </div>
         </div>
     </section>

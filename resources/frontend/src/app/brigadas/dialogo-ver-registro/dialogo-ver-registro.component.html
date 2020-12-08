@@ -20,8 +20,16 @@
                     </mat-form-field>
                     <div fxFlex></div>
                     <mat-form-field fxFlex="none" appearance="fill">
-                        <mat-label>No. Brigada</mat-label>
-                        <input matInput [value]="datosRegistro.no_brigada" required>
+                        <mat-label>Zona</mat-label>
+                        <input matInput [value]="datosRegistro.zona" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>Región</mat-label>
+                        <input matInput [value]="datosRegistro.region" readonly>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="none" appearance="fill">
+                        <mat-label>No. de Brigadistas</mat-label>
+                        <input matInput [value]="datosRegistro.no_brigadistas" readonly>
                     </mat-form-field>
                 </div>
                 <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch" style="padding-bottom:5px;">
@@ -33,10 +41,7 @@
                         <mat-label>Localidad</mat-label>
                         <input matInput [value]="datosRegistro.localidad.descripcion" readonly>
                     </mat-form-field>
-                    <mat-form-field fxFlex="40">
-                        <mat-label>Colonia Visitada</mat-label>
-                        <input matInput [value]="datosRegistro.colonia_visitada.nombre" readonly>
-                    </mat-form-field>
+                    <div fxFlex="40"></div>
                 </div>
                 <div fxFlex>
                     <table #dataTable mat-table [dataSource]="datosRegistro.detalles" class="data-table" multiTemplateDataRows>
@@ -150,16 +155,16 @@
                 </div>
                 <div fxFlex="none" fxLayout="row" fxLayoutAlign="space-between stretch">
                     <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Referidos para Validación</mat-label>
+                        <mat-label>Casos Sospechosos</mat-label>
                         <input matInput [value]="datosRegistro.pacientes_referidos_valoracion" readonly>
                     </mat-form-field>
                     <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Referidos para Hospitalización</mat-label>
-                        <input matInput [value]="datosRegistro.pacientes_referidos_hospitalizacion" readonly>
+                        <mat-label>Embarazadas</mat-label>
+                        <input matInput [value]="datosRegistro.embarazadas" readonly>
                     </mat-form-field>
                     <mat-form-field fxFlex="33">
-                        <mat-label>Pacientes Candidatos para Toma de Muestra</mat-label>
-                        <input matInput [value]="datosRegistro.pacientes_candidatos_muestra_covid" readonly>
+                        <mat-label>Diabéticos</mat-label>
+                        <input matInput [value]="datosRegistro.diabeticos" readonly>
                     </mat-form-field>
                 </div>
             </div>
@@ -167,6 +172,11 @@
     </section>
     <section fxFlex="none">
         <div fxLayout="row">
+            <div fxFlex="none" *ngIf="regionTerminadaFecha">
+                <mat-chip-list>
+                    <mat-chip color="accent" selected>Región Terminada: {{regionTerminadaFecha | date:'yyyy-MM-dd'}}</mat-chip>
+                </mat-chip-list>
+            </div>
             <div fxFlex></div>
             <div fxFlex="none">
                 <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;

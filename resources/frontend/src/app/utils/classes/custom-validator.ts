@@ -10,4 +10,14 @@ export class CustomValidator {
         };
     }
 
+    static dateBefore(validDate:Date){
+        return (control: AbstractControl): { [key:string]:any } | null =>{
+            if(control.value != null){
+                let fechaControl = new Date(control.value);
+                if(fechaControl){
+                    return fechaControl > validDate ?  { dateBefore:true } : null; 
+                }
+            }
+        };
+    }
 }

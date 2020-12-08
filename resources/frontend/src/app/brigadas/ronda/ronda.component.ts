@@ -32,6 +32,7 @@ export class RondaComponent implements OnInit {
   filtroQuery:string;
 
   rondaFinalizada:boolean;
+  estatusRegiones:any;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -54,6 +55,7 @@ export class RondaComponent implements OnInit {
             this.sharedService.showSnackBar(errorMessage, null, 3000);
           } else {
             this.filtroZonaRegion = response.filtros;
+            this.estatusRegiones = response.estatus_regiones;
             this.datosRonda = response.data;
 
             if(this.datosRonda.fecha_fin){
@@ -136,7 +138,8 @@ export class RondaComponent implements OnInit {
       idDistrito: this.datosRonda.brigada.distrito_id, 
       idRonda: this.datosRonda.id,
       municipio: this.datosRonda.municipio,
-      filtroZonaRegion: this.filtroZonaRegion
+      filtroZonaRegion: this.filtroZonaRegion,
+      listaRegionEstatus: this.estatusRegiones
     }    
 
     if(editarRegistro){
@@ -157,11 +160,15 @@ export class RondaComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(registro => {
       if(registro){
+        console.log(registro);
+        if(registro.region_estatus){
+          this.estatusRegiones[registro.region_estatus.region] = registro.region_estatus.fecha_termino;
+        }
         if(editarRegistro){
           let index = this.dataSourceRegistros.data.findIndex(x => x.id === editarRegistro.id);
-          this.dataSourceRegistros.data[index] = registro;
+          this.dataSourceRegistros.data[index] = registro.data;
         }else{
-          this.dataSourceRegistros.data.unshift(registro);
+          this.dataSourceRegistros.data.unshift(registro.data);
         }
         this.filtrarRegistros();
       }else{
@@ -171,7 +178,7 @@ export class RondaComponent implements OnInit {
   }
 
   dialogoVerRegistro(verRegistro){
-    let configDialog = {
+    let configDialog:any = {
       width: '100%',
       maxWidth: '100%',
       //maxHeight: '90vh',
@@ -179,6 +186,10 @@ export class RondaComponent implements OnInit {
       data: {registro: verRegistro},
       panelClass: 'no-padding-dialog'
     };
+
+    if(this.estatusRegiones[verRegistro.region]){
+      configDialog.data.regionTerminadaFecha = this.estatusRegiones[verRegistro.region];
+    }
 
     const dialogRef = this.dialog.open(DialogoVerRegistroComponent, configDialog);
     /*dialogRef.afterClosed().subscribe(registro => {

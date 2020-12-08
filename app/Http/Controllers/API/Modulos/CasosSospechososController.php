@@ -43,7 +43,7 @@ class CasosSospechososController extends Controller
                             'catalogo_municipios.descripcion as municipio_nombre',
                             'catalogo_localidades.descripcion as localidad_nombre',
                             'catalogo_colonias.nombre as colonia_nombre',
-                            'casos_sospechosos.updated_at',)
+                            'casos_sospechosos.updated_at')
                         ->leftJoin('catalogo_colonias', 'catalogo_colonias.id', '=', 'casos_sospechosos.colonia_id')
                         ->leftJoin('catalogo_municipios', 'catalogo_municipios.id', '=', 'casos_sospechosos.municipio_id')
                         ->leftJoin('catalogo_localidades', 'catalogo_localidades.id', '=', 'casos_sospechosos.localidad_id');

@@ -20,12 +20,13 @@
                         <input matInput mascaraFecha formControlName="fecha_registro" required cdkFocusInitial>
                         <mat-hint>Ejemplo: 2020-01-30</mat-hint>
                         <mat-error *ngIf="formRegistro.get('fecha_registro').hasError('required')">Este campo es obligatorio</mat-error>
+                        <mat-error *ngIf="formRegistro.get('fecha_registro').hasError('dateBefore')">Fecha invalida</mat-error>
                     </mat-form-field>
                     <div fxFlex></div>
 
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Zona</mat-label>
-                        <input matInput type="number" formControlName="zona" required (change)="habilitarLocalidades()" *ngIf="zonas.length != 1">
+                        <input matInput type="number" formControlName="zona" required (change)="checarZonaRegion()" *ngIf="zonas.length != 1">
                         <input matInput type="number" formControlName="zona" required readonly *ngIf="zonas.length == 1" tabindex="-1">
                         <mat-error *ngIf="formRegistro.get('zona').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('zona').hasError('min') || formRegistro.get('zona').hasError('pattern')">Valor de zona no valida</mat-error>
@@ -33,7 +34,7 @@
 
                     <mat-form-field fxFlex="none" appearance="fill">
                         <mat-label>Región</mat-label>
-                        <input matInput type="number" formControlName="region" required (change)="habilitarLocalidades()" *ngIf="regiones.length != 1">
+                        <input matInput type="number" formControlName="region" required (change)="checarZonaRegion()" *ngIf="regiones.length != 1">
                         <input matInput type="number" formControlName="region" required readonly *ngIf="regiones.length == 1" tabindex="-1">
                         <mat-error *ngIf="formRegistro.get('region').hasError('required')">Este campo es obligatorio</mat-error>
                         <mat-error *ngIf="formRegistro.get('region').hasError('min') || formRegistro.get('region').hasError('pattern')">Valor de Región no valido</mat-error>
@@ -57,7 +58,7 @@
                         <button tabindex="-1" *ngIf="formRegistro.get('localidad').value" mat-icon-button matSuffix (click)="limpiarLocalidad()">
                             <mat-icon>clear</mat-icon>
                         </button>
-                        <mat-autocomplete #localidadesAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'" (optionSelected)="localidadSeleccionada()">
+                        <mat-autocomplete #localidadesAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')" [panelWidth]="'auto'">
                             <mat-option *ngFor="let item of localidadesFiltradas | async" [value]="item">
                                 {{item.descripcion}}
                             </mat-option>
@@ -255,8 +256,13 @@
     </section>
     <section fxFlex="none">
         <div fxLayout="row">
-            <div fxFlex="none">
-                <button mat-stroked-button color="accent" (click)="toggleTerminado('localidad')" [disabled]="!formRegistro.get('localidad').value"><mat-icon>{{(localidadTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Localidad Terminada</button>
+            <div fxFlex="none" *ngIf="regionTerminadaFecha">
+                <mat-chip-list>
+                    <mat-chip color="accent" selected>Región Terminada: {{regionTerminadaFecha | date:'yyyy-MM-dd'}}</mat-chip>
+                </mat-chip-list>
+            </div>
+            <div fxFlex="none" *ngIf="!regionTerminadaFecha">
+                <button mat-stroked-button color="accent" (click)="toggleTerminado('region')" [disabled]="!formRegistro.get('region').value"><mat-icon>{{(regionTerminada)?'check_box':'check_box_outline_blank'}}</mat-icon>Región Terminada</button>
             </div>
             <!--div fxFlex="none">
                 <button mat-button color="accent" (click)="toggleTerminado('colonia')" [disabled]="!formRegistro.get('colonia_visitada').value"><mat-icon>{{(coloniaTerminada)?'check_circle':'radio_button_unchecked'}}</mat-icon> Colonia Terminada</button>

@@ -20,6 +20,7 @@ use \Validator,\Hash;
 use App\Models\Brigada;
 use App\Models\Ronda;
 use App\Models\RondaRegistro;
+use App\Models\RondaRegionEstatus;
 use App\Models\Municipio;
 
 class RondasController extends Controller
@@ -167,7 +168,9 @@ class RondasController extends Controller
                                     if(count($lista_regiones)){ $registros = $registros->whereIn('region',$lista_regiones); }
                                 },'municipio'])->find($id);
             
-            return response()->json(['data'=>$ronda,'filtros'=>['zonas'=>$lista_zonas,'regiones'=>$lista_regiones]],HttpResponse::HTTP_OK);
+            $estatus_regiones = RondaRegionEstatus::where('ronda_id',$id)->whereNotNull('fecha_termino')->get()->pluck('fecha_termino','region');
+            
+            return response()->json(['data'=>$ronda,'estatus_regiones'=>$estatus_regiones,'filtros'=>['zonas'=>$lista_zonas,'regiones'=>$lista_regiones]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }

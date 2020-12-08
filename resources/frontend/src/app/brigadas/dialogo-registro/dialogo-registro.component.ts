@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { CustomValidator } from '../../utils/classes/custom-validator';
 import { formatDate } from '@angular/common';
 import { BrigadasService } from '../brigadas.service';
 import { SharedService } from  '../../shared/shared.service';
@@ -13,6 +14,7 @@ export interface DialogData {
   idRonda:number;
   municipio:any;
   filtroZonaRegion:any;
+  listaRegionEstatus:any;
 }
 
 @Component({
@@ -35,14 +37,15 @@ export class DialogoRegistroComponent implements OnInit {
 
   zonas:number[];
   regiones:number[];
+  listaRegionEstatus:any;
+  regionTerminadaFecha:Date;
 
   displayedColumnsHeader: string[] = ['grupos_edades','sexo','inf_respiratoria','covid','tratamientos_otorgados'];
   displayedColumns: string[] = ['sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino'];
   displayedColumnsData: string[] = ['grupos_edades','sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino','tratamientos_otorgados'];
   gruposEdades:any[];
 
-  localidadTerminada:boolean;
-  //coloniaTerminada:boolean;
+  regionTerminada:boolean;
 
   totalesGrupos:any;
 
@@ -51,36 +54,42 @@ export class DialogoRegistroComponent implements OnInit {
 
   formRegistro:FormGroup;
   isLoading:boolean;
-  //isLoadingColonias:boolean;
   isLoadingCatalogos:boolean;
   
   idRonda:number;
   idDistrito:number;
+
+  //isLoadingColonias:boolean;
+  //localidadTerminada:boolean;
+  //coloniaTerminada:boolean;
   //colonias:any[];
   //coloniasFiltradas:Observable<any[]>;
   //nuevaColonia:boolean;
 
   ngOnInit() {
     //this.isLoading = true;
-    this.localidades = [];
     //this.colonias = [];
+
+    this.localidades = [];
     this.gruposEdades = [];
 
     this.zonas = this.data.filtroZonaRegion.zonas;
     this.regiones = this.data.filtroZonaRegion.regiones;
+    this.listaRegionEstatus = this.data.listaRegionEstatus;
 
     this.idDistrito = this.data.idDistrito;
     this.idRonda = this.data.idRonda;
     this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
     let fecha_hoy = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.localidadTerminada = false;
+    this.regionTerminada = false;
+    //this.localidadTerminada = false;
     //this.coloniaTerminada = false;
 
     this.formRegistro = this.formBuilder.group({
       cabecera_recorrida:[this.data.municipio],
       localidad:[{value:'',disabled:true},Validators.required],
       //colonia_visitada:[{value:'',disabled:true},Validators.required],
-      fecha_registro:[fecha_hoy,[Validators.required]],
+      fecha_registro:[fecha_hoy,[Validators.required,CustomValidator.dateBefore(new Date())]],
       no_brigadistas:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       //zona:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
       //region:['',[Validators.required,Validators.min(1),Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -170,7 +179,7 @@ export class DialogoRegistroComponent implements OnInit {
     if(this.data.registro){
       this.formRegistro.patchValue(this.data.registro);
       this.dialogTitle = 'Editar Registro';
-
+      this.checarZonaRegion();
       //this.cargarColonias(this.data.registro.zona, this.data.registro.region); ///this.data.registro.localidad.id, 
     }else{
       /*if(this.zonas.length == 1 && this.regiones.length == 1){
@@ -220,13 +229,9 @@ export class DialogoRegistroComponent implements OnInit {
 
     registro.ronda_id = this.idRonda;
 
-    if(this.localidadTerminada){
-      registro.terminar_localidad = this.localidadTerminada;
+    if(this.regionTerminada){
+      registro.terminar_region = this.regionTerminada;
     }
-
-    /*if(this.coloniaTerminada){
-      registro.terminar_colonia = this.coloniaTerminada;
-    }*/
 
     this.brigadasService.guardarRegistro(registro).subscribe(
       response =>{
@@ -234,7 +239,7 @@ export class DialogoRegistroComponent implements OnInit {
           let errorMessage = response.error.message;
           this.sharedService.showSnackBar(errorMessage, null, 3000);
         } else {
-          this.dialogRef.close(response.data);
+          this.dialogRef.close(response);
         }
         this.isLoading = false;
       },
@@ -249,8 +254,105 @@ export class DialogoRegistroComponent implements OnInit {
     );
   }
 
-  habilitarLocalidades(){
-    /*if(this.formRegistro.get('zona').valid && this.formRegistro.get('region').valid){
+  checarZonaRegion(){
+    if(this.formRegistro.get('region').valid){
+      let region = this.formRegistro.get('region').value;
+      if(this.listaRegionEstatus[region]){
+        this.regionTerminadaFecha = new Date(this.listaRegionEstatus[region]+'T12:00:00');
+        this.formRegistro.controls['fecha_registro'].setValidators([Validators.required,CustomValidator.dateBefore(this.regionTerminadaFecha)]);
+      }else{
+        this.regionTerminadaFecha = null;
+        this.formRegistro.controls['fecha_registro'].setValidators([Validators.required,CustomValidator.dateBefore(new Date())]);
+      }
+      this.formRegistro.controls['fecha_registro'].updateValueAndValidity();
+    }
+  }
+
+  checkAutocompleteLocalidad() {
+    setTimeout(() => {
+      if (typeof(this.formRegistro.get('localidad').value) != 'object') {
+        this.formRegistro.get('localidad').reset();
+      } 
+    }, 300);
+  }
+
+  limpiarLocalidad(){
+    this.formRegistro.get('localidad').patchValue('');
+    //this.localidadTerminada = false;
+  }
+
+  private _filterLocalidades(value: any): string[] {
+    let filterValue = '';
+    if(value){
+      if(typeof(value) == 'object'){
+        filterValue = value['descripcion'].toLowerCase();
+      }else{
+        filterValue = value.toLowerCase();
+      }
+    }
+    return this.localidades.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
+  }
+
+  getDisplayFn(label: string){
+    return (val) => this.displayFn(val,label);
+  }
+
+  displayFn(value: any, valueLabel: string){
+    return value ? value[valueLabel] : value;
+  }
+
+  cancelar(): void {
+    this.dialogRef.close();
+  }
+
+  sumarTotales(tipo){
+    let total_suma = 0;
+
+    for(let i in this.gruposEdades){
+      total_suma += (this.gruposEdades[i][tipo])?this.gruposEdades[i][tipo]:0;
+    }
+
+    this.totalesGrupos[tipo] = total_suma;
+
+    if(tipo == 'total_masculino' || tipo == 'total_femenino'){
+      this.formRegistro.get('total_personas').patchValue(this.totalesGrupos.total_masculino + this.totalesGrupos.total_femenino);
+    }
+  }
+
+  toggleTerminado(tipo){
+    if(tipo == 'region'){
+      this.regionTerminada = !this.regionTerminada;
+    }
+    /*else{
+      this.coloniaTerminada = !this.coloniaTerminada;
+    }*/
+  }
+
+  /*agregarColonia(){
+    let nueva_colonia = this.formRegistro.get('colonia_visitada').value;
+    this.formRegistro.get('colonia_visitada').patchValue({nombre: nueva_colonia});
+    this.nuevaColonia = true;
+  }
+
+  limpiarColonia(){
+    this.nuevaColonia = false;
+    this.formRegistro.get('colonia_visitada').reset();
+  }*/
+  
+  /*private _filterColonias(value: any): string[] {
+    let filterValue = '';
+    if(value){
+      if(typeof(value) == 'object'){
+        filterValue = value['nombre'].toLowerCase();
+      }else{
+        filterValue = value.toLowerCase();
+      }
+    }
+    return this.colonias.filter(option => option['nombre'].toLowerCase().includes(filterValue));
+  }*/
+
+  /*habilitarLocalidad(){
+    if(this.formRegistro.get('zona').valid && this.formRegistro.get('region').valid){
       if(this.formRegistro.get('colonia_visitada').disabled){
         this.formRegistro.get('colonia_visitada').enable();
       }
@@ -259,19 +361,19 @@ export class DialogoRegistroComponent implements OnInit {
     }else{
       this.formRegistro.get('colonia_visitada').disable();
       this.limpiarColonia();
-    }*/
-  }
+    }
+  }*/
 
-  localidadSeleccionada(){
-    /*let localidad = this.formRegistro.get('localidad').value;
+  /*localidadSeleccionada(){
+    let localidad = this.formRegistro.get('localidad').value;
     let zona = this.formRegistro.get('zona').value;
-    let region = this.formRegistro.get('region').value;*/
-    this.localidadTerminada = false;
-    /*this.limpiarColonia();
+    let region = this.formRegistro.get('region').value;
+    //this.localidadTerminada = false;
+    //this.limpiarColonia();
     if(localidad){
       this.cargarColonias(localidad.id, zona, region);
-    }*/
-  }
+    }
+  }*/
 
   /*cargarColonias(zona, region){
     this.isLoadingColonias = true;
@@ -312,88 +414,4 @@ export class DialogoRegistroComponent implements OnInit {
       } 
     }, 300);
   }*/
-
-  checkAutocompleteLocalidad() {
-    setTimeout(() => {
-      if (typeof(this.formRegistro.get('localidad').value) != 'object') {
-        this.formRegistro.get('localidad').reset();
-      } 
-    }, 300);
-  }
-
-  /*agregarColonia(){
-    let nueva_colonia = this.formRegistro.get('colonia_visitada').value;
-    this.formRegistro.get('colonia_visitada').patchValue({nombre: nueva_colonia});
-    this.nuevaColonia = true;
-  }
-
-  limpiarColonia(){
-    this.nuevaColonia = false;
-    this.formRegistro.get('colonia_visitada').reset();
-  }*/
-
-  limpiarLocalidad(){
-    this.formRegistro.get('localidad').patchValue('');
-    this.localidadTerminada = false;
-  }
-
-  private _filterLocalidades(value: any): string[] {
-    let filterValue = '';
-    if(value){
-      if(typeof(value) == 'object'){
-        filterValue = value['descripcion'].toLowerCase();
-      }else{
-        filterValue = value.toLowerCase();
-      }
-    }
-    return this.localidades.filter(option => option['descripcion'].toLowerCase().includes(filterValue));
-  }
-
-  /*private _filterColonias(value: any): string[] {
-    let filterValue = '';
-    if(value){
-      if(typeof(value) == 'object'){
-        filterValue = value['nombre'].toLowerCase();
-      }else{
-        filterValue = value.toLowerCase();
-      }
-    }
-    return this.colonias.filter(option => option['nombre'].toLowerCase().includes(filterValue));
-  }*/
-
-  getDisplayFn(label: string){
-    return (val) => this.displayFn(val,label);
-  }
-
-  displayFn(value: any, valueLabel: string){
-    return value ? value[valueLabel] : value;
-  }
-
-  cancelar(): void {
-    this.dialogRef.close();
-  }
-
-  sumarTotales(tipo){
-    let total_suma = 0;
-
-    for(let i in this.gruposEdades){
-      total_suma += (this.gruposEdades[i][tipo])?this.gruposEdades[i][tipo]:0;
-    }
-
-    this.totalesGrupos[tipo] = total_suma;
-
-    if(tipo == 'total_masculino' || tipo == 'total_femenino'){
-      this.formRegistro.get('total_personas').patchValue(this.totalesGrupos.total_masculino + this.totalesGrupos.total_femenino);
-    }
-  }
-
-  toggleTerminado(tipo){
-    if(tipo == 'localidad'){
-      this.localidadTerminada = !this.localidadTerminada;
-    }
-    /*else{
-      this.coloniaTerminada = !this.coloniaTerminada;
-    }*/
-  }
-
 }

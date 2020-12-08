@@ -4,6 +4,7 @@ import { BrigadasService } from '../brigadas.service';
 
 export interface DialogData {
   registro: any;
+  regionTerminadaFecha?:string;
 }
 
 @Component({
@@ -26,6 +27,8 @@ export class DialogoVerRegistroComponent implements OnInit {
   totalesGrupos:any;
   gruposEdades:any;
 
+  regionTerminadaFecha:Date;
+
   displayedColumnsHeader: string[] = ['grupos_edades','sexo','inf_respiratoria','covid','tratamientos_otorgados'];
   displayedColumns: string[] = ['sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino'];
   displayedColumnsData: string[] = ['grupos_edades','sexo_masculino','sexo_femenino','inf_resp_masculino','inf_resp_femenino','covid_masculino','covid_femenino','tratamientos_otorgados'];
@@ -35,6 +38,9 @@ export class DialogoVerRegistroComponent implements OnInit {
     this.totalesGrupos = {total_masculino:0, total_femenino:0, infeccion_respiratoria_m:0, infeccion_respiratoria_f:0, covid_m:0, covid_f:0, tratamientos_otorgados:0};
     this.datosRegistro = this.data.registro;
     this.gruposEdades = {};
+    if(this.data.regionTerminadaFecha){
+      this.regionTerminadaFecha = new Date(this.data.regionTerminadaFecha+'T12:00:00');
+    }
 
     let carga_catalogos = [
       {nombre:'grupos_edades'}

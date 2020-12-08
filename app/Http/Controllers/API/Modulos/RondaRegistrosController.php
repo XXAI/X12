@@ -19,6 +19,7 @@ use App\Models\Ronda;
 use App\Models\RondaRegistro;
 use App\Models\RondaRegistroDetalle;
 use App\Models\RondaLocalidadEstatus;
+use App\Models\RondaRegionEstatus;
 use App\Models\RondaColoniaEstatus;
 use App\Models\Colonia;
 
@@ -87,6 +88,8 @@ class RondaRegistrosController extends Controller
                 //'pacientes_referidos_hospitalizacion' => 'required',
                 'pacientes_referidos_valoracion' => 'required',
                 'no_brigadistas' => 'required',
+                'region' => 'required',
+                'zona' => 'required'
             ];
 
             DB::beginTransaction();
@@ -126,7 +129,18 @@ class RondaRegistrosController extends Controller
                 $registro = RondaRegistro::create($parametros);
             }
 
-            if(isset($parametros['terminar_localidad']) && $parametros['terminar_localidad']){
+            
+            $region_estatus = RondaRegionEstatus::where('ronda_id',$registro->ronda_id)->where('municipio_id',$registro->cabecera_recorrida_id)->where('region',$registro->region)->first();
+            if(!$region_estatus && isset($parametros['terminar_region']) && $parametros['terminar_region']){
+                $region_estatus = RondaRegionEstatus::create(['ronda_id'=>$registro->ronda_id,'municipio_id'=>$registro->cabecera_recorrida_id,'region'=>$registro->region,'fecha_termino'=>$registro->fecha_registro]);
+            }else{
+                if($region_estatus && $region_estatus->fecha_termino < $registro->fecha_registro){
+                    DB::rollback();
+                    return response()->json(['error'=>['message'=>'La fecha de termino de la Localidad es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
+                }
+            }
+
+            /*if(isset($parametros['terminar_localidad']) && $parametros['terminar_localidad']){
                 $localidad_estatus = RondaLocalidadEstatus::where('ronda_id',$registro->ronda_id)->where('localidad_id',$registro->localidad_id)->first();
                 if(!$localidad_estatus){
                     $localidad_estatus = RondaLocalidadEstatus::create(['ronda_id'=>$registro->ronda_id,'localidad_id'=>$registro->localidad_id,'fecha_termino'=>$registro->fecha_registro]);
@@ -136,7 +150,7 @@ class RondaRegistrosController extends Controller
                         return response()->json(['error'=>['message'=>'La fecha de termino de la Localidad es menor a la fecha del registro actual']],HttpResponse::HTTP_OK);
                     }
                 }
-            }
+            }*/
 
             /*if(isset($parametros['terminar_colonia']) && $parametros['terminar_colonia']){
                 $colonia_estatus = RondaColoniaEstatus::where('ronda_id',$registro->ronda_id)->where('colonia_id',$registro->colonia_visitada_id)->first();
@@ -176,7 +190,7 @@ class RondaRegistrosController extends Controller
             DB::commit();
 
             $registro->load('cabeceraRecorrida','localidad','ColoniaVisitada','detalles');
-            return response()->json(['data'=>$registro],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$registro,'region_estatus'=>$region_estatus],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);

@@ -154,8 +154,10 @@ Route::group(['middleware' => 'auth'], function ($router) {
     /*
     * Modulo de Casos sospechosos
     */
-
     Route::apiResource('casos-sospechosos',          'API\Modulos\CasosSospechososController');
+    Route::get('casos-sospechosos-municipios',       'API\Modulos\CasosSospechososController@getMunicipios');
+    Route::get('casos-sospechosos-localidades',       'API\Modulos\CasosSospechososController@getLocalidades');
+    Route::get('casos-sospechosos-colonias',       'API\Modulos\CasosSospechososController@getColonias');
 
     /**
      * Catalogos

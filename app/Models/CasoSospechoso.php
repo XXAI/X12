@@ -9,9 +9,79 @@ class CasoSospechoso extends Model
 {
     use SoftDeletes;
     protected $table = 'casos_sospechosos';
-    /*
-    protected $fillable = ['id','persona_id','contingencia_id','fecha_deteccion','es_indice','caso_padre_id','nivel','estatus_clave','valoracion_clave','latitud','longitud','observaciones','capturado_por'];
+    
+    protected $fillable = [
+        'id',
+        'folio',
+        'folio_incremento',
+        'fecha_identificacion',        
+        'origen_id',
+        'tipo_paciente_id',
+        'apellido_paterno',
+        'apellido_materno',
+        'nombre',
+        'sexo',
+        'edad',
+        'ocupacion',
+        'municipio_id',
+        'municipio_nombre',
+        'localidad_id',
+        'localidad_nombre',    
+        'colonia_id',
+        'colonia_nombre',
+        'domicilio',
+        'telefonos',
+        'diabetes',
+        'hipertension',
+        'obesidad',
+        'epoc',
+        'asma',
+        'inmunosupresion',
+        'vih_sida',
+        'enfermedad_cardiovascular',
+        'insuficiencia_renal',
+        'tabaquismo',
 
+        'inicio_subito_sintomas',
+        'fiebre',
+        'tos',
+        'cefalea',
+        'disnea',
+        'irritabilidad',
+        'dolor_toracico',
+        'escalofrios',
+        'odinofagia',
+        'mialgias',
+        'artralgias',
+        'anosmia',
+        'disgeusia',
+        'rinorrea',
+        'conjuntivitis',
+        'ataque_estado_general',
+        'diarrea',
+        'polipnea',
+        'dolor_abdominal',
+        'vomito',
+        'cianosis',
+        'fecha_inicio_sintomas',
+        'fecha_termino_seguimiento', //sumar 14 dias de inicio de sintomas
+        'tratamiento',
+        'fecha_inicio_tratamiento',
+        'fecha_termino_tratamiento',
+        'causa_no_tratamiento',
+        'tuvo_tratamiento_previo_para_covid',
+        'tratamiento_previo_para_covid',
+        'fecha_tratamiento_anterior',
+        'quien_otorgo_tratamiento_anterior',
+    
+        'contactos_sintomaticos',
+        'contactos_asintomaticos',
+        'numero_contactos',  
+    
+        'condicion_egreso',
+        'user_id'
+    ];
+/*
     public function expediente(){
         return $this->hasMany('App\Models\ExpedienteCaso','caso_id','id');
     }

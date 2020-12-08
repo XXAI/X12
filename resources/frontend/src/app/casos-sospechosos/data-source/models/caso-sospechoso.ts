@@ -2,6 +2,7 @@
 export interface CasoSospechoso {
     id:Number;
     folio:string;
+    origen_id?:Number;
     fecha_identificacion?: Date;
     tipo_paciente_id?:Number,
     apellido_paterno:string,

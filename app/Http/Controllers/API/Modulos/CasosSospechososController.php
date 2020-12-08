@@ -4,8 +4,11 @@ namespace App\Http\Controllers\API\Modulos;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use DB;
+use DB, Validator;
 use App\Models\CasoSospechoso;
+use App\Models\Municipio;
+use App\Models\Localidad;
+use App\Models\Colonia;
 
 class CasosSospechososController extends Controller
 {
@@ -16,6 +19,8 @@ class CasosSospechososController extends Controller
      */
     public function index(Request $request)
     {
+        $auth_user = auth()->user();
+
         $params = $request->input();
         if(isset($params["all"])){
             
@@ -73,8 +78,36 @@ class CasosSospechososController extends Controller
                             
 
             }
+
+            if(!$auth_user->is_superuser){
+                $lista_zonas = [];
+                $lista_regiones = [];
+        
+                
+                
+                $lista_zonas = array_unique($auth_user->configuracionBrigadas->pluck('zona')->toArray());
+                if(count($lista_zonas) == 1 && !$lista_zonas[0]){
+                    $lista_zonas = [];
+                }else{
+                    $lista_regiones = array_unique($auth_user->configuracionBrigadas->pluck('region')->toArray());
+                    if(count($lista_regiones) == 1 && !$lista_regiones[0]){
+                        $lista_regiones = [];
+                    }
+                }
+
+                $colonias = Colonia::select('id')->whereIn('zona',$lista_zonas)->whereIn('region',$lista_regiones)->get();
+
+                $lista_colonias = [];
+
+                foreach($colonias as $colonia) {
+                    $lista_colonias[] = $colonia->id;
+                }
+
+                $items = $items->whereIn('colonia_id', $lista_colonias);
+            }
             
             $items = $items->paginate($params['pageSize']);
+            
             
             return response()->json($items);
         }
@@ -87,7 +120,44 @@ class CasosSospechososController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id){
-        return response()->json(['caso' => null],200);
+
+
+        $auth_user = auth()->user();
+        $caso = CasoSospechoso::where("id",$id);
+        if($auth_user->is_superuser){
+            $caso = $caso->first();
+        } else {
+            
+            $lista_zonas = [];
+            $lista_regiones = [];
+    
+           
+            
+            $lista_zonas = array_unique($auth_user->configuracionBrigadas->pluck('zona')->toArray());
+            if(count($lista_zonas) == 1 && !$lista_zonas[0]){
+                $lista_zonas = [];
+            }else{
+                $lista_regiones = array_unique($auth_user->configuracionBrigadas->pluck('region')->toArray());
+                if(count($lista_regiones) == 1 && !$lista_regiones[0]){
+                    $lista_regiones = [];
+                }
+            }
+
+            $colonias = Colonia::select('id')->whereIn('zona',$lista_zonas)->whereIn('region',$lista_regiones)->get();
+
+            $lista_colonias = [];
+
+            foreach($colonias as $colonia) {
+                $lista_colonias[] = $colonia->id;
+            }
+            $caso = $caso->whereIn('colonia_id', $lista_colonias)->first();
+        }
+        
+        if($caso != null) {
+            return response()->json(['caso' => $caso]);
+        } else {
+            return response()->json(['message' => "Caso no encontrado"],404);
+        }
     }
 
     /**
@@ -98,7 +168,61 @@ class CasosSospechososController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json(['caso' => null],200);
+        $rules = [
+            'origen_id' => 'required',
+            'tipo_paciente_id' => 'required',
+            'apellido_paterno' => 'required',
+            'apellido_materno' => 'required',
+            'nombre' => 'required',
+            'edad' => 'required|integer',
+            'sexo' => 'required',
+            'municipio_id' => 'required',
+            'colonia_id' => 'required',
+            'domicilio' => 'required',
+            'fecha_identificacion' => 'date|nullable',
+            'fecha_inicio_sintomas' => 'date|nullable',
+            'fecha_termino_seguimiento' => 'date|nullable',
+            'fecha_inicio_tratamiento' => 'date|nullable',
+            'fecha_termino_tratamiento' => 'date|nullable',
+            'fecha_tratamiento_anterior' => 'date|nullable',
+            'contactos_sintomaticos' => 'integer',
+            'contactos_asintomaticos' => 'integer',
+            'numero_contactos' => 'integer',
+        ];
+
+        $messages = [
+            'required' => 'required',
+            'numeric' => 'numeric',
+            'integer' => 'integer',
+            'date' => 'date',
+            'unique' => 'unique'
+        ];
+
+        $payload = $request->except(['id']);
+
+        $validator = Validator::make($payload, $rules, $messages);
+
+        if ($validator->fails()) {
+            return  response()->json($validator->messages(), 409);
+        }
+        $auth_user = auth()->user();
+        $payload['user_id'] = $auth_user->id;        
+
+        $response = DB::transaction(function() use($payload){
+            $last_folio = CasoSospechoso::select(DB::raw('max(folio_incremento) as folio_incremento'))->first();
+            
+            if($last_folio->folio_incremento == null) {
+                $payload["folio"] = "000001";
+                $payload["folio_incremento"] = 1;
+            } else{
+                $payload["folio_incremento"] =  $last_folio->folio_incremento + 1;
+                $payload["folio"] = str_pad($payload["folio_incremento"], 6, "0", STR_PAD_LEFT);
+            }
+            $caso = CasoSospechoso::create($payload);
+            return response()->json(['caso' => $caso]);
+        });
+
+        return $response;
     }
 
     /**
@@ -110,7 +234,91 @@ class CasosSospechososController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return response()->json(['caso' => null],200);
+        $auth_user = auth()->user();
+        $caso = CasoSospechoso::where("id",$id);
+        if($auth_user->is_superuser){
+            $caso = $caso->first();
+        } else {
+            
+            $lista_zonas = [];
+            $lista_regiones = [];
+    
+           
+            
+            $lista_zonas = array_unique($auth_user->configuracionBrigadas->pluck('zona')->toArray());
+            if(count($lista_zonas) == 1 && !$lista_zonas[0]){
+                $lista_zonas = [];
+            }else{
+                $lista_regiones = array_unique($auth_user->configuracionBrigadas->pluck('region')->toArray());
+                if(count($lista_regiones) == 1 && !$lista_regiones[0]){
+                    $lista_regiones = [];
+                }
+            }
+
+            $colonias = Colonia::select('id')->whereIn('zona',$lista_zonas)->whereIn('region',$lista_regiones)->get();
+
+            $lista_colonias = [];
+
+            foreach($colonias as $colonia) {
+                $lista_colonias[] = $colonia->id;
+            }
+            $caso = $caso->whereIn('colonia_id', $lista_colonias)->first();
+        }
+        if($caso != null) {
+           
+            $rules = [
+                'origen_id' => 'required',
+                'tipo_paciente_id' => 'required',
+                'apellido_paterno' => 'required',
+                'apellido_materno' => 'required',
+                'nombre' => 'required',
+                'edad' => 'required|integer',
+                'sexo' => 'required',
+                'municipio_id' => 'required',
+                'colonia_id' => 'required',
+                'domicilio' => 'required',
+                'fecha_identificacion' => 'date|nullable',
+                'fecha_inicio_sintomas' => 'date|nullable',
+                'fecha_termino_seguimiento' => 'date|nullable',
+                'fecha_inicio_tratamiento' => 'date|nullable',
+                'fecha_termino_tratamiento' => 'date|nullable',
+                'fecha_tratamiento_anterior' => 'date|nullable',
+                'contactos_sintomaticos' => 'integer',
+                'contactos_asintomaticos' => 'integer',
+                'numero_contactos' => 'integer',
+            ];
+    
+            $messages = [
+                'required' => 'required',
+                'numeric' => 'numeric',
+                'integer' => 'integer',
+                'date' => 'date',
+                'unique' => 'unique'
+            ];
+    
+            $payload = $request->except(['id']);
+    
+            $validator = Validator::make($payload, $rules, $messages);
+    
+            if ($validator->fails()) {
+                return  response()->json($validator->messages(), 409);
+            }
+            $auth_user = auth()->user();
+            $payload['user_id'] = $auth_user->id;  
+
+
+            $response = DB::transaction(function() use($caso,$payload){
+                
+    
+                $caso->update($payload);
+    
+                //$caso->save();
+                return response()->json(['caso' => $caso]);
+            });
+
+        } else {
+            return response()->json(['message' => "Caso no encontrado"],404);
+        }
     }
 
     /**
@@ -122,5 +330,23 @@ class CasosSospechososController extends Controller
     public function destroy($id)
     {
         return response()->json(['caso' => null],200);
+    }
+
+    // Catalogos
+
+    public function getMunicipios(Request $request ) {
+        return response()->json(['municipios' => Municipio::all()]);
+
+    }
+
+    public function getLocalidades(Request $request ) {
+        $params = $request->input();
+        return response()->json(['localidades' => Localidad::where('municipio_id', $params['municipio_id'])->get()]);
+
+    }
+    public function getColonias(Request $request ) {
+        $params = $request->input();
+        return response()->json(['colonias' => Colonia::where('municipio_id', $params['municipio_id'])->get()]);
+
     }
 }

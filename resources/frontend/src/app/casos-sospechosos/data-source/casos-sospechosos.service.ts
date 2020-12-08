@@ -48,4 +48,27 @@ export class CasosSospechososService {
   borrar(id:Number):Observable<any>{
     return this.http.delete(`${this.api}/${this.resource}/${id}`);
   }
+
+  municipios():Observable<any>{
+    return this.http.get(`${this.api}/${this.resource}-municipios`,{
+      /*
+      params: new HttpParams()
+        .set('all',"1")*/
+    });
+  }
+
+  localidades(municipio_id:any):Observable<any>{
+    return this.http.get(`${this.api}/${this.resource}-localidades`,{
+      
+      params: new HttpParams()
+        .set('municipio_id',municipio_id)
+    });
+  }
+  colonias(municipio_id:any):Observable<any>{
+    return this.http.get(`${this.api}/${this.resource}-colonias`,{
+      
+      params: new HttpParams()
+        .set('municipio_id',municipio_id)
+    });
+  }
 }

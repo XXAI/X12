@@ -9,6 +9,8 @@ export interface CasoSospechoso {
     apellido_materno:string,
     nombre:string,
     sexo:string,
+    esta_embarazada?:boolean,
+    meses_embarazo?:Number,
     edad: Number,
     ocupacion?:string,
     municipio_id?: Number,

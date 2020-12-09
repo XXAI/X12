@@ -23,6 +23,8 @@ class CasoSospechoso extends Model
         'sexo',
         'edad',
         'ocupacion',
+        'esta_embarazada',
+        'meses_embarazo',
         'municipio_id',
         'municipio_nombre',
         'localidad_id',
@@ -80,6 +82,16 @@ class CasoSospechoso extends Model
     
         'condicion_egreso',
         'user_id'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'esta_embarazada' => 'boolean',
+        'tuvo_tratamiento_previo_para_covid' => 'boolean'
     ];
 /*
     public function expediente(){

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterTableCasosSospechosos1 extends Migration
+class AlterTableCasosSospechosos2 extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,8 @@ class AlterTableCasosSospechosos1 extends Migration
     public function up()
     {
         Schema::table('casos_sospechosos', function (Blueprint $table) {
-            $table->string('ocupacion')->nullable()->change();
-            $table->bigInteger('folio_incremento')->nullable()->after('folio');
-            $table->integer('origen_id')->unsigned()->nullable()->after('folio_incremento');
+            $table->boolean('esta_embarazada')->nullable()->after('ocupacion');
+            $table->integer('meses_embarazo')->nullable()->after('esta_embarazada');
         });
     }
 
@@ -28,8 +27,8 @@ class AlterTableCasosSospechosos1 extends Migration
     public function down()
     {
         Schema::table('casos_sospechosos', function (Blueprint $table) {
-            $table->dropColumn('folio_incremento');
-            $table->dropColumn('origen_id');
+            $table->dropColumn('esta_embarazada');
+            $table->dropColumn('meses_embarazo');
         });
     }
 }

@@ -188,9 +188,11 @@ class CasosSospechososController extends Controller
             'contactos_sintomaticos' => 'integer',
             'contactos_asintomaticos' => 'integer',
             'numero_contactos' => 'integer',
+            'meses_embarazo' => 'integer|nullable|required_if:esta_embarazada,true'
         ];
 
         $messages = [
+            'required_if' => 'required',
             'required' => 'required',
             'numeric' => 'numeric',
             'integer' => 'integer',
@@ -286,9 +288,11 @@ class CasosSospechososController extends Controller
                 'contactos_sintomaticos' => 'integer',
                 'contactos_asintomaticos' => 'integer',
                 'numero_contactos' => 'integer',
+                'meses_embarazo' => 'integer|nullable|required_if:esta_embarazada,true'
             ];
     
             $messages = [
+                'required_if' => 'required',
                 'required' => 'required',
                 'numeric' => 'numeric',
                 'integer' => 'integer',

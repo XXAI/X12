@@ -26,6 +26,9 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
   loadingMunicipios:boolean;
   loadingLocalidades:boolean;
   loadingColonias:boolean;
+
+  mostrarDatosEmbarazo:boolean;
+  
   
   tipos_paciente:any[] =[
     { id: 1, descripcion: "Sintomático"},
@@ -77,13 +80,11 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
       this.titleService.setTitle("Caso sospechoso");
       this.loadingLabel = "Cargando caso...";
 
-      
-
       this.casoSubscription = this.apiService.ver(this.id)
       .subscribe(
         response => {
           this.setLoading(false);
-
+          
           if(response.caso != null) {
             this.caso = response.caso;
             Object.keys(response.caso).forEach( prop => {
@@ -125,7 +126,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             });
 
-            
+            this.mostrarDatosEmbarazo = this.caso.sexo == "M";
 
             if(this.municipiosSubscription != null) {
               this.municipiosSubscription.unsubscribe();
@@ -335,6 +336,8 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         apellido_materno: ['',Validators.required],
         nombre: ['',Validators.required],
         sexo: ['',Validators.required],
+        esta_embarazada: [false],
+        meses_embarazo:[{value:'', disabled:true}],
         edad: ['',Validators.required],
         ocupacion: [''],
         municipio_id: ['',this.autocompleteObjectValidator()],
@@ -410,6 +413,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         this.form.get("localidad_id").enable();
         this.form.get("colonia_id").enable();
       }
+      this.toggleTratamientoPrevio();
       //this.folioControl.enable();
       //this.fechaControl.enable();
     } else {
@@ -438,6 +442,8 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     return colonia ? colonia.nombre : undefined;
   }
 
+
+
   private _filterMunicipio(descripcion: string): Municipio[] {
     const filterValue = descripcion.toLowerCase();
     return this.municipios.filter(option => option.descripcion.toLowerCase().indexOf(filterValue) === 0);
@@ -453,7 +459,14 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.colonias.filter(option => option.nombre.toLowerCase().indexOf(filterValue) === 0);
   }
 
-  
+  onSexoSelected(event):void {
+    this.mostrarDatosEmbarazo = event.value=="M";
+    if(!this.mostrarDatosEmbarazo ) {
+      this.form.get('esta_embarazada').setValue(false);
+      this.form.get('meses_embarazo').setValue(0);
+      this.form.get('meses_embarazo').enable();
+    }
+  }
 
   onMunicipioSelected(event):void{
     this.form.get("localidad_id").enable();
@@ -510,10 +523,18 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
 
     
   }
+  toggleEmbarazada():void {
+    var activo = this.form.get('esta_embarazada').value;
 
+    if(activo) {
+      this.form.get('meses_embarazo').enable();
+    } else{
+      this.form.get('meses_embarazo').disable();
+    }
+  }
   toggleTratamientoPrevio():void {
     var activo = this.form.get('tuvo_tratamiento_previo_para_covid').value;
-
+console.log(activo);
     if(activo) {
       this.form.get('tratamiento_previo_para_covid').enable();
       this.form.get('fecha_tratamiento_anterior').enable();

@@ -96,7 +96,7 @@ class CasosSospechososController extends Controller
                 }
 
                 $colonias = Colonia::select('id');
-                
+
                 if(count($lista_zonas)){
                     $colonias = $colonias->whereIn('zona',$lista_zonas);
                 }
@@ -153,7 +153,17 @@ class CasosSospechososController extends Controller
                 }
             }
 
-            $colonias = Colonia::select('id')->whereIn('zona',$lista_zonas)->whereIn('region',$lista_regiones)->get();
+            $colonias = Colonia::select('id');
+                
+            if(count($lista_zonas)){
+                $colonias = $colonias->whereIn('zona',$lista_zonas);
+            }
+
+            if(count($lista_regiones)){
+                $colonias = $colonias->whereIn('region',$lista_regiones);
+            }
+
+            $colonias = $colonias->get();
 
             $lista_colonias = [];
 
@@ -267,7 +277,17 @@ class CasosSospechososController extends Controller
                 }
             }
 
-            $colonias = Colonia::select('id')->whereIn('zona',$lista_zonas)->whereIn('region',$lista_regiones)->get();
+            $colonias = Colonia::select('id');
+                
+            if(count($lista_zonas)){
+                $colonias = $colonias->whereIn('zona',$lista_zonas);
+            }
+
+            if(count($lista_regiones)){
+                $colonias = $colonias->whereIn('region',$lista_regiones);
+            }
+
+            $colonias = $colonias->get();
 
             $lista_colonias = [];
 

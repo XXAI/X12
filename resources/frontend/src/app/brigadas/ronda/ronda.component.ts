@@ -35,6 +35,7 @@ export class RondaComponent implements OnInit {
   rondaFinalizada:boolean;
   estatusRegiones:any;
   progresoZonas:any[];
+  progresoGeneral:any;
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -48,6 +49,7 @@ export class RondaComponent implements OnInit {
     this.rondaFinalizada = true;
     this.puedeFinalizarRonda = false;
     this.progresoZonas = [];
+    this.progresoGeneral = {avance:0, total:0, porcentaje:0, etiqueta:''};
 
     this.route.paramMap.subscribe(params => {
       let ronda_id = +params.get('id');
@@ -63,11 +65,21 @@ export class RondaComponent implements OnInit {
             this.progresoZonas = response.progreso_zonas;
             this.datosRonda = response.data;
 
-            if(this.progresoZonas.length){
+            if(this.progresoZonas.length > 1){
               for (let index in this.progresoZonas) {
                 let porcentaje = (this.progresoZonas[index].total_regiones_terminadas * 100) / this.progresoZonas[index].total_regiones;
                 this.progresoZonas[index].porcentaje_avance = porcentaje;
+
+                this.progresoGeneral.total += this.progresoZonas[index].total_regiones;
+                this.progresoGeneral.avance += this.progresoZonas[index].total_regiones_terminadas;
               }
+              this.progresoGeneral.etiqueta = 'General';
+              this.progresoGeneral.porcentaje = (this.progresoGeneral.avance * 100) / this.progresoGeneral.total;
+            }else if(this.progresoZonas.length == 1){
+              //this.progresoGeneral.etiqueta = 'Zona '+this.progresoZonas[0].zona;
+              this.progresoGeneral.total = this.progresoZonas[0].total_regiones;
+              this.progresoGeneral.avance = this.progresoZonas[0].total_regiones_terminadas;
+              this.progresoGeneral.porcentaje = (this.progresoGeneral.avance * 100) / this.progresoGeneral.total;
             }
 
             if(this.filtroZonaRegion.zonas.length == 0){
@@ -177,9 +189,21 @@ export class RondaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(registro => {
       if(registro){
         console.log(registro);
-        if(registro.region_estatus){
+        if(registro.region_estatus && !this.estatusRegiones[registro.region_estatus.region]){
           this.estatusRegiones[registro.region_estatus.region] = registro.region_estatus.fecha_termino;
+
+          if(this.progresoZonas.length){
+            if(this.progresoZonas.length > 1){
+              let index = this.progresoZonas.findIndex(item => item.zona == registro.data.zona);
+              this.progresoZonas[index].total_regiones_terminadas++;
+              this.progresoZonas[index].porcentaje_avance = (this.progresoZonas[index].total_regiones_terminadas * 100) / this.progresoZonas[index].total_regiones;
+            }
+            
+            this.progresoGeneral.avance++;
+            this.progresoGeneral.porcentaje = (this.progresoGeneral.avance * 100) / this.progresoGeneral.total;
+          }
         }
+
         if(editarRegistro){
           let index = this.dataSourceRegistros.data.findIndex(x => x.id === editarRegistro.id);
           this.dataSourceRegistros.data[index] = registro.data;

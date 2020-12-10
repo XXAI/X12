@@ -31,8 +31,10 @@ export class RondaComponent implements OnInit {
   filtroAplicado:boolean;
   filtroQuery:string;
 
+  puedeFinalizarRonda:boolean;
   rondaFinalizada:boolean;
   estatusRegiones:any;
+  progresoZonas:any[];
 
   pageEvent: PageEvent;
   resultsLength: number = 0;
@@ -44,6 +46,8 @@ export class RondaComponent implements OnInit {
     this.listaRegistros = [];
     this.datosRonda = {};
     this.rondaFinalizada = true;
+    this.puedeFinalizarRonda = false;
+    this.progresoZonas = [];
 
     this.route.paramMap.subscribe(params => {
       let ronda_id = +params.get('id');
@@ -56,7 +60,19 @@ export class RondaComponent implements OnInit {
           } else {
             this.filtroZonaRegion = response.filtros;
             this.estatusRegiones = response.estatus_regiones;
+            this.progresoZonas = response.progreso_zonas;
             this.datosRonda = response.data;
+
+            if(this.progresoZonas.length){
+              for (let index in this.progresoZonas) {
+                let porcentaje = (this.progresoZonas[index].total_regiones_terminadas * 100) / this.progresoZonas[index].total_regiones;
+                this.progresoZonas[index].porcentaje_avance = porcentaje;
+              }
+            }
+
+            if(this.filtroZonaRegion.zonas.length == 0){
+              this.puedeFinalizarRonda = true;
+            }
 
             if(this.datosRonda.fecha_fin){
               this.datosRonda.estatus = 'Finalizada';

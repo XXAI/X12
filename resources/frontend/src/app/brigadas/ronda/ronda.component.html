@@ -33,12 +33,25 @@
                             <input matInput [ngModel]="datosRonda.total_dias" readonly>
                         </mat-form-field>
                     </div>
-                    <div fxFlex></div>
-                    <button *ngIf="!rondaFinalizada" fxFlex mat-raised-button (click)="finalizarRonda()" color="accent"><mat-icon>cancel_presentation</mat-icon><br> Finalizar Ronda</button>
-                    <div fxFlex></div>
+                    <div fxFlex style="overflow: auto;">
+                        <mat-list>
+                            <mat-list-item *ngFor="let progreso of progresoZonas" style="height: auto; padding:5px 0;">
+                                <div mat-line>Zona {{progreso.zona}}: {{ progreso.porcentaje_avance | number:'1.0-2' }}%</div>
+                                <div mat-line>
+                                    <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+                                </div>
+                                <div mat-line><mat-hint>{{progreso.total_regiones_terminadas | number:'1.0-0'}} / {{progreso.total_regiones | number:'1.0-0'}}</mat-hint></div>
+                            </mat-list-item>
+                        </mat-list>
+                        <mat-divider></mat-divider>
+                    </div>
                     <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
-                        <button fxFlex mat-stroked-button [routerLink]="'/listado-rondas'">
-                            <mat-icon>arrow_back</mat-icon> Regresar
+                        <button fxFlex="none" mat-flat-button color="info" [routerLink]="'/listado-rondas'">
+                            <mat-icon>backspace</mat-icon>
+                        </button>
+                        <div fxFlex></div>
+                        <button fxFlex="none" mat-flat-button color="primary" matTooltip="Finalizar Ronda" *ngIf="puedeFinalizarRonda && !rondaFinalizada" (click)="finalizarRonda()">
+                            <mat-icon>stop</mat-icon>
                         </button>
                     </div>
                 </div>

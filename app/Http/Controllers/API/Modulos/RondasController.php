@@ -18,6 +18,7 @@ use DB;
 use \Validator,\Hash;
 
 use App\Models\Brigada;
+use App\Models\BrigadaDistribucionRegion;
 use App\Models\Ronda;
 use App\Models\RondaRegistro;
 use App\Models\RondaRegionEstatus;
@@ -170,7 +171,28 @@ class RondasController extends Controller
             
             $estatus_regiones = RondaRegionEstatus::where('ronda_id',$id)->whereNotNull('fecha_termino')->get()->pluck('fecha_termino','region');
             
-            return response()->json(['data'=>$ronda,'estatus_regiones'=>$estatus_regiones,'filtros'=>['zonas'=>$lista_zonas,'regiones'=>$lista_regiones]],HttpResponse::HTTP_OK);
+            $progreso_zonas = BrigadaDistribucionRegion::select('brigadas_distribucion_regiones.zona', DB::raw('COUNT(brigadas_distribucion_regiones.region) as total_regiones'), 
+                                                                DB::raw('COUNT(rondas_regiones_estatus.fecha_termino) as total_regiones_terminadas'))
+                                                        ->leftjoin('rondas_regiones_estatus',function($join)use($id){
+                                                            $join->on('rondas_regiones_estatus.municipio_id','=','brigadas_distribucion_regiones.municipio_id')
+                                                                ->on('rondas_regiones_estatus.region','=','brigadas_distribucion_regiones.region')
+                                                                ->where('rondas_regiones_estatus.ronda_id',$id)
+                                                                ->whereNull('rondas_regiones_estatus.deleted_at');
+                                                        })
+                                                        ->where('brigadas_distribucion_regiones.municipio_id',$ronda->municipio_id)
+                                                        ->groupBy('zona');
+            if(count($lista_zonas)){
+                $progreso_zonas = $progreso_zonas->whereIn('brigadas_distribucion_regiones.zona',$lista_zonas);
+            }
+
+            if(count($lista_regiones)){
+                $progreso_zonas = $progreso_zonas->whereIn('brigadas_distribucion_regiones.region',$lista_regiones);
+            }
+
+            $progreso_zonas = $progreso_zonas->get();
+            
+            
+            return response()->json(['data'=>$ronda,'estatus_regiones'=>$estatus_regiones,'progreso_zonas'=>$progreso_zonas,'filtros'=>['zonas'=>$lista_zonas,'regiones'=>$lista_regiones]],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], 500);
         }

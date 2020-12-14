@@ -17,6 +17,7 @@ export class BitacoraDialogComponent implements OnInit, AfterViewInit {
 
   dataSource: BitacoraDataSource;
   caso_id:Number;
+  loading:boolean;
 
  
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;

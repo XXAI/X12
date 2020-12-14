@@ -295,9 +295,9 @@
     <div fxFlex="30px" fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="end center" style="width:100%; padding: 10px;">
         <button mat-flat-button color="" routerLink="/casos-sospechosos" [disabled]="loading">  Cancelar</button>
         <button mat-button color="primary" [disabled]="true" fxHide.xs> <mat-icon>backup</mat-icon> Subir estudio de caso</button>
-        <button mat-flat-button color="accent" [disabled]="true" fxHide.xs> <mat-icon>comment</mat-icon> Seguimiento por dia</button>
+        <button mat-flat-button color="accent" [disabled]="loading" *ngIf="caso !=null" (click)="openDialogBitacora()" fxHide.xs> <mat-icon>comment</mat-icon> Bitácora</button>
         <button  mat-icon-button color="primary" [disabled]="true" fxHide.gt-xs> <mat-icon>backup</mat-icon></button>
-        <button mat-icon-button color="accent" [disabled]="true " fxHide.gt-xs> <mat-icon>comment</mat-icon></button>
+        <button mat-icon-button color="accent" [disabled]="loading " *ngIf="caso !=null" (click)="openDialogBitacora()"  fxHide.gt-xs> <mat-icon>comment</mat-icon></button>
         <button mat-flat-button color="primary" [disabled]="loading" (click)="guardar()"><mat-icon>save</mat-icon>  Guardar</button>
     </div>
     <div class="loading-wrapper" *ngIf="loading" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="15px">
@@ -305,4 +305,3 @@
         <h2 style="font-weight: 300;">{{ loadingLabel }}</h2>
       </div>
 </div>
-

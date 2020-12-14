@@ -1,0 +1,26 @@
+tr.mat-row{
+cursor: pointer;
+}
+tr.mat-row:hover {
+    background-color: rgb(245,245,245);
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+
+th, td {
+    overflow: hidden;
+    width:auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+}
+.mat-column-created_at {
+    width: 130px;
+    /*text-align: center;*/
+    /*padding-right: 8px;*/
+}

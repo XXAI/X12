@@ -6,14 +6,14 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class CasosSospechososService {
+export class BitacoraService {
 
   private api: string
   private resource:string;
 
   constructor(private http: HttpClient) {
     this.api = environment.base_url;
-    this.resource = "casos-sospechosos";
+    this.resource = "bitacora-casos-sospechosos";
    }
 /*
   constructor(private http:HttpClient ) {
@@ -21,11 +21,12 @@ export class CasosSospechososService {
     this.resource = "usuarios";
    }*/
   
-  buscar(filter = '', sortOrder = 'asc', orderBy = '', pageNumber=0, pageSize = 3): Observable<any>{
+  buscar(filter = '', caso_id=null, sortOrder = 'asc', orderBy = '', pageNumber=0, pageSize = 3): Observable<any>{
     
     return this.http.get(`${this.api}/${this.resource}`,{
       params: new HttpParams()
         .set('filter',filter)
+        .set('caso_id',caso_id)
         .set('sortOrder',sortOrder)
         .set('orderBy',orderBy)
         .set('page', pageNumber.toString())
@@ -48,27 +49,4 @@ export class CasosSospechososService {
   borrar(id:Number):Observable<any>{
     return this.http.delete(`${this.api}/${this.resource}/${id}`);
   }
-
-  municipios():Observable<any>{
-    return this.http.get(`${this.api}/${this.resource}-municipios`,{
-      /*
-      params: new HttpParams()
-        .set('all',"1")*/
-    });
-  }
-
-  localidades(municipio_id:any):Observable<any>{
-    return this.http.get(`${this.api}/${this.resource}-localidades`,{
-      
-      params: new HttpParams()
-        .set('municipio_id',municipio_id)
-    });
-  }
-  colonias(municipio_id:any):Observable<any>{
-    return this.http.get(`${this.api}/${this.resource}-colonias`,{
-      
-      params: new HttpParams()
-        .set('municipio_id',municipio_id)
-    });
-  }  
 }

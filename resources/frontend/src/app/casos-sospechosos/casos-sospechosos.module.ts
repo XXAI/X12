@@ -9,10 +9,16 @@ import { getEspPaginatorIntl } from '../esp-paginator-intl';
 import { CasosSospechososRoutingModule } from './casos-sospechosos-routing.module';
 import { IndexComponent } from './index/index.component';
 import { FormComponent } from './form/form.component';
+import { BitacoraDialogComponent } from './bitacora-dialog/bitacora-dialog.component';
+import { BitacoraFormDialogComponent } from './bitacora-form-dialog/bitacora-form-dialog.component';
 
 
 @NgModule({
-  declarations: [IndexComponent, FormComponent],
+  entryComponents: [
+    BitacoraDialogComponent,
+    BitacoraFormDialogComponent
+  ],
+  declarations: [IndexComponent, FormComponent, BitacoraDialogComponent, BitacoraFormDialogComponent],
   providers:[
     {provide: MAT_DATE_LOCALE, useValue: 'es-MX'},
     

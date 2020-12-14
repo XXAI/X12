@@ -93,10 +93,12 @@ class CasoSospechoso extends Model
         'esta_embarazada' => 'boolean',
         'tuvo_tratamiento_previo_para_covid' => 'boolean'
     ];
-/*
-    public function expediente(){
-        return $this->hasMany('App\Models\ExpedienteCaso','caso_id','id');
+
+    public function bitacora(){
+        return $this->hasMany('App\Models\BitacoraCasoSospechoso','caso_id','id');
     }
+/*
+    
 
     public function contingencia(){
         return $this->belongsTo('App\Models\Contingencia','contingencia_id','id');

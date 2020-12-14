@@ -6,8 +6,9 @@ import { map, startWith, tap } from 'rxjs/operators';
 import { Municipio, Localidad, Colonia, CasosSospechososService, CasoSospechoso } from "@app/casos-sospechosos";
 import { Title } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BitacoraDialogComponent } from '../bitacora-dialog/bitacora-dialog.component';
 
 @Component({
   selector: 'app-form',
@@ -62,6 +63,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     private snackBar: MatSnackBar, 
     private router: Router,
     private route:ActivatedRoute,
+    private dialog: MatDialog,
     private apiService:CasosSospechososService) { }
 
   ngAfterViewInit(): void {
@@ -723,6 +725,20 @@ console.log(activo);
         formControl.setValidators(array);              
         formControl.updateValueAndValidity();
       }
+    });
+  }
+
+  openDialogBitacora(): void {
+    const dialogRef = this.dialog.open(BitacoraDialogComponent, { width:"800px",disableClose: true,data:this.caso.id});
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      /*
+      if(result != null){
+        if(result.last_action != "none"){
+          this.loadData();
+        }
+      }   */  
     });
   }
 

@@ -1,0 +1,20 @@
+
+
+<h1 mat-dialog-title>{{bitacora != null ? "Editar registro" : "Nuevo registro"}}</h1>
+<div class="spinner-container" *ngIf="loading" >
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<div mat-dialog-content>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="guardar()" (keyup.enter)="guardar()" >
+        <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>Seguimiento</mat-label>
+            <textarea matInput formControlName="seguimiento" rows="7" ></textarea>
+            <mat-error *ngIf="form?.controls['seguimiento']?.hasError('required')">Campo requerido.</mat-error>
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button mat-button (click)="cerrar()" [disabled]="loading">Cerrar</button>
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="loading"><mat-icon>save</mat-icon> Guardar</button>
+</div>

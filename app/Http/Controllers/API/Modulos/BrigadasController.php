@@ -163,7 +163,7 @@ class BrigadasController extends Controller
             $ids_brigadas = $ids_brigadas->get()->pluck('id');
 
             $resultado = RondaRegistro::select(DB::raw("concat(catalogo_distritos.clave, ' - ', catalogo_distritos.descripcion) as distrito"), "catalogo_municipios.descripcion  as municipio", "rondas.no_ronda", 
-                                                "catalogo_localidades.descripcion as localidad", "catalogo_colonias.nombre as colonia", "rondas_registros.zona", "rondas_registros.region", "rondas_registros.fecha_registro", 
+                                                "catalogo_localidades.descripcion as localidad", "rondas_registros.no_brigadistas", "rondas_registros.zona", "rondas_registros.region", "rondas_registros.fecha_registro", 
                                                 DB::raw("concat(catalogo_grupos_edades.edad_minima,'-',catalogo_grupos_edades.edad_maxima) as grupo_edad"), "rondas_registros_detalles.total_masculino", 
                                                 "rondas_registros_detalles.total_femenino", DB::raw("(rondas_registros_detalles.total_masculino + rondas_registros_detalles.total_femenino) as total_sexo"),
                                                 "rondas_registros_detalles.infeccion_respiratoria_m", "rondas_registros_detalles.infeccion_respiratoria_f", 
@@ -171,13 +171,13 @@ class BrigadasController extends Controller
                                                 "rondas_registros_detalles.covid_m", "rondas_registros_detalles.covid_f", DB::raw("(rondas_registros_detalles.covid_m + rondas_registros_detalles.covid_f) as total_covid"), 
                                                 "rondas_registros_detalles.tratamientos_otorgados", "rondas_registros.casas_visitadas", "rondas_registros.casas_ausentes", "rondas_registros.casas_deshabitadas", 
                                                 "rondas_registros.casas_encuestadas", "rondas_registros.casas_renuentes", "rondas_registros.casas_promocionadas", "rondas_registros.pacientes_referidos_valoracion", 
-                                                "rondas_registros.pacientes_referidos_hospitalizacion", "rondas_registros.pacientes_candidatos_muestra_covid","rondas_registros.id as registro_id")
+                                                "rondas_registros.embarazadas", "rondas_registros.diabeticos","rondas_registros.id as registro_id")
                                         ->leftjoin('rondas','rondas.id','=','rondas_registros.ronda_id')
                                         ->leftjoin('brigadas','brigadas.id','=','rondas.brigada_id')
                                         ->leftjoin('catalogo_distritos','catalogo_distritos.id','=','brigadas.distrito_id')
                                         ->leftjoin('catalogo_municipios','catalogo_municipios.id','=','rondas.municipio_id')
                                         ->leftjoin('catalogo_localidades','catalogo_localidades.id','=','rondas_registros.localidad_id')
-                                        ->leftjoin('catalogo_colonias','catalogo_colonias.id','=','rondas_registros.colonia_visitada_id')
+                                        //->leftjoin('catalogo_colonias','catalogo_colonias.id','=','rondas_registros.colonia_visitada_id')
                                         ->leftjoin('rondas_registros_detalles',function($join){
                                             $join->on('rondas_registros_detalles.ronda_registro_id','=','rondas_registros.id')->whereNull('rondas_registros_detalles.deleted_at');
                                         })

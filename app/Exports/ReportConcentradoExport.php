@@ -35,10 +35,10 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
 
     public function __construct($data){
         $this->headings = [
-            ["Distrito", "Municipio", "No. Ronda", "Localidad", "Colonia", "Zona", "Región", "Fecha Registro", "Grupo Edad", "Sexo", "", "",
+            ["Distrito", "Municipio", "No. Ronda", "Localidad", "No. de Brigadistas", "Zona", "Región", "Fecha Registro", "Grupo Edad", "Sexo", "", "",
             "Inf. Respiratoria", "", "", "Covid", "", "", "Tratamientos Otorgados",
             "Casas Visitadas", "Casas Ausentes", "Casas Deshabitadas", "Casas Encuestadas", "Casas Renuentes", "Casas Promocionadas", 
-            "Pacientes Referidos a Valoración", "Pacientes Referidos a Hospitalización", "Pacientes Candidatos a Toma de Muestra Covid"],
+            "Casos Sospechosos", "Embarazadas", "Diabéticos"],
             ["", "", "", "", "", "", "", "", "", "Masc.", "Fem.", "Total","Masc.", "Fem.", "Total", "Masc.", "Fem.", "Total"]
         ];
 
@@ -84,7 +84,7 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
         return [            
             AfterSheet::class => function(AfterSheet $event) {
                 $letra = 'A';
-                $anchos = [30,30,7,30,30,9,9,12,9.5];
+                $anchos = [30,30,7,30,10,9,9,12,9.5];
                 for ($i=0; $i < 9; $i++) { 
                     $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra.'2');
                     $event->sheet->getDelegate()->getColumnDimension($letra)->setWidth($anchos[$i]);
@@ -100,7 +100,7 @@ class ReportConcentradoExport implements FromCollection, WithHeadings, WithEvent
                     $letra++;
                 }
                 $letra = 'S';
-                $anchos = [12,10,9,11,11,9.5,14,17,16.5,21];
+                $anchos = [12,10,9,11,11,9.5,14,12,12,12];
                 for ($i=0; $i < 10; $i++) { 
                     $event->sheet->getDelegate()->mergeCells($letra.'1:'.$letra.'2');
                     $event->sheet->getDelegate()->getColumnDimension($letra)->setWidth($anchos[$i]);

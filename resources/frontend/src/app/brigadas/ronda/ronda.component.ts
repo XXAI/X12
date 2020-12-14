@@ -107,8 +107,8 @@ export class RondaComponent implements OnInit {
             this.dataSourceRegistros.filterPredicate = (data:any, filter:string) => {
               let filtrado:boolean;
               let filtro = filter.trim().toLowerCase();
-
-              filtrado = data.cabecera_recorrida.descripcion.toLowerCase().includes(filtro) || data.colonia_visitada.nombre.toLowerCase().includes(filtro) || data.fecha_registro.toLowerCase().includes(filter);
+              
+              filtrado = data.cabecera_recorrida.descripcion.toLowerCase().includes(filtro) || data.localidad.descripcion.toLowerCase().includes(filtro) || data.fecha_registro.toLowerCase().includes(filter);
               
               return filtrado;
             };

@@ -111,6 +111,7 @@ class RondasController extends Controller
     
             $reglas = [
                 'brigada_id' => 'required',
+                'municipio_id' => 'required',
                 'fecha_inicio' => 'required',
                 'no_ronda' => 'required',
             ];
@@ -124,6 +125,17 @@ class RondasController extends Controller
                 return response()->json( $v->errors(), 409);
             }
 
+            $max_ronda = Ronda::select('*')
+                                ->where('brigada_id',$parametros['brigada_id'])
+                                ->where('municipio_id',$parametros['municipio_id'])
+                                ->where(function($query)use($parametros){
+                                    $query->where('no_ronda','>=',$parametros['no_ronda'])->orWhere('fecha_fin','>=',$parametros['fecha_inicio']);
+                                })
+                                ->first();
+            if($max_ronda){
+                return response()->json(['error'=>['message'=>'Ronda no valida']], 500);
+            }
+            
             $ronda = Ronda::create($parametros);
             $ronda = Ronda::select('*',DB::raw('DATEDIFF(IF(fecha_fin,fecha_fin, current_date()), fecha_inicio) as total_dias'))->find($ronda->id);
 

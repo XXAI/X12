@@ -16,7 +16,7 @@
                     </mat-form-field>
                     <mat-form-field fxFlex>
                         <mat-label>No. de Ronda</mat-label>
-                        <input matInput formControlName="no_ronda" required>
+                        <input matInput type="number" formControlName="no_ronda" required>
                         <mat-error *ngIf="formRonda.get('no_ronda').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
                 </div>

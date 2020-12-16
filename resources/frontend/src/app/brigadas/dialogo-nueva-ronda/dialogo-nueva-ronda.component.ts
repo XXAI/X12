@@ -64,8 +64,8 @@ export class DialogoNuevaRondaComponent implements OnInit {
           this.dialogRef.close(ronda);
         },
         errorResponse =>{
-          var errorMessage = "Ocurrió un error.";
-          if(errorResponse.status == 409){
+          let errorMessage = "Ocurrió un error.";
+          if(errorResponse.error.error.message){
             errorMessage = errorResponse.error.error.message;
           }
           this.sharedService.showSnackBar(errorMessage, null, 3000);

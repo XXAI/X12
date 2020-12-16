@@ -222,8 +222,17 @@ class RondasController extends Controller
             }
 
             if(isset($parametros['fecha_fin']) && $parametros['fecha_fin']){
-                $ronda->fecha_fin = $parametros['fecha_fin'];
-                $ronda->save();
+                $ultimo_registro = RondaRegistro::where('ronda_id',$ronda->id)->max('fecha_registro');
+                if($ultimo_registro && $parametros['fecha_fin'] < $ultimo_registro){
+                    return response()->json(['error'=>['message'=>'Fecha de Fin de Ronda no valida']], 500);
+                }
+
+                if($ronda->fecha_inicio >= $parametros['fecha_fin']){
+                    return response()->json(['error'=>['message'=>'Fecha de Fin de Ronda no valida']], 500);
+                }else{
+                    $ronda->fecha_fin = $parametros['fecha_fin'];
+                    $ronda->save();
+                }
             }
             
             return response()->json(['data'=>$ronda],HttpResponse::HTTP_OK);

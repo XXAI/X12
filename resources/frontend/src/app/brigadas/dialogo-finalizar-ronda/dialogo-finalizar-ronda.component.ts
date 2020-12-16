@@ -56,7 +56,7 @@ export class DialogoFinalizarRondaComponent implements OnInit {
               },
               errorResponse =>{
                 var errorMessage = "Ocurrió un error.";
-                if(errorResponse.status == 409){
+                if(errorResponse.error.error.message){
                   errorMessage = errorResponse.error.error.message;
                 }
                 this.sharedService.showSnackBar(errorMessage, null, 3000);

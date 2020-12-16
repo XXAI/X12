@@ -57,3 +57,11 @@ table td {
     padding: 0.8em 0em 0.5em 0em !important;
     border-top:none;
 }
+
+:host ::ng-deep .mat-list-item-content{
+    padding:0px !important;
+}
+
+:host ::ng-deep .mat-list-text{
+    padding:0px !important;
+}

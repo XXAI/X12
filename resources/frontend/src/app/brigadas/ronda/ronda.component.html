@@ -20,18 +20,23 @@
                             </p>
                             <mat-divider></mat-divider>
                         </div>
-                        <mat-form-field fxFlex appearance="standard">
-                            <mat-label>Fecha Inicio</mat-label>
-                            <input matInput [ngModel]="datosRonda.fecha_inicio" readonly>
-                        </mat-form-field>
-                        <mat-form-field fxFlex appearance="standard" *ngIf="datosRonda.fecha_fin">
-                            <mat-label>Fecha Fin</mat-label>
-                            <input matInput [ngModel]="datosRonda.fecha_fin" readonly>
-                        </mat-form-field>
-                        <mat-form-field fxFlex appearance="standard">
-                            <mat-label>Total Días</mat-label>
-                            <input matInput [ngModel]="datosRonda.total_dias" readonly>
-                        </mat-form-field>
+                        <mat-list fxFlex="none">
+                            <mat-list-item style="height: auto; padding-bottom: 5px;">
+                                <div mat-line style="font-weight: bold;">Fecha Inicio</div>
+                                <div mat-line>{{ datosRonda.fecha_inicio }}</div>
+                                <mat-divider></mat-divider>
+                            </mat-list-item>
+                            <mat-list-item style="height: auto; padding-bottom: 5px;" *ngIf="datosRonda.fecha_fin">
+                                <div mat-line style="font-weight: bold;">Fecha Fin</div>
+                                <div mat-line>{{ datosRonda.fecha_fin }}</div>
+                                <mat-divider></mat-divider>
+                            </mat-list-item>
+                            <mat-list-item style="height: auto; padding-bottom: 5px;">
+                                <div mat-line style="font-weight: bold;">Total Días</div>
+                                <div mat-line>{{ datosRonda.total_dias }}</div>
+                                <mat-divider></mat-divider>
+                            </mat-list-item>
+                        </mat-list>
                     </div>
                     <div fxFlex style="overflow: auto;">
                         <span>Progreso {{progresoGeneral.etiqueta}}:</span>

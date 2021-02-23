@@ -168,6 +168,10 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::apiResource('vigilancia-clinica',            'API\Modulos\VigilanciaClinicaController');
     Route::get('resumen_camas',                         'API\Modulos\VigilanciaClinicaController@getResumenCamas');
     Route::get('catalogos-resumen-clinicas',            'API\Modulos\VigilanciaClinicaController@getFilterCatalogsVc');
+
+
+    //Semaforo
+    Route::apiResource('semaforo',                      'API\Modulos\SemaforoController');
     
     //Reponsables
     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');

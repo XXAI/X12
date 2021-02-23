@@ -50,6 +50,7 @@ import { GruposEstrategicosModule } from './grupos-estrategicos/grupos-estrategi
 import { ArchivosGruposModule } from './archivos-grupos/archivos-grupos.module';
 import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.module';
 import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica.module';
+import { SemaforoModule } from './semaforo/semaforo.module';
 import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.module";
 
 @NgModule({
@@ -93,6 +94,7 @@ import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.mo
     ArchivosGruposModule,
     RedNegativaIragModule,
     VigilanciaClinicaModule,
+    SemaforoModule,
     CasosSospechososModule,
     WildcardRoutingModule,
   ],

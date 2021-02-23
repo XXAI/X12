@@ -26,6 +26,8 @@ use App\Models\CasosCovid\EgresosCovid;
 use App\Models\VigilanciaClinica\CatalogoEstatusPaciente;
 use App\Models\VigilanciaClinica\CatalogoClinicaCovid;
 
+use App\Models\Semaforo\RangoIndicador;
+
 
 class CatalogosController extends Controller
 {
@@ -49,7 +51,8 @@ class CatalogosController extends Controller
                 'tipo_unidad' => TipoUnidad::orderBy("descripcion"),
                 'estatus_paciente_covid' => CatalogoEstatusPaciente::getModel(),
                 'clinicas_covid' => CatalogoClinicaCovid::getModel(),
-                'egresos_covid' =>  EgresosCovid::getModel()
+                'egresos_covid' =>  EgresosCovid::getModel(),
+                'rango_indicadores' => RangoIndicador::orderBy("id"),
             ];
 
             $parametros = Input::all();

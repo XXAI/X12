@@ -1,0 +1,374 @@
+<div [formGroup]="semaforoForm">
+  <div class="form-container" fxFlex>
+    <div class="form-loading-shade" *ngIf="isLoading">
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </div>
+    <div class="form-loading-shade" *ngIf="!isLoading && !paciente">No se encontraron los datos del Paciente</div>
+
+    <mat-card fxFlex.xs="100%" fxFlex="400">
+
+
+      <h2 ><span *ngIf="paciente.id">Editar</span> <span *ngIf="!paciente.id">Nuevo</span> Calculo de Semaforización</h2>
+      <mat-card-content>
+        <br />
+
+        <!-- <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+          <mat-form-field appearance="outline" fxFlex>
+  
+            <mat-label>Fecha de Inicio del Rango: </mat-label>
+            <input matInput [max]="maxDate" [matDatepicker]="picker1" formControlName="fecha_inicio" placeholder="Fecha de Inicio del Rango" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+    
+            <mat-error *ngIf=" semaforoForm.get('fecha_inicio').invalid && (semaforoForm.get('fecha_inicio').dirty || semaforoForm.get('fecha_inicio').touched)">
+              <span *ngIf="semaforoForm.get('fecha_inicio').errors.required">El campo es obligatorio</span>
+            </mat-error>
+    
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline" fxFlex>
+  
+            <mat-label>Fecha Final del Rango: </mat-label>
+            <input matInput [max]="maxDate" [matDatepicker]="picker2" formControlName="fecha_fin" placeholder="Fecha Fin del Rango" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+    
+            <mat-error *ngIf=" semaforoForm.get('fecha_fin').invalid && (semaforoForm.get('fecha_fin').dirty || semaforoForm.get('fecha_fin').touched)">
+              <span *ngIf="semaforoForm.get('fecha_fin').errors.required">El campo es obligatorio</span>
+            </mat-error>
+    
+          </mat-form-field>
+
+                  <mat-form-field appearance="outline"  *ngIf="!catalogos['rango_indicadores']">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="rango_indicador_id">
+          
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="catalogos['rango_indicadores']">
+            <mat-label>Indicador</mat-label>
+            <input type="text" aria-label="indicador" matInput formControlName="rango_indicador_id" [matAutocomplete]="rangoIndicadorAutocomplete" >
+            <mat-autocomplete #rangoIndicadorAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('rango')" [panelWidth]="'auto'">
+                <mat-option *ngFor="let item of filteredCatalogs['rangos'] | async" [value]="item">
+                    {{item.rango}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-hint *ngIf="!semaforoForm.get('rango_indicador_id').value">Selecciona un Rango de la lista</mat-hint>
+            <mat-hint align="end" *ngIf="pacienteForm.controls['paciente'].get('municipio_id').value">[{{pacienteForm.controls['paciente'].get('municipio_id').value.clave}}]</mat-hint>
+        </mat-form-field>
+  
+        </div> -->
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion1" readonly>
+          
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular1($event.target.value)" formControlName="rango1" placeholder="Valor">
+          <mat-error *ngIf="semaforoForm.get('rango1').invalid && (semaforoForm.get('rango1').dirty || semaforoForm.get('rango1').touched)">
+              <span *ngIf="semaforoForm.get('rango1').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor1" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('valor1').invalid && (semaforoForm.get('valor1').dirty || semaforoForm.get('valor1').touched)">
+              <span *ngIf="semaforoForm.get('valor1').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion8" readonly>
+          
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular8($event.target.value)" formControlName="rango8" placeholder="Valor">
+          <mat-error *ngIf="semaforoForm.get('rango8').invalid && (semaforoForm.get('rango8').dirty || semaforoForm.get('rango8').touched)">
+              <span *ngIf="semaforoForm.get('rango8').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor8" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('valor8').invalid && (semaforoForm.get('valor8').dirty || semaforoForm.get('valor8').touched)">
+              <span *ngIf="semaforoForm.get('valor8').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion2" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular2($event.target.value)" formControlName="rango1" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango2').invalid && (semaforoForm.get('rango2').dirty || semaforoForm.get('rango2').touched)">
+              <span *ngIf="semaforoForm.get('rango2').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)"  formControlName="valor2" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor2').invalid && (semaforoForm.get('valor2').dirty || semaforoForm.get('valor2').touched)">
+              <span *ngIf="semaforoForm.get('valor2').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion3" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular3($event.target.value)" formControlName="rango3" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango3').invalid && (semaforoForm.get('rango3').dirty || semaforoForm.get('rango3').touched)">
+              <span *ngIf="semaforoForm.get('rango3').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor3" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor3').invalid && (semaforoForm.get('valor3').dirty || semaforoForm.get('valor3').touched)">
+              <span *ngIf="semaforoForm.get('valor3').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion9" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular9($event.target.value)" formControlName="rango9" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango9').invalid && (semaforoForm.get('rango9').dirty || semaforoForm.get('rango9').touched)">
+              <span *ngIf="semaforoForm.get('rango9').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor9" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor9').invalid && (semaforoForm.get('valor9').dirty || semaforoForm.get('valor9').touched)">
+              <span *ngIf="semaforoForm.get('valor9').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion10" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular10($event.target.value)" formControlName="rango10" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango10').invalid && (semaforoForm.get('rango10').dirty || semaforoForm.get('rango10').touched)">
+              <span *ngIf="semaforoForm.get('rango10').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor10" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor10').invalid && (semaforoForm.get('valor10').dirty || semaforoForm.get('valor10').touched)">
+              <span *ngIf="semaforoForm.get('valor10').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion4" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)"  (blur)= "calcular4($event.target.value)" formControlName="rango4" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango4').invalid && (semaforoForm.get('rango4').dirty || semaforoForm.get('rango4').touched)">
+              <span *ngIf="semaforoForm.get('rango4').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor4" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor4').invalid && (semaforoForm.get('valor4').dirty || semaforoForm.get('valor4').touched)">
+              <span *ngIf="semaforoForm.get('valor4').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion5" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular5($event.target.value)" formControlName="rango5" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango5').invalid && (semaforoForm.get('rango5').dirty || semaforoForm.get('rango5').touched)">
+              <span *ngIf="semaforoForm.get('rango5').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor5" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor5').invalid && (semaforoForm.get('valor5').dirty || semaforoForm.get('valor5').touched)">
+              <span *ngIf="semaforoForm.get('valor5').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion6" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular6($event.target.value)" formControlName="rango6" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango6').invalid && (semaforoForm.get('rango6').dirty || semaforoForm.get('rango6').touched)">
+              <span *ngIf="semaforoForm.get('rango6').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)"  formControlName="valor6" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor6').invalid && (semaforoForm.get('valor6').dirty || semaforoForm.get('valor6').touched)">
+              <span *ngIf="semaforoForm.get('valor6').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+  
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Indicador</mat-label>
+          <input matInput formControlName="descripcion7" readonly>
+          
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Rango: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" (blur)= "calcular7($event.target.value)" formControlName="rango7" placeholder="0">
+          <mat-error *ngIf="semaforoForm.get('rango7').invalid && (semaforoForm.get('rango7').dirty || semaforoForm.get('rango7').touched)">
+              <span *ngIf="semaforoForm.get('rango7').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor7" placeholder="0" readonly>
+          <mat-error *ngIf="semaforoForm.get('valor7').invalid && (semaforoForm.get('valor7').dirty || semaforoForm.get('valor7').touched)">
+              <span *ngIf="semaforoForm.get('valor7').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Resultado: </mat-label>
+          <input matInput class="uppercase" id="nombre" formControlName="resultado" placeholder="Resultado"/>
+          <mat-error *ngIf=" semaforoForm.get('resultado').invalid && (semaforoForm.get('resultado').dirty || semaforoForm.get('resultado').touched)">
+            <span *ngIf="semaforoForm.get('resultado').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field>
+      
+      </div>
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <button mat-raised-button color="primary" (click)="calcularRangos()">Calcular Rangos</button>
+
+      </div>
+
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+    <br />
+    <div>
+      <span fxFlex></span>
+      <!-- <button mat-button routerLink="/semaforo">
+        <mat-icon>format_list_numbered</mat-icon> Regresar
+      </button>
+      <button
+        mat-raised-button
+        (click)="enviarDatos()"
+        color="primary"
+        [disabled]="!semaforoForm.valid || isLoading"
+      >
+        <mat-icon>save</mat-icon> Guardar
+      </button> -->
+    </div>
+  </div>
+</div>

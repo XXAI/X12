@@ -180,4 +180,10 @@ export const APPS: App[] = [
       },
     ],
   },
+  {
+    name: "Semaforo",
+    route: "semaforo/nuevo",
+    icon: "assets/icons/semaforos.svg",
+    isHub: true,
+  },
 ];

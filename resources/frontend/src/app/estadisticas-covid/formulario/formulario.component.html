@@ -1,0 +1,262 @@
+<div [formGroup]="estadisticascovidForm">
+  <div class="form-container" fxFlex>
+    <div class="form-loading-shade" *ngIf="isLoading">
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </div>
+
+    <mat-card fxFlex.xs="100%" fxFlex="400">
+
+
+      <h2 >  Estadisticas Covid</h2>
+      <mat-card-content>
+        <br />
+
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion1" readonly>
+
+        </mat-form-field>
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor1" placeholder="0">
+          <mat-error *ngIf="estadisticascovidForm.get('valor1').invalid && (estadisticascovidForm.get('valor1').dirty || estadisticascovidForm.get('valor1').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor1').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion2" readonly>
+
+        </mat-form-field>
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor2" placeholder="0">
+          <mat-error *ngIf="estadisticascovidForm.get('valor2').invalid && (estadisticascovidForm.get('valor2').dirty || estadisticascovidForm.get('valor8').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor2').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion3" readonly>
+
+        </mat-form-field>
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor3" placeholder="0">
+          <mat-error *ngIf="estadisticascovidForm.get('valor3').invalid && (estadisticascovidForm.get('valor3').dirty || estadisticascovidForm.get('valor8').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor3').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion4" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor4" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor4').invalid && (estadisticascovidForm.get('valor4').dirty || estadisticascovidForm.get('valor3').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor4').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion5" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor5" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor5').invalid && (estadisticascovidForm.get('valor5').dirty || estadisticascovidForm.get('valor9').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor5').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion6" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor6" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor6').invalid && (estadisticascovidForm.get('valor6').dirty || estadisticascovidForm.get('valor10').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor6').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion7" readonly>
+
+        </mat-form-field>
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor7" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor7').invalid && (estadisticascovidForm.get('valor7').dirty || estadisticascovidForm.get('valor4').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor7').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion8" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor8" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor8').invalid && (estadisticascovidForm.get('valor8').dirty || estadisticascovidForm.get('valor5').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor8').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion9" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)"  formControlName="valor9" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor9').invalid && (estadisticascovidForm.get('valor9').dirty || estadisticascovidForm.get('valor6').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor9').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <mat-form-field appearance="outline">
+
+          <input matInput formControlName="descripcion10" readonly>
+
+        </mat-form-field>
+
+
+
+
+        <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Valor: </mat-label>
+          <input matInput (keypress)="numberOnly($event)" formControlName="valor10" placeholder="0" >
+          <mat-error *ngIf="estadisticascovidForm.get('valor10').invalid && (estadisticascovidForm.get('valor10').dirty || estadisticascovidForm.get('valor7').touched)">
+              <span *ngIf="estadisticascovidForm.get('valor10').errors.required">Campo obligatorio, solo acepta números</span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+
+      <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <!-- <mat-form-field appearance="outline" fxFlex>
+          <mat-label>Resultado: </mat-label>
+          <input matInput class="uppercase" id="nombre" formControlName="resultado" placeholder="Resultado"/>
+          <mat-error *ngIf=" estadisticascovidForm.get('resultado').invalid && (estadisticascovidForm.get('resultado').dirty || estadisticascovidForm.get('resultado').touched)">
+            <span *ngIf="estadisticascovidForm.get('resultado').errors.required">El campo es obligatorio</span>
+          </mat-error>
+        </mat-form-field> -->
+
+      </div>
+      <!-- <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+
+        <button mat-raised-button color="primary" (click)="calcularRangos()">Guardar datos</button>
+
+      </div>
+ -->
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+    <br />
+    <div>
+      <span fxFlex></span>
+
+      <button
+        mat-raised-button
+        (click)="enviarDatos()"
+        color="primary"
+        [disabled]="!estadisticascovidForm.valid || isLoading"
+      >
+        <mat-icon>save</mat-icon> Guardar
+      </button>
+    </div>
+  </div>
+</div>

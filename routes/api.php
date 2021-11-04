@@ -172,13 +172,16 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Semaforo
     Route::apiResource('semaforo',                      'API\Modulos\SemaforoController');
-    
+
     //Reponsables
     Route::apiResource('responsables',                  'API\Catalogos\ResponsableController');
-    
+
     //Colonias
     Route::apiResource('colonias',                      'API\Catalogos\ColoniasController');
-    
+
+       //estadisticas covid
+    Route::apiResource('estadisticas-covid',                      'API\Modulos\EstadisticasCovidController');
+
 });
 
 Route::middleware('auth')->get('/avatar-images', function (Request $request) {

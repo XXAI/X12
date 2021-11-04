@@ -52,7 +52,7 @@ import { RedNegativaIragModule } from './red-negativa-irag/red-negativa-irag.mod
 import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica.module';
 import { SemaforoModule } from './semaforo/semaforo.module';
 import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.module";
-
+import { EstadisticasCovidModule } from './estadisticas-covid/estadisticas-covid.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -96,6 +96,7 @@ import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.mo
     VigilanciaClinicaModule,
     SemaforoModule,
     CasosSospechososModule,
+    EstadisticasCovidModule,
     WildcardRoutingModule,
   ],
   providers: [

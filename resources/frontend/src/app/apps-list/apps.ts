@@ -112,6 +112,12 @@ export const APPS: App[] = [
     permission: "5LPMrjGUSaEQkkzM0w1RUUWC25z7ePvH",
   },
   {
+    name: "Estadisticas Covid",
+    route: "estadisticas-covid/nuevo",
+    icon: "assets/icons/estadisticas.png",
+    permission: "bpfgCRXtWTmAyAVDi83DzxNTrbePn9sp",
+  },
+  {
     name: "Herramientas Dev",
     route: "dev-tools",
     icon: "assets/icons/toolbox.svg",

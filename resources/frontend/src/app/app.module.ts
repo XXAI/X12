@@ -53,6 +53,8 @@ import { VigilanciaClinicaModule } from './vigilancia-clinica/vigilancia-clinica
 import { SemaforoModule } from './semaforo/semaforo.module';
 import { CasosSospechososModule } from "./casos-sospechosos/casos-sospechosos.module";
 import { EstadisticasCovidModule } from './estadisticas-covid/estadisticas-covid.module';
+import { AvanceDiarioDosisModule } from './influenza/avance-diario-dosis/avance-diario-dosis.module';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -97,6 +99,7 @@ import { EstadisticasCovidModule } from './estadisticas-covid/estadisticas-covid
     SemaforoModule,
     CasosSospechososModule,
     EstadisticasCovidModule,
+    AvanceDiarioDosisModule,
     WildcardRoutingModule,
   ],
   providers: [

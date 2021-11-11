@@ -15,6 +15,7 @@ use App\Models\Influenza\DosisMeta;
 use App\Models\Influenza\DosisAvanceDiario;
 use App\Models\Influenza\DosisAvanceDiarioDetalle;
 use App\Models\Influenza\GrupoPoblacion;
+use App\Models\Distrito;
 
 use App\Helpers\HttpStatusCodes;
 
@@ -27,7 +28,7 @@ class DosisMetasAvancesController extends Controller
 
             $data = [
                 'grupos_poblacion' => GrupoPoblacion::all(),
-                'dosis_metas' => DosisMeta::with('grupoPoblacion')->where('distrito_id',$auth_user->distrito_asignado_id)->get(),
+                'dosis_metas' => DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get(),
                 'distrito' => Distrito::find($auth_user->distrito_asignado_id)
             ];
 
@@ -42,32 +43,34 @@ class DosisMetasAvancesController extends Controller
             $auth_user = auth()->user();
             $parametros = $request->all();
 
-            $data = [];
-
+            $metas_form = array_values($parametros);
+            
             $dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
 
             DB::beginTransaction();
 
-            if(count($dosis_metas)){
+            //if(count($dosis_metas)){
                 $metas_guardadas = [];
                 foreach ($dosis_metas as $value) {
                     $metas_guardadas[$value->id] = $value;
                 }
 
-                foreach ($parametros as $meta) {
+                foreach ($metas_form as $meta) {
                     $meta['distrito_id'] = $auth_user->distrito_asignado_id;
 
                     if(isset($meta['id']) && $meta['id']){
                         $dosis_meta = $metas_guardadas[$meta['id']];
-
                         $dosis_meta->update($meta);
                     }else{
                         DosisMeta::create($meta);
                     }
                 }
-            }else{
-                DosisMeta::createMany($parametros);
-            }
+            /*}else{
+                for ($i=0; $i < count($metas_form) ; $i++) { 
+                    $metas_form[$i]['distrito_id'] = $auth_user->distrito_asignado_id;
+                }
+                DosisMeta::getModel()->createMany($metas_form);
+            }*/
             DB::commit();
             $dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
 
@@ -136,12 +139,39 @@ class DosisMetasAvancesController extends Controller
             $auth_user = auth()->user();
             $parametros = $request->all();
 
+            $avance_por_meta = [];
+            $avance_general = 0;
+            foreach ($parametros['avance_metas'] as $avance_meta) {
+                $avance_general += $avance_meta['avance'];
+                $avance_por_meta[$avance_meta['dosis_meta_id']] = $avance_meta['avance'];
+            }
+
+            DB::beginTransaction();
+
+            $dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
+            $avance_acumulado = 0;
+            foreach ($dosis_metas as $meta) {
+                $meta->avance_dosis_acumuladas += $avance_por_meta[$meta->id];
+                $avance_acumulado += $meta->avance_dosis_acumuladas;
+
+                $meta->save();
+            }
+
             $avance_diario = DosisAvanceDiario::create([
-                'distrito_id'=>''
+                'distrito_id'       => $auth_user->distrito_asignado_id,
+                'fecha_avance'      => $parametros['fecha_avance'],
+                'avance_dia'        => $avance_general,
+                'avance_acumulado'  => $avance_acumulado,
+                'observaciones'     => $parametros['observaciones'],
+                'usuario_id'        => $auth_user->id
             ]);
-            
+
+            $avance_diario->detalles()->createMany($parametros['avance_metas']);
+
+            DB::commit();
             return response()->json(['data'=>$avance_diario],HttpResponse::HTTP_OK);
         } catch (Exception $e) {
+            DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
@@ -155,7 +185,6 @@ class DosisMetasAvancesController extends Controller
     public function show(Request $request, $id)
     {
         try {
-
             $avance_diario = DosisAvanceDiario::with('detalles')->find($id);
 
             if(!$avance_diario){
@@ -178,47 +207,7 @@ class DosisMetasAvancesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules = [
-            'descripcion' => ['required'],
-            'estrategia_id' => ['required'],
-            'total_meta_programada' => ['numeric']
-        ];
-
-        $messages = [
-            'required' => 'required',
-            'numeric' => 'numeric',
-        ];
-
-        DB::beginTransaction();
-        try {
-
-            $object = Actividad::find($id);
-
-            if(!$object){
-                throw new Exception("Registro inexistente",404);
-            } 
-
-            $validator = Validator::make($request->all(), $rules,$messages);
-
-            if ($validator->fails()) {
-                return  response()->json($validator->messages(), 409);
-            }
-        
-            $object->descripcion = $request['descripcion'];
-            if(isset($request['total_meta_programada'])){
-                $object->total_meta_programada = $request['total_meta_programada'];
-            } else {
-                $object->total_meta_programada = null;
-            }
-            
-            $object->save();
-            DB::commit();
-        }catch (\Exception $e) {
-            DB::rollback();
-            return Response::json(['error' => $e->getMessage()], HttpResponse::HTTP_CONFLICT);
-        }
-        $object->estrategia;
-        return $object;
+        //StandBy
     }
 
     /**
@@ -227,19 +216,33 @@ class DosisMetasAvancesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         try {
-            //$object = Permiso::destroy($id);
-            $object = Actividad::find($id);
-            if(!$object){
-                throw new Exception("No de puede borrar un registro inexistente",404);
+            $auth_user = auth()->user();
+            
+            DB::beginTransaction();
+
+            $avance_diario = DosisAvanceDiario::with('detalles')->find($id);
+
+            $eliminar_avances = [];
+            foreach ($avance_diario->detalles as $avance_meta) {
+                $eliminar_avances[$avance_meta->dosis_meta_id] = $avance_meta->avance;
             }
 
-            $object = Actividad::destroy($id);
-            return Response::json(['data'=>$object],200);
+            $dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
+            foreach ($dosis_metas as $meta) {
+                $meta->avance_dosis_acumuladas -= $eliminar_avances[$meta->id];
+                $meta->save();
+            }
+
+            $avance_diario->detalles()->delete();
+            $avance_diario->delete();
+
+            DB::commit();
+            return response()->json(['data'=>$avance_diario],HttpResponse::HTTP_OK);
         } catch (Exception $e) {
-            return Response::json(['message' => $e->getMessage()], HttpStatusCodes::parse($e->getCode()));
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
 }

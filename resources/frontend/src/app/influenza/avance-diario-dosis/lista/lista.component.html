@@ -1,1 +1,60 @@
-<p>lista works!</p>
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex fxLayout="row" fxLayoutGap="10px">
+        <section fxFlex="30" fxLayout="row">
+            <mat-card fxFlex="100" fxLayout="column">
+                <mat-card-header *ngIf="datosDistrito">
+                    <mat-card-title>Distrito {{datosDistrito.clave}}</mat-card-title>
+                    <mat-card-subtitle>{{datosDistrito.descripcion}}</mat-card-subtitle>
+                </mat-card-header>
+                <div fxFlex fxLayout="column">
+                    <section fxFlex="none">
+                        <div fxLayout="column">
+                            <button fxFlex mat-raised-button color="accent" (click)="configMetas()">
+                                <mat-icon>table_view</mat-icon> Configurar Metas
+                            </button>
+                        </div>
+                    </section>
+                    <mat-divider [inset]="true"></mat-divider>
+                    <section fxFlex style="overflow: auto;">
+                        <div fxLayout="column">
+                            <div fxFlex fxLayout="row raw" *ngFor="let grupo of catGruposPoblacion" class="meta-capturada">
+                                <div fxFlex="100" class="meta-capturada-grupo">{{grupo.descripcion}}</div>
+                                <div fxFlex="30" class="meta-capturada-etiqueta">META GENERAL</div>
+                                <div fxFlex="40" class="meta-capturada-etiqueta">AVANCE ACUMULADO</div>
+                                <div fxFlex="30" class="meta-capturada-etiqueta">META DIARIA</div>
+                                <div fxFlex="30" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].meta_general:0) | number}}</div>
+                                <div fxFlex="40" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].avance_dosis_acumuladas:0) | number}}</div>
+                                <div fxFlex="30" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].meta_diaria:0) | number}}</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <mat-divider [inset]="true"></mat-divider>
+                <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
+                    <div fxFlex></div>
+                    <div fxFlex="none">
+                        <mat-hint>Total de Dosis: {{totalDosisProgramadas | number}}</mat-hint>
+                    </div>
+                </div>
+            </mat-card>
+        </section>
+        
+        <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
+            <div fxFlex="none" fxLayout="row">
+                <div fxFlex>
+                    busqueda por fecha
+                </div>
+                <div fxFlex="none">
+                    <button mat-flat-button color="primary"><mat-icon>add_circle</mat-icon> Avance</button>
+                </div>
+            </div>
+            <mat-divider [inset]="true"></mat-divider>
+            <div fxFlex style="overflow: auto; background-color: whitesmoke;">
+                listado de avances diarios
+            </div>
+            <div fxFlex="none">
+                paginador
+            </div>
+        </mat-card>
+    </section>
+</section>

@@ -1,0 +1,26 @@
+.meta-capturada{
+    padding:2px;
+    background-color: black;
+    color:whitesmoke;
+    border-bottom: 2px solid white;
+}
+
+.meta-capturada-grupo{
+    font-weight: bold;
+    font-style: italic;
+    font-stretch: semi-condensed;
+    text-align: center;
+}
+
+.meta-capturada-etiqueta{
+    text-align: center;
+    color: whitesmoke;
+    background-color: grey;
+}
+
+.meta-capturada-valor{
+    text-align: center;
+    color: black;
+    background-color: whitesmoke;
+    border: 2px solid grey;
+}

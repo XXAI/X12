@@ -1,0 +1,36 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none">
+        <h3 style="padding: 3px; margin:0px;">Configuración de Metas</h3>
+    </section>
+    <section fxFlex="none" fxLayout="row" class="grupo-encabezado">
+        <div class="encabezado" fxFlex>GRUPO Y POBLACION</div>
+        <div class="encabezado" fxFlex="20">META GENERAL</div>
+        <div class="encabezado" fxFlex="20">META DIARIA</div>
+    </section>
+    <section fxFlex fxLayout="column" style="overflow: auto;" [formGroup]="formMetas">
+        <div fxFlex fxLayout="row" *ngFor="let grupo of catGruposPoblacion" class="grupo-linea" [formGroup]="formMetas.get('grupo_poblacion_'+grupo.id)">
+            <div fxFlex class="grupo-etiqueta">
+                {{grupo.descripcion}}
+            </div>
+            <div fxFlex="20" class="small-form-input">
+                <mat-form-field appearance="outline">
+                    <input matInput formControlName="meta_general" [type]="'number'" autocomplete="off">
+                </mat-form-field>
+            </div>
+            <div fxFlex="20" class="small-form-input">
+                <mat-form-field appearance="outline">
+                    <input matInput formControlName="meta_diaria" [type]="'number'" autocomplete="off">
+                </mat-form-field>
+            </div>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!formMetas.valid || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

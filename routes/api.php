@@ -113,6 +113,13 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('listado-avances',                   'API\Modulos\AvancesActividadesController@listadoAvances');
 
     /**
+     * Influenza - Dosis Diarias
+     */
+    Route::apiResource('influenza-dosis-diarias',       'API\Modulos\Influenza\DosisMetasAvancesController');
+    Route::get('influenza-dosis-diarias-init',          'API\Modulos\Influenza\DosisMetasAvancesController@getInitData');
+    Route::post('influenza-config-metas-dosis',         'API\Modulos\Influenza\DosisMetasAvancesController@guardarDosisMetas');
+
+    /**
      * Brigadas - Rondas
      */
     Route::apiResource('brigadas',          'API\Modulos\BrigadasController');

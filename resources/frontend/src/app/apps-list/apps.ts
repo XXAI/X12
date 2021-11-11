@@ -49,7 +49,7 @@ export const APPS: App[] = [
     name: "Avance Diario - Dosis",
     route: "influenza-avance-diario-dosis",
     icon: "assets/icons/vacunacion-influenza.svg",
-    permission: "L66kwrzam7WU23VRh0aiV91p8ZbPoN7i",
+    permission: "mfnu5RtNDeH5pK1wehA9yoh9nkuJaeM4",
   },
   {
     name: "Contagios",

@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use \DB, \Response, \Exception; 
 
+use \DateTime;
+
 use App\Http\Controllers\Controller;
 
 use App\Models\Influenza\DosisMeta;
@@ -139,9 +141,22 @@ class DosisMetasAvancesController extends Controller
             $auth_user = auth()->user();
             $parametros = $request->all();
 
+            $avance_capturado = DosisAvanceDiario::where('distrito_id',$auth_user->distrito_asignado_id)->where('fecha_avance',$parametros['fecha_avance'])->first();
+            if($avance_capturado){
+                throw new Exception("El día seleccionado ya fue capturado", 1);
+            }
+
+            $hoy = new DateTime();
+            $fecha_avance = new DateTime($parametros['fecha_avance']);
+
+            if($fecha_avance > $hoy){
+                throw new Exception("Piensa McFly, piensa!!!, no se puede capturar un avance de un día mayor al actual", 1);
+            }
+
+            $avance_metas_form = array_values($parametros['avance_metas']);
             $avance_por_meta = [];
             $avance_general = 0;
-            foreach ($parametros['avance_metas'] as $avance_meta) {
+            foreach ($avance_metas_form as $avance_meta) {
                 $avance_general += $avance_meta['avance'];
                 $avance_por_meta[$avance_meta['dosis_meta_id']] = $avance_meta['avance'];
             }
@@ -149,27 +164,29 @@ class DosisMetasAvancesController extends Controller
             DB::beginTransaction();
 
             $dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
-            $avance_acumulado = 0;
+            $meta_dia = 0;
             foreach ($dosis_metas as $meta) {
                 $meta->avance_dosis_acumuladas += $avance_por_meta[$meta->id];
-                $avance_acumulado += $meta->avance_dosis_acumuladas;
-
+                $meta_dia += $meta->meta_diaria;
                 $meta->save();
             }
 
             $avance_diario = DosisAvanceDiario::create([
-                'distrito_id'       => $auth_user->distrito_asignado_id,
-                'fecha_avance'      => $parametros['fecha_avance'],
-                'avance_dia'        => $avance_general,
-                'avance_acumulado'  => $avance_acumulado,
-                'observaciones'     => $parametros['observaciones'],
-                'usuario_id'        => $auth_user->id
+                'distrito_id'           => $auth_user->distrito_asignado_id,
+                'fecha_avance'          => $parametros['fecha_avance'],
+                'avance_dia'            => $avance_general,
+                'meta_dia'              => $meta_dia,
+                'porcentaje_meta_dia'   => round((($avance_general/$meta_dia)*100),2),
+                'observaciones'         => $parametros['observaciones'],
+                'usuario_id'            => $auth_user->id,
+                'creado_por'            => $auth_user->id
             ]);
 
-            $avance_diario->detalles()->createMany($parametros['avance_metas']);
+            $avance_diario->detalles()->createMany($avance_metas_form);
 
             DB::commit();
-            return response()->json(['data'=>$avance_diario],HttpResponse::HTTP_OK);
+            //$dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
+            return response()->json(['data'=>$dosis_metas],HttpResponse::HTTP_OK);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

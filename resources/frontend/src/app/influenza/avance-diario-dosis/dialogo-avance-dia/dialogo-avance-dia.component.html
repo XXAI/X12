@@ -1,0 +1,49 @@
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
+    <section fxFlex="none">
+        <h3 style="padding: 3px; margin:0px;">Avance de Dosis al Día</h3>
+    </section>
+    <section fxFlex="none" fxLayout="row" [formGroup]="formAvance">
+        <mat-form-field fxFlex="none" appearance="fill">
+            <mat-label>Fecha Avance</mat-label>
+            <input matInput formControlName="fecha_avance" [matDatepicker]="picker" required readonly>
+            <mat-hint align="end">Click para selccionar fecha <mat-icon>keyboard_arrow_up</mat-icon></mat-hint>
+            <mat-datepicker-toggle matSuffix color="primary" [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker disabled="false"></mat-datepicker>
+        </mat-form-field>
+        <div fxFlex="none">
+            &nbsp;
+        </div>
+        <mat-form-field fxFlex>
+            <textarea matInput rows="1" formControlName="observaciones" placeholder="Observaciones"></textarea>
+        </mat-form-field>
+    </section>
+    <section fxFlex="none" fxLayout="row" class="grupo-encabezado">
+        <div class="encabezado" fxFlex>GRUPO Y POBLACION</div>
+        <div class="encabezado" fxFlex="20">META DIARIA</div>
+        <div class="encabezado" fxFlex="20">AVANCE DEL DÍA</div>
+    </section>
+    <section fxFlex fxLayout="column" style="overflow: auto;" [formGroup]="formAvance">
+        <div fxFlex fxLayout="row" *ngFor="let grupo of catGruposPoblacion" class="grupo-linea" [formGroup]="formAvance.get('avance_metas.avance_diario_'+grupo.id)">
+            <div fxFlex class="grupo-etiqueta">
+                {{grupo.descripcion}}
+            </div>
+            <div fxFlex="20" style="text-align: center;">
+                {{listaMetasDosis[grupo.id].meta_diaria | number}}
+            </div>
+            <div fxFlex="20" class="small-form-input">
+                <mat-form-field appearance="outline">
+                    <input matInput formControlName="avance" [type]="'number'" autocomplete="off">
+                </mat-form-field>
+            </div>
+        </div>
+    </section>
+    <section fxFlex="none">
+        <div fxLayout="row">
+            <div fxFlex></div>
+            <div fxFlex="none">
+                <button mat-button (click)="cancelar()">Cancelar</button>&nbsp;
+                <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!formAvance.valid || isLoading" [class.button-spinner]="isLoading"><mat-icon>save</mat-icon> Guardar</button>&nbsp;
+            </div>
+        </div>
+    </section>
+</section>

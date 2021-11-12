@@ -9,7 +9,7 @@ class DosisAvanceDiario extends Model
 {
     use SoftDeletes;
     protected $table = 'influenza_dosis_avance_diario';
-    protected $fillable = ['distrito_id','fecha_avance','avance_dia','avance_acumulado','observaciones','solo_lectura','usuario_id','creado_por'];
+    protected $fillable = ['distrito_id','fecha_avance','meta_dia','avance_dia','porcentaje_meta_dia','observaciones','solo_lectura','usuario_id','creado_por'];
 
     public function detalles(){
         return $this->hasMany('App\Models\Influenza\DosisAvanceDiarioDetalle','avance_diario_id');

@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { SharedService } from '@app/shared/shared.service';
 import { AvanceDiarioService } from '../avance-diario.service';
 import { DialogoConfigMetasComponent } from '../dialogo-config-metas/dialogo-config-metas.component';
+import { DialogoAvanceDiaComponent } from '../dialogo-avance-dia/dialogo-avance-dia.component';
 
 @Component({
   selector: 'app-lista',
@@ -10,7 +13,8 @@ import { DialogoConfigMetasComponent } from '../dialogo-config-metas/dialogo-con
   styleUrls: ['./lista.component.css']
 })
 export class ListaComponent implements OnInit {
-
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  
   constructor(
     private sharedService: SharedService,
     private avanceDiarioService: AvanceDiarioService,
@@ -22,6 +26,13 @@ export class ListaComponent implements OnInit {
   datosMetas:any;
   catGruposPoblacion:any[];
   mostrarBotonMetas:boolean;
+
+  listaAvanceDiario:MatTableDataSource<any>;
+  displayedColumns: string[] = ['fecha_avance','meta_dia','avance_dia','porcentaje_meta_dia','usuario','actions'];
+  pageEvent: PageEvent;
+  resultsLength: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 20;
 
   totalDosisProgramadas: number;
   totalDosisAcumuladas: number;
@@ -52,13 +63,68 @@ export class ListaComponent implements OnInit {
         this.sharedService.showSnackBar(errorMessage, null, 3000);
       }
     );
+
+    this.cargarListaAvances();
+  }
+
+  cargarListaAvances(event?){
+    this.isLoading = true;
+    let params:any;
+    if(!event){
+      params = { page: 1, per_page: this.pageSize }
+    }else{
+      params = {
+        page: event.pageIndex+1,
+        per_page: event.pageSize
+      };
+    }
+
+    this.avanceDiarioService.getListadoAvancesDiarios(params).subscribe(
+      response => {
+        console.log(response);
+        this.listaAvanceDiario = new MatTableDataSource <any> (response.data.data);
+        this.listaAvanceDiario.paginator = this.paginator;
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+      }
+    );
   }
 
   arreglarMetasCapturadas(metas){
     this.datosMetas = {};
     metas.forEach(meta => {
+      meta.porcentaje = ((meta.avance_dosis_acumuladas/meta.meta_general)*100);
       this.datosMetas[meta.grupo_poblacion_id] = meta;
       this.totalDosisProgramadas += +meta.meta_general;
+    });
+  }
+
+  avanceDia(id?:number){
+    let configDialog:any = {
+      width: '90%',
+      maxWidth: '90%',
+      height: '70%',
+      disableClose:true,
+      data: {gruposPoblacion:this.catGruposPoblacion, metasDosis: this.datosMetas},
+      panelClass: 'no-padding-dialog'
+    };
+
+    if(id){
+      configDialog.data.idAvanaceDia = id;
+    }
+
+    const dialogRef = this.dialog.open(DialogoAvanceDiaComponent, configDialog);
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response){
+        this.cargarListaAvances();
+        this.arreglarMetasCapturadas(response);
+      }
     });
   }
 
@@ -68,7 +134,7 @@ export class ListaComponent implements OnInit {
       maxWidth: '90%',
       height: '70%',
       disableClose:true,
-      data: {gruposPoblacion:this.catGruposPoblacion},
+      data: {gruposPoblacion: this.catGruposPoblacion},
       panelClass: 'no-padding-dialog'
     };
 

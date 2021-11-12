@@ -21,10 +21,10 @@
                                 <div fxFlex="100" class="meta-capturada-grupo">{{grupo.descripcion}}</div>
                                 <div fxFlex="30" class="meta-capturada-etiqueta">META GENERAL</div>
                                 <div fxFlex="40" class="meta-capturada-etiqueta">AVANCE ACUMULADO</div>
-                                <div fxFlex="30" class="meta-capturada-etiqueta">META DIARIA</div>
+                                <div fxFlex="30" class="meta-capturada-etiqueta">% AVANCE</div>
                                 <div fxFlex="30" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].meta_general:0) | number}}</div>
                                 <div fxFlex="40" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].avance_dosis_acumuladas:0) | number}}</div>
-                                <div fxFlex="30" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].meta_diaria:0) | number}}</div>
+                                <div fxFlex="30" class="meta-capturada-valor">{{ ((datosMetas[grupo.id])?datosMetas[grupo.id].porcentaje:0) | number:'1.0-2'}}%</div>
                             </div>
                         </div>
                     </section>
@@ -33,7 +33,7 @@
                 <div fxFlex="none" fxLayout="row" style="padding-top:5px;">
                     <div fxFlex></div>
                     <div fxFlex="none">
-                        <mat-hint>Total de Dosis: {{totalDosisProgramadas | number}}</mat-hint>
+                        <mat-hint>Total Dosis: {{totalDosisProgramadas | number}}</mat-hint>
                     </div>
                 </div>
             </mat-card>
@@ -42,18 +42,67 @@
         <mat-card fxFlex fxLayout="column" fxLayoutGap="5px">
             <div fxFlex="none" fxLayout="row">
                 <div fxFlex>
-                    busqueda por fecha
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Selecciona una Fecha" disabled>
+                        <mat-datepicker #picker disabled="false"></mat-datepicker>
+                        <mat-datepicker-toggle matSuffix>
+                            <mat-icon matDatepickerToggleIcon>clear</mat-icon>
+                        </mat-datepicker-toggle>
+                    </mat-form-field>
+                    <button mat-flat-button color="info" (click)="picker.open()"><mat-icon>today</mat-icon></button>
                 </div>
                 <div fxFlex="none">
-                    <button mat-flat-button color="primary"><mat-icon>add_circle</mat-icon> Avance</button>
+                    <button mat-fab color="accent" (click)="avanceDia()"><mat-icon>edit_calendar</mat-icon></button>
                 </div>
             </div>
             <mat-divider [inset]="true"></mat-divider>
             <div fxFlex style="overflow: auto; background-color: whitesmoke;">
-                listado de avances diarios
+                <table mat-table [dataSource]="listaAvanceDiario" class="data-table">
+                    <!-- Number Column -->
+                    <ng-container matColumnDef="fecha_avance">
+                        <th mat-header-cell *matHeaderCellDef width="1">Fecha Avance</th>
+                        <td mat-cell *matCellDef="let row">{{row.fecha_avance}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="meta_dia">
+                        <th mat-header-cell *matHeaderCellDef>Total Meta Día</th>
+                        <td mat-cell *matCellDef="let row">{{row.meta_dia||0 | number}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="avance_dia">
+                        <th mat-header-cell *matHeaderCellDef>Total Avance Día</th>
+                        <td mat-cell *matCellDef="let row">{{row.avance_dia||0 | number}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="porcentaje_meta_dia">
+                        <th mat-header-cell *matHeaderCellDef>% Avance Día</th>
+                        <td mat-cell *matCellDef="let row">{{row.porcentaje_meta_dia||0 | number:'1.0-2'}} %</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="usuario">
+                        <th mat-header-cell *matHeaderCellDef width="1">Usuario</th>
+                        <td mat-cell *matCellDef="let row">{{row.usuario.username}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef width="1">Acciones</th>
+                        <td mat-cell *matCellDef="let row"></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="noResultsFound">
+                        <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                            No se encontraron registros 
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="no-results-found" [ngClass]="{'hide':!(listaAvanceDiario!=null && listaAvanceDiario.data.length==0)}"></tr>
+                </table>
             </div>
             <div fxFlex="none">
-                paginador
+                <mat-paginator [pageSize]="pageSize" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[10, 20, 30, 50]" showFirstLastButtons (page)="pageEvent = cargarListaAvances($event)"></mat-paginator>
             </div>
         </mat-card>
     </section>

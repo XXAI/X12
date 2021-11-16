@@ -1,9 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SharedService } from '@app/shared/shared.service';
 import { AvanceDiarioService } from '../avance-diario.service';
 import { DatePipe } from '@angular/common';
+import { ConfirmActionDialogComponent } from '@app/utils/confirm-action-dialog/confirm-action-dialog.component';
 
 export interface DialogData {
   gruposPoblacion:any[];
@@ -21,6 +22,7 @@ export class DialogoAvanceDiaComponent implements OnInit {
 
   constructor(
     public datePipe: DatePipe,
+    public dialog: MatDialog, 
     public dialogRef: MatDialogRef<DialogoAvanceDiaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private formBuilder: FormBuilder,
@@ -32,9 +34,14 @@ export class DialogoAvanceDiaComponent implements OnInit {
   catGruposPoblacion:any[];
   listaMetasDosis:any;
 
+  previewMode:boolean;
+  soloLectura:boolean;
+  idAvance:number;
+
   formAvance:FormGroup;
   
   ngOnInit() {
+    this.previewMode = false;
     this.catGruposPoblacion = this.data.gruposPoblacion;
     this.listaMetasDosis = this.data.metasDosis;
     this.formAvance = this.formBuilder.group({
@@ -58,10 +65,32 @@ export class DialogoAvanceDiaComponent implements OnInit {
     this.formAvance.addControl('avance_metas',this.formBuilder.group(controles_avance));
 
     if(this.data.idAvanaceDia){
-      /*for (const key in this.data.dosisMetas) {
-        const meta = this.data.dosisMetas[key];
-        this.formMetas.get('grupo_poblacion_'+meta.grupo_poblacion_id).patchValue(meta);
-      }*/
+      this.isLoading = true;
+      this.idAvance = this.data.idAvanaceDia;
+      this.previewMode = true;
+
+      this.avanceDiarioService.verAvanceDiario(this.idAvance).subscribe(
+        response => {
+          this.isLoading = false;
+          this.soloLectura = response.data.solo_lectura;
+
+          response.data.fecha_avance = new Date(response.data.fecha_avance+'T12:00:00');
+          response.data.avance_metas = {};
+
+          response.data.detalles.forEach(avance => {
+            response.data.avance_metas['avance_diario_'+avance.dosis_meta_id] = avance;
+          });
+          this.formAvance.patchValue(response.data);
+        },
+        errorResponse =>{
+          var errorMessage = "Ocurrió un error.";
+          if(errorResponse.status == 409){
+            errorMessage = errorResponse.error.error.message;
+          }
+          this.sharedService.showSnackBar(errorMessage, null, 3000);
+          this.isLoading = false;
+        }
+      );
     }else{
       //response.data.fecha_inicio = new Date(response.data.fecha_inicio+'T12:00:00');
       let fecha_hoy = new Date();
@@ -84,7 +113,6 @@ export class DialogoAvanceDiaComponent implements OnInit {
         response => {
           this.sharedService.showSnackBar('Datos guardados con éxito', null, 3000);
           this.isLoading = false;
-          console.log(response.data);
           this.dialogRef.close(response.data);
         },
         errorResponse =>{
@@ -96,6 +124,36 @@ export class DialogoAvanceDiaComponent implements OnInit {
           this.isLoading = false;
         }
       );
+    }
+  }
+
+  eliminar(): void{
+    if(!this.soloLectura){
+      const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+        width: '500px',
+        data:{dialogTitle:'Eliminar Avance',dialogMessage:'¿Esta seguro de eliminar este elemento?',btnColor:'warn',btnText:'Eliminar'}
+      });
+  
+      dialogRef.afterClosed().subscribe(valid => {
+        if(valid){
+          this.isLoading = true;
+          this.avanceDiarioService.eliminarAvanceDiario(this.idAvance).subscribe(
+            response => {
+              this.sharedService.showSnackBar('Elemento eliminado con éxito', null, 3000);
+              this.isLoading = false;
+              this.dialogRef.close(response.data);
+            },
+            errorResponse =>{
+              var errorMessage = "Ocurrió un error.";
+              if(errorResponse.status == 409){
+                errorMessage = errorResponse.error.error.message;
+              }
+              this.sharedService.showSnackBar(errorMessage, null, 3000);
+              this.isLoading = false;
+            }
+          ); 
+        }
+      });
     }
   }
 }

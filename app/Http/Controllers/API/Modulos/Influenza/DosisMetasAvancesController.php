@@ -17,6 +17,7 @@ use App\Models\Influenza\DosisMeta;
 use App\Models\Influenza\DosisAvanceDiario;
 use App\Models\Influenza\DosisAvanceDiarioDetalle;
 use App\Models\Influenza\GrupoPoblacion;
+use App\Models\Influenza\ConfigurarModulo;
 use App\Models\Distrito;
 
 use App\Helpers\HttpStatusCodes;
@@ -28,10 +29,13 @@ class DosisMetasAvancesController extends Controller
         try {
             $auth_user = auth()->user();
 
+            $config = ConfigurarModulo::get();
+
             $data = [
+                'configuracion' => $config,
                 'grupos_poblacion' => GrupoPoblacion::all(),
                 'dosis_metas' => DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get(),
-                'distrito' => Distrito::find($auth_user->distrito_asignado_id)
+                'distrito' => Distrito::find($auth_user->distrito_asignado_id),
             ];
 
             return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
@@ -241,6 +245,10 @@ class DosisMetasAvancesController extends Controller
 
             $avance_diario = DosisAvanceDiario::with('detalles')->find($id);
 
+            if($avance_diario->solo_lectura){
+                throw new Exception("No es posible eliminar este elemento", 1);
+            }
+
             $eliminar_avances = [];
             foreach ($avance_diario->detalles as $avance_meta) {
                 $eliminar_avances[$avance_meta->dosis_meta_id] = $avance_meta->avance;
@@ -254,9 +262,10 @@ class DosisMetasAvancesController extends Controller
 
             $avance_diario->detalles()->delete();
             $avance_diario->delete();
-
             DB::commit();
-            return response()->json(['data'=>$avance_diario],HttpResponse::HTTP_OK);
+
+            //$dosis_metas = DosisMeta::where('distrito_id',$auth_user->distrito_asignado_id)->get();
+            return response()->json(['data'=>$dosis_metas],HttpResponse::HTTP_OK);
         } catch (Exception $e) {
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

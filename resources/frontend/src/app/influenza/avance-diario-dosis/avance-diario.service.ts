@@ -47,6 +47,14 @@ export class AvanceDiarioService {
     );
   }
 
+  verAvanceDiario(id:number):Observable<any> {
+    return this.http.get<any>(this.url_dosis_diarias+'/'+id).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+
   eliminarAvanceDiario(id:number):Observable<any>{
     return this.http.delete<any>(this.url_dosis_diarias+'/'+id).pipe(
       map( response => {
